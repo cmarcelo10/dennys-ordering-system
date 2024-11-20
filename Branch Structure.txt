@@ -1,0 +1,6 @@
+You can create any branch you want off of the code how ever you see fit.
+How ever, when committing anything to main, you must first go through the Integration branch.
+This way we can test things before we break things. 
+Every push to main will have a version number incase things break.
+
+Please use your development branch or create a temporary branch off of someone else's branch.
