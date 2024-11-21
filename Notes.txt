@@ -1,0 +1,8 @@
+This is for notes;
+Use format mm-dd - Name: note
+-
+-
+-
+Example:
+11-21 - Ryan:
+Today is the start of our coding
