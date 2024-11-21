@@ -1,10 +1,25 @@
 import * as React from 'react'
-import { createRoot } from 'react-dom/client'
+import * as ReactDOM from 'react-dom/client'
+import {createBrowserRouter, Router, RouterProvider} from "react-router-dom"
 import './index.css'
 import App from './App.tsx'
 
-createRoot(document.getElementById('root')!).render(
+// insert all new pages as
+/*
+{
+    path: [path]
+    element: [element]
+}
+*/
+const router = createBrowserRouter([
+    { 
+        // example
+        path: "/",
+        element: <App />
+    },
+])
+ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <App />
+    <RouterProvider router={router} />
   </React.StrictMode>,
 )
