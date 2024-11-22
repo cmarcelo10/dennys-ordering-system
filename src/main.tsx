@@ -2,7 +2,6 @@ import * as React from 'react'
 import * as ReactDOM from 'react-dom/client'
 import {createBrowserRouter, Router, RouterProvider} from "react-router-dom"
 import './index.css'
-import App from './App.tsx'
 import MainMenu from './pages/MainMenu.tsx'
 import HandheldsMenu from './pages/HandheldsMenu.tsx'
 
@@ -14,13 +13,8 @@ import HandheldsMenu from './pages/HandheldsMenu.tsx'
 }
 */
 const router = createBrowserRouter([
-    { 
-        // example
-        path: "/",
-        element: <App />
-    },
     {
-        path: "/home",
+        path: "/",
         element: <MainMenu />
     },
     {
