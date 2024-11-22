@@ -4,6 +4,7 @@ import {createBrowserRouter, Router, RouterProvider} from "react-router-dom"
 import './index.css'
 import App from './App.tsx'
 import MainMenu from './pages/MainMenu.tsx'
+import HandheldsMenu from './pages/HandheldsMenu.tsx'
 
 // insert all new pages as
 /*
@@ -21,6 +22,10 @@ const router = createBrowserRouter([
     {
         path: "/home",
         element: <MainMenu />
+    },
+    {
+        path: "/sandwiches-and-burgers",
+        element: <HandheldsMenu />
     }
 ])
 ReactDOM.createRoot(document.getElementById('root')!).render(
