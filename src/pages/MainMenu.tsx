@@ -32,7 +32,6 @@ const MainMenu = () =>
     return (
         <ThemeProvider theme={theme}>
         <Navbar bottomLabel='foo'>
-            <Toolbar/>
             <Stack spacing={3}>
                 {
                     cardsArray.map(item=>(
@@ -48,7 +47,6 @@ const MainMenu = () =>
                     </Card>)) 
                 }
             </Stack>
-            <Toolbar />
         </Navbar>
     </ThemeProvider>)
 }
