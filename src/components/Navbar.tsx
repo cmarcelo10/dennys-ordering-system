@@ -25,9 +25,10 @@ const NavBar = ({bottomLabel, children}: NavBarProps) => {
             <Toolbar/>
             <AppBar sx={{backgroundColor: '#464340', alignContent: 'center', justifyContent:'center', position: 'fixed', bottom: 0, top: 'auto'}} elevation={0}>
                     <Toolbar sx={{display: 'flex', flexDirection: 'row', alignContent: 'center', justifyContent: 'center'}}>
-                    <Button variant='contained' sx={{backgroundColor: theme.palette.secondary.main}}> {bottomLabel}</Button>
-                </Toolbar>
+                        <Button variant='contained' sx={{backgroundColor: theme.palette.secondary.main}}> {bottomLabel}</Button>
+                    </Toolbar>
             </AppBar>
-        </ThemeProvider>);
+        </ThemeProvider>
+            );
 }
 export default NavBar
