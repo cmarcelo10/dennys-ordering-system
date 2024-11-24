@@ -23,6 +23,7 @@ export const BaconAvocadoCheeseBurger:FoodItem =
     name: "Bacon Avocado Cheeseburger",
     description: DummyText,
     price: 19.99,
+    preferredFontSize: 23.5,
     image: BaconAvocadoCheeseburgerImg,
 }
 

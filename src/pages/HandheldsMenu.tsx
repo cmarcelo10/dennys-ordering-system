@@ -14,12 +14,7 @@ import * as FoodItems from '../components/FoodItems.ts'
 
 import Divider from '@mui/material/Divider'
 import FoodItem from '../components/FoodItem'
-const dennysBrown: string = "#464340"
-const dennysYellow: string = "#ffd31a"
-const dennysRed: string = "#d63d42"
-const dennysGrey: string = "#474355"
-
-const theme = createTheme();
+import theme from '../styles/Theme.ts'
 
 const dummyText = "Lorem ipsum dolor sit amet, consectetur" + 
 " adipiscing elit. Nam sagittis quam est, non vulputate nulla" + 
@@ -57,7 +52,6 @@ const HandheldsMenu = () =>
     
     return (
         <ThemeProvider theme={theme}>
-        
             <Navbar bottomLabel='foo'>
             <Breadcrumbs sx={{position: 'sticky', top: 0, bottom: 'auto'}}>
             <Typography>
@@ -67,7 +61,7 @@ const HandheldsMenu = () =>
                 Sandwiches and Burgers
             </Typography>
             </Breadcrumbs>
-            <Typography sx={{paddingTop: 2}}variant='h2' fontFamily={'Roboto'} color={dennysRed} textAlign="center" fontWeight={555} fontSize={36}>Sandwiches and Burgers</Typography>
+            <Typography sx={{paddingTop: 2, width: '100%'}}variant='h2' fontFamily={'Roboto'} color={theme.palette.dennysRed.main} textAlign="center" fontWeight={555} fontSize={30}>Sandwiches and Burgers</Typography>
             <Divider sx={DividerProps} variant='middle'/>
             <Stack spacing={3} sx={{paddingTop: 3, paddingBottom: 3, overflowY: 'scroll'}}>
                 {
@@ -83,7 +77,7 @@ const HandheldsMenu = () =>
                                         pl: 1,
                                         pr: 1,
                                     },
-                                }} title={<Typography variant='h4' fontSize={item.preferredFontSize !== undefined? item.preferredFontSize : 28} fontWeight={500}>{item.name}</Typography>}/>
+                                }} title={<Typography variant='h4' fontSize={28} fontWeight={500}>{item.name}</Typography>}/>
                                 <CardContent sx={{
                                     textAlign: 'left', 
                                     textJustify: 'justify', 
