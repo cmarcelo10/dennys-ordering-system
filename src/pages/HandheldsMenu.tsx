@@ -1,7 +1,8 @@
 import React, {useState, useEffect} from 'react'
 import Typography from '@mui/material/Typography'
 import Collapse from '@mui/material/Collapse'
-import { Navigate } from 'react-router-dom'
+import {useNavigate} from 'react-router-dom'
+import {Link as ReactRouterLink} from 'react-router-dom'
 import Stack from '@mui/material/Stack'
 import Box from '@mui/material/Box'
 import {Breadcrumbs, Card, CardActionArea, CardActions, CardContent, CardHeader, CardMedia, createTheme, Link, ThemeProvider, Toolbar} from '@mui/material'
@@ -43,6 +44,7 @@ const DividerProps =
 }
 const HandheldsMenu = () =>
 {
+    const navigate = useNavigate();
     const {height, width} = WindowDimensions()
     const [cardsArray, setCardsArray] = useState<FoodItem[]>([]);
     useEffect((()=>
@@ -55,7 +57,7 @@ const HandheldsMenu = () =>
             <Navbar bottomLabel='foo'>
             <Breadcrumbs sx={{position: 'sticky', top: 0, bottom: 'auto'}}>
             <Typography>
-                Main
+                Main Menu {/* Need to link this to the main menu... it's kind of annoying that */}
             </Typography>
             <Typography>
                 Sandwiches and Burgers
