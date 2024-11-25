@@ -42,7 +42,7 @@ const NavBar = ({bottomLabel, children}: NavBarProps) => {
             <Toolbar/>
             <AppBar sx={{zIndex: 1000, backgroundColor: '#464340', alignContent: 'center', justifyContent:'center', position: 'fixed', bottom: 0, top: 'auto'}} elevation={0}>
                     <Toolbar sx={{display: 'flex', flexDirection: 'row', alignContent: 'center', justifyContent: 'center'}}>
-                        <Button variant='contained' sx={{backgroundColor: theme.palette.dennysRed.main, color: theme.palette.dennysRed.contrastText, width: '50%', height: '40px', fontSize: 20}}><Typography fontWeight={1000}>{bottomLabel}</Typography></Button>
+                        <Button variant='contained' sx={{backgroundColor: theme.palette.dennysRed.main, color: theme.palette.dennysRed.contrastText, width: '50%', height: '40px', fontSize: 20, textTransform: 'none'}}><Typography fontWeight={1000}>{bottomLabel}</Typography></Button>
                     </Toolbar>
             </AppBar>
         </ThemeProvider>
