@@ -1,12 +1,16 @@
+import CustomizationCategory from "./CustomizationCategory"
+
 type FoodItem = 
 {
     name: string, 
     description?: string
     price: number,
-    image: string,
+    image?: string,
     largeImage?: string,
     menuPage?: string,
     preferredFontSize?: string | number,
+    customizations?: CustomizationCategory[],
+    salad?: FoodItem,
 }
 
 export default FoodItem

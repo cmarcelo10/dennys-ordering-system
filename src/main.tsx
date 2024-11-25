@@ -20,7 +20,7 @@ const router = createBrowserRouter([
     {
         path: "/sandwiches-and-burgers",
         element: <HandheldsMenu />
-    }
+    },
 ])
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>

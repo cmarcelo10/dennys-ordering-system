@@ -1,70 +1,54 @@
-import React, {useState, useEffect} from 'react'
+import React from 'react'
 import Typography from '@mui/material/Typography'
-import Collapse from '@mui/material/Collapse'
-import {useNavigate} from 'react-router-dom'
-import {Link as ReactRouterLink} from 'react-router-dom'
+import {Link as ReactRouterLink, useNavigate} from 'react-router-dom'
 import Stack from '@mui/material/Stack'
 import Box from '@mui/material/Box'
-import {Breadcrumbs, Card, CardActionArea, CardActions, CardContent, CardHeader, CardMedia, createTheme, Link, ThemeProvider, Toolbar} from '@mui/material'
-import Button from '@mui/material/Button'
-import NavBar from '../components/Navbar'
+import Breadcrumbs from '@mui/material/Breadcrumbs'
+import Card from '@mui/material/Card'
+import CardActionArea from '@mui/material/CardActionArea' 
+import CardContent from '@mui/material/CardContent' 
+import CardHeader from '@mui/material/CardHeader'
+import IconButton from '@mui/material/IconButton'
+import {ThemeProvider} from '@mui/material'
 import Navbar from '../components/Navbar'
-
-import WindowDimensions from '../components/WindowDimensions'
-import * as FoodItems from '../components/FoodItems.ts'
-
 import Divider from '@mui/material/Divider'
-import FoodItem from '../components/FoodItem'
+import FoodItem from '../types/FoodItem'
+import * as FoodItems from '../types/MenuItems.ts'
 import theme from '../styles/Theme.ts'
+import ArrowBackIosRounded from '@mui/icons-material/ArrowBackIosRounded'
 
-const dummyText = "Lorem ipsum dolor sit amet, consectetur" + 
-" adipiscing elit. Nam sagittis quam est, non vulputate nulla" + 
- " eleifend et. Phasellus scelerisque at ipsum et imperdiet.";
-
-
-type StringNode = 
-{
-    index: number,
-    title: string,
-    description: string,
-}
 const imageDimensions = 
 {
-    width: 150,
-    height: 150,
+    width: 112.5,
+    height: 112.5,
 }
 
-const cardHeight= 250
-const DividerProps =
-{
-    '&.MUIDivider-root':
-    {
-        height: '8px'
-    }
-}
 const HandheldsMenu = () =>
 {
     const navigate = useNavigate();
-    const {height, width} = WindowDimensions()
-    const [cardsArray, setCardsArray] = useState<FoodItem[]>([]);
-    useEffect((()=>
+    const [cardsArray, setCardsArray] = React.useState<FoodItem[]>([]);
+    React.useEffect((()=>
     {
         setCardsArray(FoodItems.HandheldsList);
     }), []);
     
     return (
         <ThemeProvider theme={theme}>
-            <Navbar bottomLabel='foo'>
-            <Breadcrumbs sx={{position: 'sticky', top: 0, bottom: 'auto'}}>
-            <Typography>
-                Main Menu {/* Need to link this to the main menu... it's kind of annoying that */}
-            </Typography>
-            <Typography>
-                Sandwiches and Burgers
-            </Typography>
-            </Breadcrumbs>
-            <Typography sx={{paddingTop: 2, width: '100%'}}variant='h2' fontFamily={'Roboto'} color={theme.palette.dennysRed.main} textAlign="center" fontWeight={555} fontSize={30}>Sandwiches and Burgers</Typography>
-            <Divider sx={DividerProps} variant='middle'/>
+            <Navbar bottomLabel='foo'> {/* Bump this up to Main and use context*/}
+            <Box display="flex" flexDirection="row" alignContent={'center'}>
+                <IconButton size="medium" onClick={()=>navigate('/')}>
+                    <ArrowBackIosRounded/>
+                </IconButton>
+                <Breadcrumbs sx={{alignContent: 'center'}}>
+                    <ReactRouterLink to={"/"} style={{textDecoration: 'none', color: 'inherit'}}> Main Menu </ReactRouterLink>
+                        Main Menu {/* Need to link this to the main menu... it's kind of annoying that */}
+                    <Typography>
+                        Sandwiches and Burgers
+                    </Typography>
+                </Breadcrumbs>
+            </Box>
+            <Typography sx={{paddingTop: 1, width: '100%'}}variant='h2' fontFamily={'Roboto'} color={theme.palette.dennysRed.main} textAlign="center" fontWeight={555} fontSize={30}>Sandwiches and Burgers</Typography>
+            <Divider variant='middle'/>
             <Stack spacing={3} sx={{paddingTop: 3, paddingBottom: 3, overflowY: 'scroll'}}>
                 {
                     cardsArray.map(item=>(
@@ -72,14 +56,18 @@ const HandheldsMenu = () =>
                         <CardActionArea>
                             <Box padding='4px' paddingLeft={1} paddingRight={1}>
                                 <CardHeader sx={{
-                                    fontWeight: 500,
-                                    '&.MuiCardHeader-root':
+                                    fontWeight: 500, 
+                                    '&.MuiCardHeader-root': 
                                     {
-                                        padding: '8px',
-                                        pl: 1,
+                                        p: '8px', 
+                                        pl: 1, 
                                         pr: 1,
-                                    },
-                                }} title={<Typography variant='h4' fontSize={28} fontWeight={500}>{item.name}</Typography>}/>
+                                    }
+                                }} title={
+                                    <Typography variant='h4' fontSize={28} fontWeight={500}>
+                                        {item.name}
+                                        </Typography>
+                                    }/>
                                 <CardContent sx={{
                                     textAlign: 'left', 
                                     textJustify: 'justify', 
@@ -91,13 +79,12 @@ const HandheldsMenu = () =>
                                     <Box display='flex' flexDirection={'row'} alignItems={'top'}  justifyContent={'space-between'}>
                                         <Typography fontSize={14}  sx={{textAlign: 'justify', textJustify: 'justify', padding: '4px', maxLines: 4, overflow: 'hidden', paddingTop: 0}} variant='body1' color="black">{item.description}</Typography>
                                         <Box display='flex' flexDirection='column' textAlign={'right'}>
-                                        <Box component='img' height={imageDimensions.width*0.75} width={imageDimensions.width*0.75} paddingLeft={1} borderColor={'black'} src={item.image}/>
-                                        <Typography margin='4px' fontSize={20} fontWeight={500}> $19.99</Typography>
-                                    </Box>
+                                            <Box component='img' height={imageDimensions.height} width={imageDimensions.width} paddingLeft={1} borderColor={'black'} src={item.image}/>
+                                            <Typography margin='4px' fontSize={20} fontWeight={500}> $19.99</Typography>
+                                        </Box>
                                     </Box>
                                 </CardContent>
-                                
-                                </Box>
+                            </Box>
                         </CardActionArea>
                     </Card>)) 
                 }

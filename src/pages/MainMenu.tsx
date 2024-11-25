@@ -1,19 +1,11 @@
 import React, {useState, useEffect} from 'react'
-import Categories from '../components/MenuCategories'
-import Category from '../components/Category'
+import Categories from '../types/MenuCategories'
+import Category from '../types/Category'
 import Navbar from '../components/Navbar'
 import { Card, createTheme, ThemeProvider, Stack, Typography, Toolbar, Grid2} from '@mui/material'
 import CardContent from '@mui/material/CardContent'
-import CardHeader from '@mui/material/CardHeader'
-const theme = createTheme();
-const dummyText = "Lorem ipsum dolor sit amet, consectetur" + 
-                " adipiscing elit. Nam sagittis quam est, non vulputate nulla" + 
-                " eleifend et. Phasellus scelerisque at ipsum et imperdiet." +
-                " In mattis arcu et quam auctor maximus. Vestibulum vitae lectus nulla. Nunc nec consectetur arcu."+
-                " In metus nulla, ultrices et hendrerit eu, congue a tortor." +
-                " Curabitur sed dui lacinia, hendrerit sem quis, pulvinar leo.";
-
-
+import CardHeader from '@mui/material/CardHeader';
+import theme from '../styles/Theme.ts'
 const MainMenu = () =>
 {
     const [cardsArray, setCardsArray] = useState<Category[]>([]);
