@@ -1,13 +1,12 @@
 import CustomizationCategory from "./CustomizationCategory"
-
-type FoodItem = 
+type FoodItem =
 {
-    name: string, 
+    name: string,
+    url?: string,
     description?: string
     price: number,
     image?: string,
     largeImage?: string,
-    menuPage?: string,
     preferredFontSize?: string | number,
     customizations?: CustomizationCategory[],
     salad?: FoodItem,

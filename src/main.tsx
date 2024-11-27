@@ -1,9 +1,10 @@
-import * as React from 'react'
-import * as ReactDOM from 'react-dom/client'
-import {createBrowserRouter, Router, RouterProvider} from "react-router-dom"
+import React from 'react'
+import {createRoot} from 'react-dom/client'
+import {createBrowserRouter, RouterProvider} from "react-router-dom"
 import './index.css'
 import MainMenu from './pages/MainMenu.tsx'
-import HandheldsMenu from './pages/HandheldsMenu.tsx'
+import CategoryMenu from './pages/CategoryMenu.tsx'
+import ItemViewPage from './pages/ItemViewPage.tsx'
 
 // insert all new pages as
 /*
@@ -18,11 +19,16 @@ const router = createBrowserRouter([
         element: <MainMenu />
     },
     {
-        path: "/sandwiches-and-burgers",
-        element: <HandheldsMenu />
+        path: '/browse',
+        element: <CategoryMenu/>
     },
-])
-ReactDOM.createRoot(document.getElementById('root')!).render(
+    {
+        path: "/browse/customize",
+        element: <ItemViewPage/>
+    }
+]);
+
+createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <RouterProvider router={router} />
   </React.StrictMode>,

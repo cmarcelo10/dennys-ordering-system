@@ -1,6 +1,6 @@
 import React from 'react'
 import Typography from '@mui/material/Typography'
-import {createBrowserRouter, Link as ReactRouterLink, useNavigate} from 'react-router-dom'
+import {createBrowserRouter, Link,  useLocation,  useNavigate} from 'react-router-dom'
 import Stack from '@mui/material/Stack'
 import Box from '@mui/material/Box'
 import Breadcrumbs from '@mui/material/Breadcrumbs'
@@ -10,9 +10,9 @@ import CardContent from '@mui/material/CardContent'
 import CardHeader from '@mui/material/CardHeader'
 import IconButton from '@mui/material/IconButton'
 import {ThemeProvider} from '@mui/material'
-import Navbar from '../components/Navbar'
+import Navbar from '../components/Navbar.tsx'
 import Divider from '@mui/material/Divider'
-import FoodItem from '../types/FoodItem'
+import FoodItem from '../types/FoodItem.ts'
 import * as FoodItems from '../types/MenuItems.ts'
 import theme from '../styles/Theme.ts'
 import ArrowBackIosRounded from '@mui/icons-material/ArrowBackIosRounded'
@@ -23,15 +23,57 @@ const imageDimensions =
     height: 112.5,
 }
 
-const HandheldsMenu = () =>
+const CategoryMenu = () =>
 {
     const navigate = useNavigate();
+    const location = useLocation();
+    const queryParams = new URLSearchParams(location.search);
+    const menuCategory = queryParams.get('category');
     const [cardsArray, setCardsArray] = React.useState<FoodItem[]>([]);
+    const [categoryFound, setCategoryFound] = React.useState<boolean>(false);
+    const [categoryName, setCategoryName] = React.useState('Not Found');
     React.useEffect((()=>
     {
-        setCardsArray(FoodItems.HandheldsList);
+        console.log(menuCategory);
+        if(menuCategory === null || menuCategory === undefined)
+        {
+            navigate("/"); // go home
+        }
+        const catName = decodeURIComponent(menuCategory!);
+        if(catName === "Sandwiches and Burgers")
+        {
+            setCardsArray(FoodItems.HandheldsList);
+            setCategoryFound(true);
+        }
     }), []);
-    
+
+    const ErrorComponent = ()=>
+    (
+        <ThemeProvider theme={theme}>
+            <Navbar bottomLabel={"Page Not Implemented"}> {/* Bump this up to Main and use context*/}
+            <Box display="flex" flexDirection="row" alignContent={'center'}>
+                <IconButton size="medium" onClick={()=>navigate('/')}>
+                    <ArrowBackIosRounded/>
+                </IconButton>
+                <Breadcrumbs sx={{alignContent: 'center'}}>
+                    <Link to={"/"} style={{textDecoration: 'none', color: 'inherit'}}> Main Menu </Link>
+                        Main Menu {/* Need to link this to the main menu... it's kind of annoying that */}
+                    <Typography>
+                        Category Not Found
+                    </Typography>
+                </Breadcrumbs>
+            </Box>
+            <Typography sx={{paddingTop: 1, width: '100%'}} variant='h2' fontFamily={'Roboto'} color={theme.palette.dennysRed.main} textAlign="center" fontWeight={555} fontSize={30}>Page not implemented</Typography>
+            </Navbar>
+        </ThemeProvider>
+    );
+
+    if(!categoryFound)
+    {
+        return (
+            <ErrorComponent />
+        )
+    }
     return (
         <ThemeProvider theme={theme}>
             <Navbar bottomLabel='foo'> {/* Bump this up to Main and use context*/}
@@ -40,7 +82,7 @@ const HandheldsMenu = () =>
                     <ArrowBackIosRounded/>
                 </IconButton>
                 <Breadcrumbs sx={{alignContent: 'center'}}>
-                    <ReactRouterLink to={"/"} style={{textDecoration: 'none', color: 'inherit'}}> Main Menu </ReactRouterLink>
+                    <Link to={"/"} style={{textDecoration: 'none', color: 'inherit'}}> Main Menu </Link>
                         Main Menu {/* Need to link this to the main menu... it's kind of annoying that */}
                     <Typography>
                         Sandwiches and Burgers
@@ -93,7 +135,7 @@ const HandheldsMenu = () =>
         
     </ThemeProvider>)
 }
-export default HandheldsMenu
+export default CategoryMenu
 
 
 //<Box position='fixed' left={0} height={height} width={width} paddingBottom={2} overflow='scroll'>

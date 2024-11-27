@@ -24,6 +24,7 @@ export const EggStyleOptions:CustomizationCategory =
 
 export const BurgerPattyOptions:CustomizationCategory = 
 {
+    index: 1,
     name: "Substitute Burger Patty",
     isRequired: false,
     customizations: [
@@ -53,6 +54,7 @@ export const BurgerFillingOptions:CustomizationCategory =
 
 export const SideOptions:CustomizationCategory = 
 {
+    index: 2,
     name: "Side",
     isRequired: true,
     customizations: [
@@ -70,6 +72,7 @@ export const SideOptions:CustomizationCategory =
 
 export const SauceOptions:CustomizationCategory = 
 {
+    index: 3,
     name: "Sauce",
     isRequired: false,
     customizations: [
@@ -101,7 +104,7 @@ const Slamburger:FoodItem =
     price: 19.99,
     image: SlamburgerSmall,
     largeImage: SlamburgerLarge,
-    menuPage: "/sandwiches-and-burgers/slamburger",
+    url: 'slamburger', // this is the URI-encoded name
     customizations: SlamburgerCustomizations,
     salad: GardenSaladSide,
 }
