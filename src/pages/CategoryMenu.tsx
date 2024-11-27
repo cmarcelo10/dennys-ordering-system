@@ -26,12 +26,19 @@ const imageDimensions =
 const CategoryMenu = () =>
 {
     const navigate = useNavigate();
+    const openItemPage = (itemName: string, isEditing: boolean) =>
+    {
+        const encodedName = encodeURIComponent(itemName);
+        navigate(`/browse/customize?item=${encodedName}?editing=${isEditing}`);
+    }
+
     const location = useLocation();
     const queryParams = new URLSearchParams(location.search);
     const menuCategory = queryParams.get('category');
     const [cardsArray, setCardsArray] = React.useState<FoodItem[]>([]);
     const [categoryFound, setCategoryFound] = React.useState<boolean>(false);
     const [categoryName, setCategoryName] = React.useState('Not Found');
+
     React.useEffect((()=>
     {
         console.log(menuCategory);
@@ -82,8 +89,7 @@ const CategoryMenu = () =>
                     <ArrowBackIosRounded/>
                 </IconButton>
                 <Breadcrumbs sx={{alignContent: 'center'}}>
-                    <Link to={"/"} style={{textDecoration: 'none', color: 'inherit'}}> Main Menu </Link>
-                        Main Menu {/* Need to link this to the main menu... it's kind of annoying that */}
+                    <Link to={"/"} style={{textDecoration: 'none', color: 'inherit'}}> Main Menu </Link>{/* Need to link this to the main menu... it's kind of annoying that */}
                     <Typography>
                         Sandwiches and Burgers
                     </Typography>
@@ -94,8 +100,8 @@ const CategoryMenu = () =>
             <Stack spacing={3} sx={{paddingTop: 3, paddingBottom: 3, overflowY: 'scroll'}}>
                 {
                     cardsArray.map(item=>(
-                    <Card elevation={5} sx={{display: "flex", flexDirection: 'column', borderRadius: 8, backgroundColor: "#F2EEEA"}}>
-                        <CardActionArea>
+                    <Card key={item.name} elevation={5} sx={{display: "flex", flexDirection: 'column', borderRadius: 8, backgroundColor: "#F2EEEA"}}>
+                        <CardActionArea onClick={()=>{openItemPage(item.name, false);}}>
                             <Box padding='4px' paddingLeft={1} paddingRight={1}>
                                 <CardHeader sx={{
                                     fontWeight: 500, 
