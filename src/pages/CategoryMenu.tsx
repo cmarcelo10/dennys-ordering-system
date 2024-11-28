@@ -16,6 +16,8 @@ import FoodItem from '../types/FoodItem.ts'
 import * as FoodItems from '../types/MenuItems.ts'
 import theme from '../styles/Theme.ts'
 import ArrowBackIosRounded from '@mui/icons-material/ArrowBackIosRounded'
+import DiscountItem from '../types/DiscountItem.ts'
+import * as DiscountItems from '../types/DiscountMenuItems.ts'
 
 const imageDimensions = 
 {
@@ -36,6 +38,7 @@ const CategoryMenu = () =>
     const queryParams = new URLSearchParams(location.search);
     const menuCategory = queryParams.get('category');
     const [cardsArray, setCardsArray] = React.useState<FoodItem[]>([]);
+    const [discountArray, setDiscountArray] = React.useState<DiscountItem[]>([]);
     const [categoryFound, setCategoryFound] = React.useState<boolean>(false);
     const [categoryName, setCategoryName] = React.useState('Not Found');
 
@@ -50,6 +53,9 @@ const CategoryMenu = () =>
         if(catName === "Sandwiches and Burgers")
         {
             setCardsArray(FoodItems.HandheldsList);
+            setCategoryFound(true);
+        } else if (catName === "Deals and Promos"){
+            setDiscountArray(DiscountItems.DiscountList);
             setCategoryFound(true);
         }
     }), []);
@@ -81,6 +87,68 @@ const CategoryMenu = () =>
             <ErrorComponent />
         )
     }
+    else if (menuCategory == "Deals and Promos"){
+        return(
+            <ThemeProvider theme={theme}>
+            <Navbar bottomLabel='foo'> {/* Bump this up to Main and use context*/}
+            <Box display="flex" flexDirection="row" alignContent={'center'}>
+                <IconButton size="medium" onClick={()=>navigate('/')}>
+                    <ArrowBackIosRounded/>
+                </IconButton>
+                <Breadcrumbs sx={{alignContent: 'center'}}>
+                    <Link to={"/"} style={{textDecoration: 'none', color: 'inherit'}}> Main Menu </Link>{/* Need to link this to the main menu... it's kind of annoying that */}
+                    <Typography>
+                        Deals and Promos
+                    </Typography>
+                </Breadcrumbs>
+            </Box>
+            <Typography sx={{paddingTop: 1, width: '100%'}} variant='h2' fontFamily={'Roboto'} color={theme.palette.dennysRed.main} textAlign="center" fontWeight={555} fontSize={30}>Deals and Promos</Typography>
+            <Divider variant='middle'/>
+            <Stack spacing={3} sx={{paddingTop: 3, paddingBottom: 3, overflowY: 'scroll'}}>
+                {
+                   discountArray.map(item=>(
+                    <Card key={item.name} elevation={5} sx={{display: "flex", flexDirection: 'column', borderRadius: 8, backgroundColor: "#F2EEEA"}}>
+                        <CardActionArea onClick={()=>{openItemPage(item.name, false);}}>
+                            <Box padding='4px' paddingLeft={1} paddingRight={1}>
+                                <CardHeader sx={{
+                                    fontWeight: 500, 
+                                    '&.MuiCardHeader-root': 
+                                    {
+                                        p: '8px', 
+                                        pl: 1, 
+                                        pr: 1,
+                                    }
+                                }} title={
+                                    <Typography variant='h4' fontSize={28} fontWeight={500}>
+                                        {item.name}
+                                        </Typography>
+                                    }/>
+                                <CardContent sx={{
+                                    textAlign: 'left', 
+                                    textJustify: 'justify', 
+                                    '&.MuiCardContent-root':
+                                    {
+                                        padding: '2px'
+                                    }
+                                    }}>
+                                    <Box display='flex' flexDirection={'row'} alignItems={'top'}  justifyContent={'space-between'}>
+                                        <Typography fontSize={14}  sx={{textAlign: 'justify', textJustify: 'justify', padding: '4px', maxLines: 4, overflow: 'hidden', paddingTop: 0}} variant='body1' color="black">{item.description}</Typography>
+                                        <Box display='flex' flexDirection='column' textAlign={'right'}>
+                                        {/* <Box component='img' height={imageDimensions.height} width={imageDimensions.width} paddingLeft={1} borderColor={'black'} src={item.image}/> */}
+                                            {/* <Typography margin='4px' fontSize={20} fontWeight={500}> $19.99</Typography> */}
+                                        </Box>
+                                    </Box>
+                                </CardContent>
+                            </Box>
+                        </CardActionArea>
+                    </Card>)) 
+                }
+            </Stack>
+        </Navbar>
+        
+    </ThemeProvider>
+        )
+    } else{
     return (
         <ThemeProvider theme={theme}>
             <Navbar bottomLabel='foo'> {/* Bump this up to Main and use context*/}
@@ -140,6 +208,7 @@ const CategoryMenu = () =>
         </Navbar>
         
     </ThemeProvider>)
+    }
 }
 export default CategoryMenu
 
