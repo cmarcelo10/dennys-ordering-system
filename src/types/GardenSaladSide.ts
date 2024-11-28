@@ -2,6 +2,7 @@ import FoodItem from "./FoodItem";
 const GardenSaladSide: FoodItem = 
 {
     name: "Garden Salad",
+    parentCategory: "Sides and Salads",
     price: 4.29,
     customizations: 
     [
@@ -44,9 +45,11 @@ const GardenSaladSide: FoodItem =
                     isMutuallyExclusive: true
                 },
             ],
-            maxSelectAmount: 1
+            maxSelectAmount: 1,
+            amountSelected: 0,
         }
     ]
+
 }
 
 export default GardenSaladSide
