@@ -78,10 +78,25 @@ const ItemViewPage = ()=>
 
     const parentLocation = item ? `/browse?category=${encodeURIComponent(item.parentCategory)}` : "/";
     const image = item ? ( item.largeImage ? item.largeImage : item.image) : undefined;
+    const updatePrice = () =>
+    {
+        let newPrice = item!.price;
+        custOptions.forEach(option => {
+            option.customizations.forEach(customization => {
+                if(customization.selected)
+                {
+                    newPrice+=customization.price;
+                }
+            })
+        });
+        
+        setPrice(Number.parseFloat(newPrice.toFixed(2)));
+    }
     const toggleSelected = (parentIndex: number, childIndex: number, isMutuallyExclusive: boolean) =>
     {
         // whew!
         let newPrice = item!.price;
+        console.log(newPrice)
         const updated = custOptions.map((element, parentKey) => 
         {
             if(parentKey === parentIndex)
@@ -90,7 +105,10 @@ const ItemViewPage = ()=>
                 {
                     if(isMutuallyExclusive)
                     {
-                        property.selected = false;
+                        if(property.selected) // avoid redrawing elements that haven't changed.
+                        {
+                            property.selected = false;
+                        }
                         if(index === childIndex)
                         {
                             property.selected = !property.selected;
@@ -101,37 +119,26 @@ const ItemViewPage = ()=>
                     {
                         if(!property.selected && element.amountSelected < element.maxSelectAmount)
                         {
-                            console.log(element.maxSelectAmount);
                             element.amountSelected++;
                             property.selected = true;
-                            console.log(`${property.name} was selected`);
-                            console.log(element.amountSelected);
                         }
                         else if(property.selected)
                         {
                             property.selected = false
                             element.amountSelected--;
-                            console.log(`${property.name} was deselected`);
-                            console.log(element.amountSelected);
                         }
                         else
                         {
                             console.log(`Attempted to select ${property.name} but too many were selected`);
                         }
                     }
-                    if(property.selected)
-                    {
-                        // instead of adding and subtracting
-                        // just add the price of the selected options to the base price
-                        newPrice = newPrice + property.price;
-                    }
                     return property;
                 })
             }
             return element;
         });
-        setPrice(Number.parseFloat(newPrice.toFixed(2)));
         setCustOptions(updated);
+        updatePrice(); // this step can't happen until the customizations are updated
     }
     if(item === undefined || item === null)
     {
@@ -223,13 +230,13 @@ const ItemViewPage = ()=>
                                                         fontSize: 16,
                                                         }}>
                                                     <Box display='flex' flexDirection='row' alignItems='center' m={1}>
-                                                        <IconButton size='medium' onClick={()=>{toggleSelected(index, keyValue, customization.isMutuallyExclusive)}}>
-                                                            {customization.selected ? (
-                                                                <TaskAltRoundedIcon sx={{color: 'black'}} />
-                                                            ):(
-                                                                <RadioButtonUncheckedIcon sx={{color: shouldGreyOutChoice(element, customization) ? theme.palette.text.disabled : undefined}} />
-                                                            ) }
-                                                        </IconButton>
+
+                                                        {customization.selected ? (
+                                                            <TaskAltRoundedIcon sx={{p: 1, fontSize: 30, fontWeight: 1000, color: 'black'}} />
+                                                        ):(
+                                                            <RadioButtonUncheckedIcon sx={{p: 1, fontSize: 30, fontWeight: 1000, color: shouldGreyOutChoice(element, customization) ? theme.palette.text.disabled : undefined}} />
+                                                        ) }
+
                                                         <Typography color={shouldGreyOutChoice(element, customization) ? theme.palette.text.disabled : undefined} fontSize={16} alignSelf='center' pl={0.25} fontWeight={ customization.selected? 500 : undefined}>{customization.name}</Typography>
                                                     </Box>
                                                     <Typography color={shouldGreyOutChoice(element, customization) ? theme.palette.text.disabled : undefined} fontSize='inherit'  alignSelf='center' pr={2} fontWeight={ customization.selected? 500 : undefined}>

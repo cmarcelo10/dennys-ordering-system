@@ -5,6 +5,7 @@ import PotRoastMeltImg from '../assets/food/PotRoastMelt.png'
 import DoubleCheeseburgerImg from '../assets/food/DoubleCheeseburger.png'
 import FoodItem from "./FoodItem.ts";
 import Slamburger from './Slamburger.ts'
+import TraditionalClubSandwich from './TraditionalClubSandwich.ts'
 import DummyText from "./DummyText.ts";
 
 export const BaconAvocadoCheeseBurger:FoodItem = 
@@ -28,17 +29,6 @@ export const PotRoastMelt:FoodItem =
     price: 19.99,
     customizations: [],
     image: PotRoastMeltImg,
-}
-
-export const TraditionalClubSandwich:FoodItem =
-{
-    name: "Traditional Club Sandwich",
-    parentCategory: "Sandwiches and Burgers",
-    description: DummyText,
-    price: 19.99,
-    preferredFontSize: 24,
-    customizations: [],
-    image: TraditionalClubSandwichImg,
 }
 
 export const DoubleCheeseburger:FoodItem =
