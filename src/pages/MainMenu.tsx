@@ -25,7 +25,7 @@ const MainMenu = () =>
 
     return (
         <ThemeProvider theme={theme}>
-        <Navbar bottomLabel='Review Order'>
+        <Navbar bottomLabel='Review Order' bottomRoute='/cart'>
             <Typography sx={{paddingTop: 3, width: '100%'}} variant='h2' fontFamily={'Roboto'} color={theme.palette.dennysRed.main} textAlign="center" fontWeight={555} fontSize={30}>Main Menu</Typography>
             <Divider variant='middle'/>
             <Grid2 container alignContent="center" justifyContent='space-evenly' alignSelf='center' columnSpacing={0.5} rowSpacing={2} paddingBottom={3} pt={3}>
