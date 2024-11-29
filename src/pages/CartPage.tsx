@@ -17,10 +17,9 @@ const dummyCartItems = [
       customizations: [
         {
           name: "Sides",
-          label: "Choose your side",
+          label: "Side",
           customizations: [
             { name: "Fries", price: 2.0, isMutuallyExclusive: true },
-            { name: "Salad", price: 2.5, isMutuallyExclusive: true }
           ],
           isRequired: true,
           maxSelectAmount: 1
@@ -47,17 +46,16 @@ const dummyCartItems = [
       customizations: [
         {
           name: "Crust",
-          label: "Choose your crust",
+          label: "Crust",
           customizations: [
             { name: "Thin Crust", price: 0, isMutuallyExclusive: true },
-            { name: "Thick Crust", price: 1.0, isMutuallyExclusive: true }
           ],
           isRequired: true,
           maxSelectAmount: 1
         },
         {
           name: "Toppings",
-          label: "Add toppings",
+          label: "Toppings",
           customizations: [
             { name: "Olives", price: 0.5, isMutuallyExclusive: false },
             { name: "Mushrooms", price: 0.5, isMutuallyExclusive: false }
