@@ -1,6 +1,6 @@
 import react from 'react';
 import NavBar from '../components/Navbar';
-import { Box, Button, Typography, ThemeProvider } from '@mui/material';
+import { Box, Button, Typography, ThemeProvider, Grid } from '@mui/material';
 import theme from '../styles/Theme';
 import CartItemCard from '../components/CartItemCard';
 
@@ -74,36 +74,24 @@ const dummyCartItems = [
 
 
 const CartPage = () => {
-    // get unique items in cart and their quantities
-    const getUniqueItemsWithQuantities = (items: FoodItem[]) => {
-        const uniqueItemsMap = new Map<string, { item: FoodItem; quantity: number }>();
-
-        items.forEach((item) => {
-            const itemKey = JSON.stringify(item);
-            if (uniqueItemsMap.has(itemKey)) {
-                uniqueItemsMap.get(itemKey)!.quantity++;
-            } else {
-                uniqueItemsMap.set(itemKey, { item, quantity: 1 });
-            }
-        });
-        
-        return Array.from(uniqueItemsMap.values());
-    };
-
-    const uniqueItemsWithQuantities = getUniqueItemsWithQuantities(dummyCart);
-
     return (
-        <ThemeProvider theme={theme}>
-            <NavBar bottomLabel='Confirm & Place Order'>
-            <Typography sx={{paddingTop: 3, width: '100%'}} variant='h2' fontFamily={'Roboto'} color={theme.palette.dennysRed.main} textAlign="center" fontWeight={555} fontSize={30}>Review Order</Typography>
-            <Box sx={{paddingTop: 1, width: '100%'}}>
-                {uniqueItemsWithQuantities.map(({ item, quantity }) => (
-                    <CartItemCard key={item.name} item={item} quantity={quantity} />
-                ))}
-            </Box>
-            </NavBar>
-        </ThemeProvider>
-    )
-}
-
-export default CartPage;
+      <ThemeProvider theme={theme}>
+        <NavBar bottomLabel='Confirm & Place Order'>
+          <Typography sx={{ paddingTop: 3, width: '100%' }} variant='h2' fontFamily={'Roboto'} color={theme.palette.dennysRed.main} textAlign="center" fontWeight={555} fontSize={30}>
+            Review Order
+          </Typography>
+          <Box sx={{ paddingTop: 1, width: '100%' }}>
+            <Grid container spacing={2}>
+              {dummyCartItems.map((cartItem, index) => (
+                <Grid item key={index} xs={12} sm={6} md={4}>
+                  <CartItemCard item={cartItem.item} quantity={cartItem.quantity} />
+                </Grid>
+              ))}
+            </Grid>
+          </Box>
+        </NavBar>
+      </ThemeProvider>
+    );
+  };
+  
+  export default CartPage;
