@@ -5,7 +5,7 @@ import './index.css'
 import MainMenu from './pages/MainMenu.tsx'
 import CategoryMenu from './pages/CategoryMenu.tsx'
 import ItemViewPage from './pages/ItemViewPage.tsx'
-import { CartContext } from './contexts/CartContext.tsx'
+import { CartContext, CartProvider } from './contexts/CartContext.tsx'
 
 // insert all new pages as
 /*
@@ -31,6 +31,8 @@ const router = createBrowserRouter([
 
 createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
+    <CartProvider>
     <RouterProvider router={router} />
+    </CartProvider>
   </React.StrictMode>
 )
