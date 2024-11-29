@@ -9,7 +9,7 @@ import CardActionArea from '@mui/material/CardActionArea'
 import CardContent from '@mui/material/CardContent' 
 import CardHeader from '@mui/material/CardHeader'
 import IconButton from '@mui/material/IconButton'
-import {ThemeProvider} from '@mui/material'
+import {Button, ThemeProvider} from '@mui/material'
 import Navbar from '../components/Navbar.tsx'
 import Divider from '@mui/material/Divider'
 import FoodItem from '../types/FoodItem.ts'
@@ -108,7 +108,7 @@ const CategoryMenu = () =>
                 {
                    discountArray.map(item=>(
                     <Card key={item.name} elevation={5} sx={{display: "flex", flexDirection: 'column', borderRadius: 8, backgroundColor: "#F2EEEA"}}>
-                        <CardActionArea onClick={()=>{openItemPage(item.name, false);}}>
+                    
                             <Box padding='4px' paddingLeft={1} paddingRight={1}>
                                 <CardHeader sx={{
                                     fontWeight: 500, 
@@ -137,10 +137,34 @@ const CategoryMenu = () =>
                                         {/* <Box component='img' height={imageDimensions.height} width={imageDimensions.width} paddingLeft={1} borderColor={'black'} src={item.image}/> */}
                                             {/* <Typography margin='4px' fontSize={20} fontWeight={500}> $19.99</Typography> */}
                                         </Box>
+                                
                                     </Box>
+                                    
                                 </CardContent>
                             </Box>
-                        </CardActionArea>
+                            <Box 
+                                sx={{
+                                    display: 'flex',
+                                    justifyContent: { xs: 'center', md: 'absolute' },
+                                    alignItems: 'center',
+                                    mt: { xs: 2, md: 0 },
+                                }}
+                            >
+                                <Button 
+                                    variant="contained" 
+                                    color="primary" 
+                                    // To be added later
+                                    // onClick={() => handleApplyDiscount(discount.id)}
+                                    sx={{
+                                        backgroundColor: theme.palette.dennysRed.main,
+                                        width: { xs: '100%', md: 'auto' }, 
+                                        maxWidth: '200px', 
+                                        marginBottom: '1rem',
+                                    }}
+                                >
+                                    Apply
+                                </Button>
+                             </Box>   
                     </Card>)) 
                 }
             </Stack>
