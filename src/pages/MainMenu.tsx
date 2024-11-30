@@ -13,9 +13,10 @@ const MainMenu = () =>
     const navigate = useNavigate();
     const [cardsArray, setCardsArray] = useState<Category[]>([]);
     useEffect((()=>
-        {
-            setCardsArray(Categories);
-        }), []);
+    {
+        setCardsArray(Categories);
+    }), []);
+
     const handleNavigate = (categoryName: string) =>
     {
         console.log(categoryName);

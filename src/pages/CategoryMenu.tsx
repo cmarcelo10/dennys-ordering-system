@@ -26,12 +26,11 @@ const imageDimensions =
 const CategoryMenu = () =>
 {
     const navigate = useNavigate();
-    const openItemPage = (itemName: string, isEditing: boolean) =>
+    const openItemPage = (itemName: string) =>
     {
         const encodedName = encodeURIComponent(itemName);
-        navigate(`/browse/customize?item=${encodedName}?editing=${isEditing}`);
+        navigate(`/browse/customize?item=${encodedName}`);
     }
-
     const location = useLocation();
     const queryParams = new URLSearchParams(location.search);
     const menuCategory = queryParams.get('category');
@@ -98,45 +97,45 @@ const CategoryMenu = () =>
             <Typography sx={{paddingTop: 1, width: '100%'}} variant='h2' fontFamily={'Roboto'} color={theme.palette.dennysRed.main} textAlign="center" fontWeight={555} fontSize={30}>Sandwiches and Burgers</Typography>
             <Divider variant='middle'/>
             <Stack spacing={3} sx={{paddingTop: 3, paddingBottom: 3, overflowY: 'scroll'}}>
-                {
-                    cardsArray.map(item=>(
-                    <Card key={item.name} elevation={5} sx={{display: "flex", flexDirection: 'column', borderRadius: 8, backgroundColor: "#F2EEEA"}}>
-                        <CardActionArea onClick={()=>{openItemPage(item.name, false);}}>
-                            <Box padding='4px' paddingLeft={1} paddingRight={1}>
-                                <CardHeader sx={{
-                                    fontWeight: 500, 
-                                    '&.MuiCardHeader-root': 
-                                    {
-                                        p: '8px', 
-                                        pl: 1, 
-                                        pr: 1,
-                                    }
-                                }} title={
-                                    <Typography variant='h4' fontSize={28} fontWeight={500}>
-                                        {item.name}
-                                        </Typography>
-                                    }/>
-                                <CardContent sx={{
-                                    textAlign: 'left', 
-                                    textJustify: 'justify', 
-                                    '&.MuiCardContent-root':
-                                    {
-                                        padding: '2px'
-                                    }
-                                    }}>
-                                    <Box display='flex' flexDirection={'row'} alignItems={'top'}  justifyContent={'space-between'}>
-                                        <Typography fontSize={14}  sx={{textAlign: 'justify', textJustify: 'justify', padding: '4px', maxLines: 4, overflow: 'hidden', paddingTop: 0}} variant='body1' color="black">{item.description}</Typography>
-                                        <Box display='flex' flexDirection='column' textAlign={'right'}>
-                                            <Box component='img' height={imageDimensions.height} width={imageDimensions.width} paddingLeft={1} borderColor={'black'} src={item.image}/>
-                                            <Typography margin='4px' fontSize={20} fontWeight={500}> $19.99</Typography>
-                                        </Box>
+            {
+                cardsArray.map(item=>(
+                <Card key={item.name} elevation={5} sx={{display: "flex", flexDirection: 'column', borderRadius: 8, backgroundColor: "#F2EEEA"}}>
+                    <CardActionArea onClick={()=>{openItemPage(item.name);}}>
+                        <Box padding='4px' paddingLeft={1} paddingRight={1}>
+                            <CardHeader sx={{
+                                fontWeight: 500, 
+                                '&.MuiCardHeader-root': 
+                                {
+                                    p: '8px', 
+                                    pl: 1, 
+                                    pr: 1,
+                                }
+                            }} title={
+                                <Typography variant='h4' fontSize={28} fontWeight={500}>
+                                    {item.name}
+                                    </Typography>
+                                }/>
+                            <CardContent sx={{
+                                textAlign: 'left', 
+                                textJustify: 'justify', 
+                                '&.MuiCardContent-root':
+                                {
+                                    padding: '2px'
+                                }
+                                }}>
+                                <Box display='flex' flexDirection={'row'} alignItems={'top'}  justifyContent={'space-between'}>
+                                    <Typography fontSize={14}  sx={{textAlign: 'justify', textJustify: 'justify', padding: '4px', maxLines: 4, overflow: 'hidden', paddingTop: 0}} variant='body1' color="black">{item.description}</Typography>
+                                    <Box display='flex' flexDirection='column' textAlign={'right'}>
+                                        <Box component='img' height={imageDimensions.height} width={imageDimensions.width} paddingLeft={1} borderColor={'black'} src={item.image}/>
+                                        <Typography margin='4px' fontSize={20} fontWeight={500}> $19.99</Typography>
                                     </Box>
-                                </CardContent>
-                            </Box>
-                        </CardActionArea>
-                    </Card>)) 
-                }
-            </Stack>
+                                </Box>
+                            </CardContent>
+                        </Box>
+                    </CardActionArea>
+                </Card>)) 
+            }
+        </Stack>
         </Navbar>
         
     </ThemeProvider>)

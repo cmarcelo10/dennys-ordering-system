@@ -7,6 +7,7 @@ type CustomizationCategory =
     customizations: CustomizationOption[];
     isRequired: boolean,
     maxSelectAmount: number,
+    amountSelected: number,
     parentItem?: string,
     totalPrice?: number,
 }
