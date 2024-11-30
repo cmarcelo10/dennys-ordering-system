@@ -1,4 +1,4 @@
-import react, { useContext } from 'react';
+import react, { useContext, useEffect } from 'react';
 import NavBar from '../components/Navbar';
 import { Box, Button, Typography, ThemeProvider, Grid } from '@mui/material';
 import theme from '../styles/Theme';
@@ -11,70 +11,82 @@ import FoodItem from './types/FoodItem';
 
 // dummy CartItem list
 const dummyCartItems = [
-  {
-    item: {
-      name: "Bacon Cheeseburger",
-      price: 8.99,
-      customizations: [
-        {
-          name: "Sides",
-          label: "Side",
-          customizations: [
-            { name: "Fries", price: 2.0, isMutuallyExclusive: true },
-          ],
-          isRequired: true,
-          maxSelectAmount: 1
-        },
-        {
-          name: "Extras",
-          label: "Add extras",
-          customizations: [
-            { name: "Extra Bacon", price: 1.5, isMutuallyExclusive: false },
-            { name: "Cheese", price: 1.0, isMutuallyExclusive: false }
-          ],
-          isRequired: false,
-          maxSelectAmount: 2
-        }
-      ]
+    {
+      id: 1,
+      item: {
+        name: "Bacon Cheeseburger",
+        parentCategory: "Burgers",
+        price: 8.99,
+        customizations: [
+          {
+            name: "Sides",
+            label: "Side",
+            customizations: [
+              { name: "Fries", price: 2.0, isMutuallyExclusive: true, selected: true },
+            ],
+            isRequired: true,
+            maxSelectAmount: 1,
+            amountSelected: 1
+          },
+          {
+            name: "Extras",
+            label: "Add extras",
+            customizations: [
+              { name: "Extra Bacon", price: 1.5, isMutuallyExclusive: false, selected: true },
+              { name: "Cheese", price: 1.0, isMutuallyExclusive: false, selected: true }
+            ],
+            isRequired: false,
+            maxSelectAmount: 2,
+            amountSelected: 2
+          }
+        ]
+      },
+      quantity: 2
     },
-    quantity: 2,
-    price: 8.99
-  },
-  {
-    item: {
-      name: "Veggie Pizza",
-      price: 12.99,
-      customizations: [
-        {
-          name: "Crust",
-          label: "Crust",
-          customizations: [
-            { name: "Thin Crust", price: 0, isMutuallyExclusive: true },
-          ],
-          isRequired: true,
-          maxSelectAmount: 1
-        },
-        {
-          name: "Toppings",
-          label: "Toppings",
-          customizations: [
-            { name: "Olives", price: 0.5, isMutuallyExclusive: false },
-            { name: "Mushrooms", price: 0.5, isMutuallyExclusive: false }
-          ],
-          isRequired: false,
-          maxSelectAmount: 2
-        }
-      ]
-    },
-    quantity: 1,
-    price: 12.99
-  }
-];
+    {
+      id: 2,
+      item: {
+        name: "Veggie Pizza",
+        parentCategory: "Pizzas",
+        price: 12.99,
+        customizations: [
+          {
+            name: "Crust",
+            label: "Crust",
+            customizations: [
+              { name: "Thin Crust", price: 0, isMutuallyExclusive: true, selected: true },
+            ],
+            isRequired: true,
+            maxSelectAmount: 1,
+            amountSelected: 1
+          },
+          {
+            name: "Toppings",
+            label: "Toppings",
+            customizations: [
+              { name: "Olives", price: 0.5, isMutuallyExclusive: false, selected: true },
+              { name: "Mushrooms", price: 0.5, isMutuallyExclusive: false, selected: true }
+            ],
+            isRequired: false,
+            maxSelectAmount: 2,
+            amountSelected: 2
+          }
+        ]
+      },
+      quantity: 1
+    }
+  ];
 
 
 const CartPage = () => {
     // set up cart context to get cart items
-    const { cartItems, totalPrice } = useContext(CartContext);
+    const { cartItems, totalPrice, setCartContext } = useContext(CartContext);
+
+    // set up cart with dummy cart data
+    useEffect(() => {
+        const totalPrice = dummyCartItems.reduce((total, cartItem) => total + (cartItem.item.price * cartItem.quantity), 0);
+        setCartContext(dummyCartItems, totalPrice);
+    }, [setCartContext]);
 
 
     return (
@@ -92,6 +104,9 @@ const CartPage = () => {
                 ))}
             </Grid>
           </Box>
+            <Typography sx={{ paddingTop: 2, width: '100%' }} variant='h5' textAlign="center">
+            Total Price: ${totalPrice.toFixed(2)}
+            </Typography>
         </NavBar>
       </ThemeProvider>
     );
