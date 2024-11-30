@@ -1,8 +1,9 @@
-import react from 'react';
+import react, { useContext } from 'react';
 import NavBar from '../components/Navbar';
 import { Box, Button, Typography, ThemeProvider, Grid } from '@mui/material';
 import theme from '../styles/Theme';
 import CartItemCard from '../components/CartItemCard';
+import { CartContext } from '../contexts/CartContext';
 
 // dummy menu items for testing
 import { HandheldsList } from '../types/MenuItems';
@@ -72,6 +73,10 @@ const dummyCartItems = [
 
 
 const CartPage = () => {
+    // set up cart context to get cart items
+    const { cartItems, totalPrice } = useContext(CartContext);
+
+
     return (
       <ThemeProvider theme={theme}>
         <NavBar bottomLabel='Confirm & Place Order'>
@@ -80,11 +85,11 @@ const CartPage = () => {
           </Typography>
           <Box sx={{ paddingTop: 1, width: '100%' }}>
             <Grid container spacing={2}>
-              {dummyCartItems.map((cartItem, index) => (
-                <Grid item key={index} xs={12} sm={6} md={4}>
-                  <CartItemCard item={cartItem.item} quantity={cartItem.quantity} />
-                </Grid>
-              ))}
+                {cartItems.map((cartItem, index) => (
+                    <Grid item xs={12} key={index}>
+                    <CartItemCard item={cartItem.item} quantity={cartItem.quantity} />
+                    </Grid>
+                ))}
             </Grid>
           </Box>
         </NavBar>
