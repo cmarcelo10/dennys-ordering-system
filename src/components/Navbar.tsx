@@ -4,6 +4,7 @@ import {ThemeProvider} from '@mui/material/styles'
 import WindowDimensions from './WindowDimensions';
 import DennysLogo from '../assets/DENN.svg'
 import theme from '../styles/Theme';
+import ItemSearch from './ItemSearch';
 import PersonIcon from '@mui/icons-material/Person'
 import { useNavigate } from 'react-router-dom';
 interface NavBarProps
@@ -16,7 +17,7 @@ const NavBar = ({bottomLabel, children}: NavBarProps) => {
     const navigate = useNavigate();
     return (
         <ThemeProvider theme={theme}>
-            <AppBar sx={{zIndex: 1000, backgroundColor: '#464340'}} elevation={1}>
+            <AppBar sx={{zIndex: 1000, backgroundColor: '#464340', height: 70}} elevation={1} position='fixed'>
                 <Toolbar sx={{justifyContent: 'space-between'}}>
                     <Box component='img' src={DennysLogo} sx={{postiion: 'absolute', left: '10px', right: 'auto', backgroundColor: theme.palette.dennysYellow.main, height: 40, width: 40, borderRadius: 2, padding: 0.5}} onClick={()=>{navigate("/")}}/>
                     <InputBase inputMode='search' placeholder='Search' size='small' sx={{
@@ -38,6 +39,8 @@ const NavBar = ({bottomLabel, children}: NavBarProps) => {
                             alignSelf: 'right',
                             zIndex: 100,
                         }}}/>
+                    <Box component='img' src={DennysLogo} sx={{postiion: 'absolute', left: '10px', right: 'auto', backgroundColor: theme.palette.dennysYellow.main, height: 40, width: 40, borderRadius: 2, padding: 0.5}}/>
+                    <ItemSearch />
                 </Toolbar>
             </AppBar>
             <Toolbar/>
