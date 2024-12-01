@@ -15,7 +15,7 @@ export const BaconAvocadoCheeseBurger:FoodItem =
     description: DummyText,
     price: 19.99,
     preferredFontSize: 23.5,
-    customizations: [],
+    customizations: {},
     image: BaconAvocadoCheeseburgerImg,
     //  customizations are "optional"
     // -> when  in cart, pushing the selected customization options into the cart with the food item. 
@@ -27,7 +27,7 @@ export const PotRoastMelt:FoodItem =
     parentCategory: "Sandwiches and Burgers",
     description: DummyText,
     price: 19.99,
-    customizations: [],
+    customizations: {},
     image: PotRoastMeltImg,
 }
 
@@ -37,7 +37,7 @@ export const DoubleCheeseburger:FoodItem =
     parentCategory: "Sandwiches and Burgers",
     description: DummyText,
     price: 19.99,
-    customizations: [],
+    customizations: {},
     image: DoubleCheeseburgerImg,
 }
 
@@ -47,7 +47,7 @@ export const Flaming5PepperBurger:FoodItem =
     parentCategory: "Sandwiches and Burgers",
     description: DummyText,
     price: 19.99,
-    customizations: [],
+    customizations: {},
     image: Flaming5PepperBurgerImg,
 }
 

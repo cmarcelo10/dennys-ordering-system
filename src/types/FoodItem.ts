@@ -8,11 +8,13 @@ type FoodItem =
     price: number,
     image?: string,
     largeImage?: string,
+    customizations:
+    {
+        [key: string]: CustomizationCategory,
+    }
     preferredFontSize?: string | number,
-    customizations: CustomizationCategory[],
     salad?: FoodItem,
 }
-
 export default FoodItem
 
 

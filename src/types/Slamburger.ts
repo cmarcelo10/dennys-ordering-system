@@ -3,12 +3,12 @@ import CustomizationCategory from "./CustomizationCategory.ts";
 import SlamburgerSmall from '../assets/food/Slamburger.jpg'
 import SlamburgerLarge from '../assets/food/Slamburger.png'
 import GardenSaladSide, {SideSaladOptions} from "./GardenSaladSide.ts";
+
 export const EggStyleOptions:CustomizationCategory =
 {
-    name: "Egg Style",
     isRequired: true,
     optionsAreMutuallyExclusive:false,
-    customizations: {
+    options: {
         "Over Easy": 
         {
             price: 0, 
@@ -58,13 +58,13 @@ export const EggStyleOptions:CustomizationCategory =
 
 export const BurgerPattyOptions:CustomizationCategory = 
 {
-    name: "Substitute Burger Patty",
+    label: "Substitute Burger Patty",
     isRequired: false,
     optionsAreMutuallyExclusive: true,
-    customizations: {
-        "Beyond Meat Patty": {price: 4.98, selected: true, parentCategory: "Substitute Burger Patty"},
-        "Crispy Chicken Breast": {price: 0, selected: true, parentCategory: "Substitute Burger Patty"},
-        "Grilled Seasoned Chicken Breast": {price: 0, selected: true, parentCategory: "Substitute Burger Patty"},
+    options: {
+        "Beyond Meat Patty": {price: 4.98, selected: true, parentCategory: "Burger Patty"},
+        "Crispy Chicken Breast": {price: 0, selected: true, parentCategory: "Burger Patty"},
+        "Grilled Seasoned Chicken Breast": {price: 0, selected: true, parentCategory: "Burger Patty"},
     },
     maxSelectAmount: 1,
     amountSelected: 0,
@@ -72,10 +72,9 @@ export const BurgerPattyOptions:CustomizationCategory =
 
 export const BurgerFillingOptions:CustomizationCategory = 
 {
-    name: "Extras",
     label: "Add Extra Fillings",
     isRequired: false,
-    customizations: {
+    options: {
         "Aged White Cheddar Cheese": {price: 2.29, selected: false, parentCategory: "Extras"},
         "Canadian Cheese": {price: 2.29, selected: false, parentCategory: "Extras"},
         "Swiss Cheese": {price: 2.29, selected: false, parentCategory: "Extras"},
@@ -90,31 +89,30 @@ export const BurgerFillingOptions:CustomizationCategory =
 
 export const SlamburgerSideOptions:CustomizationCategory = 
 {
-    name: "Side",
     label: "Select a Side",
     isRequired: true,
     optionsAreMutuallyExclusive: true,
     maxSelectAmount: 1,
     amountSelected: 0,
-    customizations:
+    options:
     {
-        "Hash Browns":{price: 0, selected: false, parentCategory: "Extras"},
-        "French Fries":{price: 0, selected: false, parentCategory: "Extras"},
-        "Seasonal Fruit":{price: 2.39, selected: false, parentCategory: "Extras"},
-        "Seasoned Fries":{price: 2.39, selected: false, parentCategory: "Extras"},
-        "Onion Rings":{price: 2.39, selected: false, parentCategory: "Extras"},
-        "Bacon Cheddar Tots (6pcs)":{price: 2.39, selected: false, parentCategory: "Extras"},
-        "Smothered Fries":{price: 4.39, selected: false, parentCategory: "Extras"},
-        "Poutine":{price: 4.39, selected: false, parentCategory: "Extras"},
+        "Hash Browns":{price: 0, selected: false, parentCategory: "Side"},
+        "French Fries":{price: 0, selected: false, parentCategory: "Side"},
+        "Seasonal Fruit":{price: 2.39, selected: false, parentCategory: "Side"},
+        "Seasoned Fries":{price: 2.39, selected: false, parentCategory: "Side"},
+        "Onion Rings":{price: 2.39, selected: false, parentCategory: "Side"},
+        "Bacon Cheddar Tots (6pcs)":{price: 2.39, selected: false, parentCategory: "Side"},
+        "Smothered Fries":{price: 4.39, selected: false, parentCategory: "Side"},
+        "Poutine":{price: 4.39, selected: false, parentCategory: "Side"},
     },
 }
 
 export const SauceOptions:CustomizationCategory = 
 {
-    name: "Sauce",
+    label: "Add Sauce",
     isRequired: false,
     optionsAreMutuallyExclusive: false,
-    customizations: {
+    options: {
         "Brown Gravy": {price: 1.99, selected: false, parentCategory: "Sauce"},
         "Country Gravy": {price: 1.99, selected: false, parentCategory: "Sauce"},
         "Turkey Gravy": {price: 1.99, selected: false, parentCategory: "Sauce"},
@@ -125,9 +123,15 @@ export const SauceOptions:CustomizationCategory =
     maxSelectAmount: 5,
 }
 
-export const SlamburgerCustomizations: CustomizationCategory[] = [
-    EggStyleOptions, BurgerPattyOptions, BurgerFillingOptions, SlamburgerSideOptions, SauceOptions, SideSaladOptions, 
-]
+export const SlamburgerCustomizations = 
+{
+    "Egg Style": EggStyleOptions,
+    "Burger Patty": BurgerPattyOptions,
+    "Extras": BurgerFillingOptions,
+    "Sauce": SauceOptions,
+    "Side": SlamburgerSideOptions,
+    "Side Salad": SideSaladOptions,
+}
 
 const Slamburger:FoodItem = 
 {

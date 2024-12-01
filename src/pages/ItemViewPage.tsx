@@ -49,12 +49,11 @@ const ItemDetailsTextArea = ({description}:{description: string | undefined}) =>
     </Typography>
 );
 
-
 const ItemViewPage = ()=>
 {
     const navigate = useNavigate();
     const queryParams = new URLSearchParams(location.search);
-    const [itemName, setItemName] = React.useState(''); 
+    const itemName = queryParams.get('item');
     const [item, setFoodItem] = React.useState<FoodItem>(); // Adding the types 
     const [custOptions, setCustOptions] = React.useState<CustomizationCategory[]>([])
     const [price, setPrice] = React.useState<number>(0);
@@ -94,6 +93,10 @@ const ItemViewPage = ()=>
         // JavaScript isn't great at floating point arithmetic
         // This is good enough for a demo implementation.
         setPrice(Number.parseFloat(newPrice.toFixed(2)));
+    }
+    const toggleSelected = ()=>
+    {
+        const parentCateogyr
     }
     const toggleSelected = React.useCallback((parentIndex: number, childIndex: number, isMutuallyExclusive: boolean) =>
     {
@@ -138,7 +141,7 @@ const ItemViewPage = ()=>
                         }
                     }
                     return property;
-                })
+                });
             }
             return element;
         });
@@ -198,11 +201,14 @@ const ItemViewPage = ()=>
                                             <Typography margin='4px' fontSize={20} fontWeight={500}>${item.price}</Typography>
                                         </Box>
                                     </Box>
+
+                                    {/* allergy and nutritional stuff would go here */}
+
                                 </CardContent>
                             </Box>
                         </Card>
                         {item!.customizations!.map((element, itemIndex)=>
-                            (<CategoryCard index={itemIndex} category={element!} itemSelectionHandler={toggleSelected} />))
+                            (<CategoryCard key={itemIndex} category={element!} itemSelectionHandler={toggleSelected} />))
                         }
                     </Stack>
                  </NavBar>

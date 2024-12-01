@@ -2,15 +2,15 @@ import CustomizationCategory from "./CustomizationCategory";
 import GardenSaladSide, {SideSaladOptions} from "./GardenSaladSide";
 import TraditionalClubSandwichImg from "../assets/food/TraditionalClubSandwich.png"
 import FoodItem from "./FoodItem";
+
 export const TCSSideOptions:CustomizationCategory = 
 {
-    name: "Side",
     label: "Select a Side",
     isRequired: true,
     optionsAreMutuallyExclusive: true,
     maxSelectAmount: 1,
     amountSelected: 0,
-    customizations:
+    options:
     {
         "Hash Browns":{price: 0, selected: false, parentCategory: "Side"},
         "French Fries":{price: 0, selected: false, parentCategory: "Side"},
@@ -23,13 +23,12 @@ export const TCSSideOptions:CustomizationCategory =
     },
 }
 
-export const TCSExtras:CustomizationCategory = 
+export const TCSExtras:CustomizationCategory =
 {
-    name: "Extras",
     label: "Add Extra Fillings:",
     isRequired: false,
     optionsAreMutuallyExclusive: false,
-    customizations: {
+    options: {
        "Extra Bacon": {price: 2.29, selected: false, parentCategory: "Extras"},
        "Extra Swiss Cheese": {price: 2.29, selected: false, parentCategory: "Extras"},
        "Extra Cheddar Cheese": {price: 2.29, selected: false, parentCategory: "Extras"},
@@ -38,7 +37,12 @@ export const TCSExtras:CustomizationCategory =
     maxSelectAmount: 4,
     amountSelected: 0,
 }
-export const TraditionalClubSandwichCustomizations = [TCSSideOptions, TCSExtras, SideSaladOptions];
+export const TraditionalClubSandwichCustomizations = 
+{
+    "Side": TCSSideOptions, 
+    "Extras": TCSExtras,
+    "Side Salad": SideSaladOptions
+};
 
 const TraditionalClubSandwich:FoodItem = 
 {
@@ -50,6 +54,5 @@ const TraditionalClubSandwich:FoodItem =
     customizations: TraditionalClubSandwichCustomizations,
     image: TraditionalClubSandwichImg,
     salad: GardenSaladSide,
-
 }
 export default TraditionalClubSandwich;
