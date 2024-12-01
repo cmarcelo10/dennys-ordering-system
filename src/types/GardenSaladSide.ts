@@ -1,4 +1,3 @@
-import CustomizationCategory from "./CustomizationCategory";
 import FoodItem from "./FoodItem";
 import CustomizationCategory from "./CustomizationCategory";
 const GardenSaladSide: FoodItem = 
