@@ -17,6 +17,7 @@ import theme from '../styles/Theme.ts'
 import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
 import TaskAltRoundedIcon from '@mui/icons-material/TaskAltRounded';
 import { Immer } from 'immer'
+import { CardGiftcard } from '@mui/icons-material'
 // Later problem: lifting the state up to the parent.
 
 // The cart object will only save the "selected" parameters of the item. 
@@ -53,16 +54,93 @@ function shouldGreyOutChoice(cat: CustomizationCategory, cust: CustomizationOpti
     }
     return false;
 }
+
+interface CustomizationRowBox
+{
+    index: number,
+    maxAmountForCategory: number,
+    currentAmountForCategory: number
+}
+
+interface CategoryCardProps
+{
+    index: number,
+    category: CustomizationCategory,
+    itemSelectionHandler: (index: number, childIndex: number, isMutuallyExclusiveOption: boolean) => void
+}
+
+const CategoryCard = ({index, category, itemSelectionHandler}: CategoryCardProps)=>
+{
+    const shouldGreyOutOption = React.useCallback(function (amountSelected: number, maxSelectAmount: number, customizationIsSelected: boolean)
+    {
+        return amountSelected === maxSelectAmount && !customizationIsSelected;
+
+    }, [])
+    const toggleSelected = React.useCallback(itemSelectionHandler, []);
+
+    return(
+        <Card key={index} sx={{backgroundColor: "#F2EEEA"}}>
+            <CardHeader sx={{
+                fontWeight: 500, 
+                '& .MuiCardHeader-root': 
+                {
+                    p: '2px', 
+                    pl: 1, 
+                    pr: 1,
+                }
+            }} title={
+                <Typography variant='h4' fontSize={20} fontWeight={500}>
+                {category.name}
+                </Typography>}/>
+            <Divider/>
+            <CardContent sx={{
+                '&.MuiCardContent-root':
+                {
+                    m: '5px',
+                    p: 0,
+                }
+            }}>
+                <Box key={(category.index!)} display='flex' flexDirection={'column'}>
+                    {category.customizations.map((customization, keyValue)=>
+                        (
+                            <> {/*<> </> is shorthand for react fragments*/}
+                            <Box key={keyValue} display='flex' alignContent='center' flexDirection='row' justifyContent = 'space-between' bgcolor={customization.selected ? theme.palette.dennysYellow.main : 'none'}
+                                onClick={()=>{toggleSelected(index, keyValue, customization.isMutuallyExclusive)}}
+                                borderColor={theme.palette.dennysGrey.main} width={'100%'} 
+                                sx={{
+                                    borderBox: 'content-box',
+                                    fontSize: 16,
+                                    }}>
+                                <Box key={customization.index!} display='flex' flexDirection='row' alignItems='center' m={1}>
+                                    {customization.selected ? (
+                                        <TaskAltRoundedIcon sx={{p: 1, fontSize: 30, fontWeight: 1000, color: 'black'}} />
+                                    ):(
+                                        <RadioButtonUncheckedIcon sx={{p: 1, fontSize: 30, fontWeight: 1000, color: shouldGreyOutOption(category.maxSelectAmount, category.amountSelected, customization.selected!) ? theme.palette.text.disabled : undefined}} />
+                                    ) }
+                                    <Typography color={shouldGreyOutChoice(category, customization) ? theme.palette.text.disabled : undefined} fontSize={16} alignSelf='center' pl={0.25} fontWeight={ customization.selected? 500 : undefined}>{customization.name}</Typography>
+                                </Box>
+                                <Typography color={shouldGreyOutChoice(category, customization) ? theme.palette.text.disabled : undefined} fontSize='inherit'  alignSelf='center' pr={2} fontWeight={ customization.selected? 500 : undefined}>
+                                    {customization.price > 0 ? (<>+ ${customization.price}</>):(<>{/* render nothing */}</>)}
+                                </Typography>
+                            </Box>
+                            {keyValue < category.customizations.length - 1 ? (<Divider key={(index+1)*100}/>) : (<></>)}
+                            </>
+                        )
+                    )}
+                </Box>
+            </CardContent>
+        </Card>
+    );
+}
 const ItemViewPage = ()=>
 {
-
     const navigate = useNavigate();
     const queryParams = new URLSearchParams(location.search);
     const itemName = queryParams.get('item');
-    const [item, setFoodItem] = React.useState<FoodItem>();
+    const [item, setFoodItem] = React.useState<FoodItem>(); // Adding the types 
     const [custOptions, setCustOptions] = React.useState<CustomizationCategory[]>([])
-    const [price, setPrice] = React.useState(0);
-
+    const [price, setPrice] = React.useState<number>(0);
+    const [sideSaladSelected, setSideSaladSelected] = React.useState<boolean>(false);
     React.useEffect(()=>{
         const foundItem = HandheldsList.find((entry)=>entry.name === itemName);
         if(foundItem)
@@ -73,8 +151,7 @@ const ItemViewPage = ()=>
             setPrice(foundItem.price);
         }
 
-    }, [itemName]);
-    
+    }, [item]);
 
     const parentLocation = item ? `/browse?category=${encodeURIComponent(item.parentCategory)}` : "/";
     const image = item ? ( item.largeImage ? item.largeImage : item.image) : undefined;
@@ -89,16 +166,15 @@ const ItemViewPage = ()=>
                 }
             })
         });
-        
+        // JavaScript isn't great at floating point arithmetic
+        // This is good enough for a demo implementation.
         setPrice(Number.parseFloat(newPrice.toFixed(2)));
     }
-    const toggleSelected = (parentIndex: number, childIndex: number, isMutuallyExclusive: boolean) =>
+    const toggleSelected = React.useCallback((parentIndex: number, childIndex: number, isMutuallyExclusive: boolean) =>
     {
         // whew!
-        let newPrice = item!.price;
-        console.log(newPrice)
         const updated = custOptions.map((element, parentKey) => 
-        {
+        { 
             if(parentKey === parentIndex)
             {
                 element.customizations = element.customizations.map((property, index) =>
@@ -115,21 +191,25 @@ const ItemViewPage = ()=>
                         }
                         return property
                     }
-                    if(index === childIndex)
+                    else if(index === childIndex)
                     {
-                        if(!property.selected && element.amountSelected < element.maxSelectAmount)
+                        if(property.index !== 1028) // side salad is 1028
                         {
-                            element.amountSelected++;
-                            property.selected = true;
-                        }
-                        else if(property.selected)
-                        {
-                            property.selected = false
-                            element.amountSelected--;
+                            if(!property.selected && element.amountSelected < element.maxSelectAmount)
+                            {
+                                element.amountSelected++;
+                                property.selected = true;
+                            }
+                            else if(property.selected)
+                            {
+                                property.selected = false
+                                element.amountSelected--;
+                            }
                         }
                         else
                         {
-                            console.log(`Attempted to select ${property.name} but too many were selected`);
+                            property.selected = !property.selected;
+                            setSideSaladSelected(property.selected);
                         }
                     }
                     return property;
@@ -138,8 +218,9 @@ const ItemViewPage = ()=>
             return element;
         });
         setCustOptions(updated);
-        updatePrice(); // this step can't happen until the customizations are updated
-    }
+        updatePrice(); 
+        // Performing this calculation prior to updating the item's state will show the incorrect price
+    }, [custOptions]);
     if(item === undefined || item === null)
     {
         return(<ErrorPage />)
@@ -195,62 +276,9 @@ const ItemViewPage = ()=>
                                 </CardContent>
                             </Box>
                         </Card>
-                        {item!.customizations!.map((element, index)=>
-                        (
-                            <Card key={index} sx={{backgroundColor: "#F2EEEA"}}>
-                                <CardHeader sx={{
-                                    fontWeight: 500, 
-                                    '& .MuiCardHeader-root': 
-                                    {
-                                        p: '2px', 
-                                        pl: 1, 
-                                        pr: 1,
-                                    }
-                                }} title={
-                                    <Typography variant='h4' fontSize={20} fontWeight={500}>
-                                    {element.name}
-                                    </Typography>}/>
-                                <Divider/>
-                                <CardContent sx={{
-                                    '&.MuiCardContent-root':
-                                    {
-                                        m: '5px',
-                                        p: 0,
-                                    }
-                                }}>
-                                    <Box display='flex' flexDirection={'column'}>
-                                        {element.customizations.map((customization, keyValue)=>
-                                            (
-                                                <>
-                                                <Box key={keyValue} display='flex' alignContent='center' flexDirection='row' justifyContent = 'space-between' bgcolor={customization.selected ? theme.palette.dennysYellow.main : 'none'}
-                                                    onClick={()=>{toggleSelected(index, keyValue, customization.isMutuallyExclusive)}}
-                                                    borderColor={theme.palette.dennysGrey.main} width={'100%'} 
-                                                    sx={{
-                                                        borderBox: 'content-box',
-                                                        fontSize: 16,
-                                                        }}>
-                                                    <Box display='flex' flexDirection='row' alignItems='center' m={1}>
-
-                                                        {customization.selected ? (
-                                                            <TaskAltRoundedIcon sx={{p: 1, fontSize: 30, fontWeight: 1000, color: 'black'}} />
-                                                        ):(
-                                                            <RadioButtonUncheckedIcon sx={{p: 1, fontSize: 30, fontWeight: 1000, color: shouldGreyOutChoice(element, customization) ? theme.palette.text.disabled : undefined}} />
-                                                        ) }
-
-                                                        <Typography color={shouldGreyOutChoice(element, customization) ? theme.palette.text.disabled : undefined} fontSize={16} alignSelf='center' pl={0.25} fontWeight={ customization.selected? 500 : undefined}>{customization.name}</Typography>
-                                                    </Box>
-                                                    <Typography color={shouldGreyOutChoice(element, customization) ? theme.palette.text.disabled : undefined} fontSize='inherit'  alignSelf='center' pr={2} fontWeight={ customization.selected? 500 : undefined}>
-                                                        {customization.price > 0 ? (<>+ ${customization.price}</>):(<></>)}
-                                                    </Typography>
-                                                </Box>
-                                                <Divider/>
-                                                </>
-                                            )
-                                        )}
-                                    </Box>
-                                </CardContent>
-                            </Card>
-                        ))}
+                        {item!.customizations!.map((element, itemIndex)=>
+                            (<CategoryCard index={itemIndex} category={element!} itemSelectionHandler={toggleSelected} />))
+                        }
                     </Stack>
                  </NavBar>
             </ThemeProvider>

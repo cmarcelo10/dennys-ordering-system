@@ -54,9 +54,10 @@ const GardenSaladSide: FoodItem =
 }
 
 export const SideSaladOptions:CustomizationCategory = {
+    index: 255,
     name: "Garden Salad",
     isRequired: false,
-    customizations: [{name: "Add Garden Salad", price: 4.29, isMutuallyExclusive: false}],
+    customizations: [{index: 1028, name: "Add Garden Salad", price: 4.29, isMutuallyExclusive: false}],
     maxSelectAmount: 1,
     amountSelected: 0,
     // Really terrible workaround for the implementation

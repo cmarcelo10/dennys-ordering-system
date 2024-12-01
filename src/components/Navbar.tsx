@@ -36,7 +36,7 @@ const NavBar = ({bottomLabel, children}: NavBarProps) => {
                             paddingLeft: '2px',
                             paddingRight: '4px',
                             alignSelf: 'right',
-                            zIndex: 10000,
+                            zIndex: 100,
                         }}}/>
                 </Toolbar>
             </AppBar>
