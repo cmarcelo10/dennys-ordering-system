@@ -125,16 +125,6 @@ export const SauceOptions:CustomizationCategory =
     maxSelectAmount: 5,
 }
 
-export const SideSaladOptions:CustomizationCategory = {
-    name: "Garden Salad",
-    isRequired: false,
-    customizations: {"Add Garden Salad":{price: 4.29, selected: false, parentCategory: "Garden Salad"}},
-    maxSelectAmount: 1,
-    amountSelected: 0,
-    optionsAreMutuallyExclusive: false,
-    // Really terrible workaround for the implementation
-}
-
 export const SlamburgerCustomizations: CustomizationCategory[] = [
     EggStyleOptions, BurgerPattyOptions, BurgerFillingOptions, SlamburgerSideOptions, SauceOptions, SideSaladOptions, 
 ]
