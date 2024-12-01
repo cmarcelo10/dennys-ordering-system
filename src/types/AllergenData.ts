@@ -1,14 +1,14 @@
 import Slamburger from "./Slamburger"
 
-type Allergen = {
+type AllergenData = {
     name: string,
-    allergens: string[]
+    allergens: string
 }
-export default Allergen
+export default AllergenData
 
-const SlamburgerAllergenData:Allergen = {
+const SlamburgerAllergenData:AllergenData = {
     name: "Slamburger",
-    allergens: ["Eggs", "Dairy", "Gluten"]
+    allergens: "Eggs, Dairy, Gluten"
 }
 
 export const AllergenDataTable = [

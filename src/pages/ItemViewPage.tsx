@@ -1,7 +1,7 @@
 import React from 'react'
 import Modal from '@mui/material/Modal'
 import Slamburger from '../types/Slamburger'
-import Allergen from '../types/AllergenData'
+import AllergenData from '../types/AllergenData'
 import { AllergenDataTable } from '../types/AllergenData'
 import NutritionalData from '../types/NutritionalData'
 import { NutritionalDataTable } from '../types/NutritionalData'
@@ -148,6 +148,7 @@ const ItemViewPage = ()=>
     const [price, setPrice] = React.useState<number>(0);
     const [sideSaladSelected, setSideSaladSelected] = React.useState<boolean>(false);
     const [itemNutrition, setItemNutrition] = React.useState<NutritionalData | null>(null);
+    const [itemAllergens, setItemAllergens] = React.useState<AllergenData | null>(null);
     React.useEffect(()=>{
         const foundItem = HandheldsList.find((entry)=>entry.name === itemName);
         if(foundItem)
@@ -161,6 +162,11 @@ const ItemViewPage = ()=>
         if (foundNutritionItem)
         {
             setItemNutrition(foundNutritionItem)
+        }
+        const foundItemAllergens = AllergenDataTable.find((entry)=>entry.name === itemName);
+        if (foundItemAllergens)
+        {
+            setItemAllergens(foundItemAllergens)
         }
       
     }, [item]);
@@ -271,31 +277,9 @@ const ItemViewPage = ()=>
                             </Typography>
                         </Breadcrumbs>
                     </Box>
-                    <Button onClick={handleOpen}>Nutritional Data</Button>
-                    <Modal open={open} onClose={handleClose} aria-labelledby="nutrition-data-popup" aria-describedby="nutrition-data-popup-desc">
+                    
 
-
-                    {(itemNutrition === undefined) ? (
-                            <Box sx={popupStyle}>
-                            <Typography id="nutrition-data-popup" variant="h6" component="h2">
-                                No Nutrition Data Available
-                            </Typography>
-                            <Typography id="nutrition-data-popup-desc" sx={{ mt: 2 }}>
-                            </Typography>
-                            </Box>
-                        ):(
-                            <Box sx={popupStyle}>
-                            <Typography id="nutrition-data-popup" variant="h6" component="h2">
-                                {itemName} Nutritional Data
-                            </Typography>
-                            <Typography id="nutrition-data-popup-desc" sx={{ mt: 2 }}>
-                                Filler for now  
-                            </Typography>
-                            </Box>
-                        )
-                    }
-
-                    </Modal>
+                    
                     <Stack className='customizationStack' spacing={3} pb={'70px'}>
                         <Card key={item.name} elevation={5} sx={{display: "flex", flexDirection: 'column', borderRadius: 8, backgroundColor: "#F2EEEA"}}>
                             <Box padding='4px' paddingLeft={1} paddingRight={1}>
@@ -330,6 +314,99 @@ const ItemViewPage = ()=>
                                 </CardContent>
                             </Box>
                         </Card>
+                        <Box>
+                            <Card>
+                                <CardHeader sx={{
+                                    fontWeight: 500, 
+                                    '&.MuiCardHeader-root': 
+                                    {
+                                        p: '8px', 
+                                        pl: 1, 
+                                        pr: 1,
+                                    }
+                                }} title={
+                                    <Typography variant='h4' fontSize={28} fontWeight={500} color="red">
+                                        Important Information
+                                    </Typography>
+                                    }/>
+                                <CardContent sx={{
+                                    textAlign: 'left', 
+                                    textJustify: 'justify', 
+                                    '&.MuiCardContent-root':
+                                    {
+                                        padding: '5px'
+                                    }
+                                    }}>
+                                    
+                                    <Box display='flex' flexDirection='column'>
+                                        <Box display='flex' flexDirection='row' justifyContent='space-between'>
+                                            <Typography margin='4px' fontSize={20} color="red">
+                                                Allergens
+                                            </Typography>
+                                            <Typography margin='4px' fontSize={20} color="red">
+                                                {itemAllergens?.allergens}
+                                            </Typography>
+                                        </Box>
+                                        <Box display='flex' flexDirection='row' justifyContent='space-between'>
+                                            <Typography margin='4px' fontSize={20}>
+                                                Nutritional Data
+                                            </Typography>
+                                            <Button onClick={handleOpen}>View</Button>
+                                            <Modal open={open} onClose={handleClose} aria-labelledby="nutrition-data-popup" aria-describedby="nutrition-data-popup-desc">
+
+
+                                            {(itemNutrition === null) ? (
+                                                    <Box sx={popupStyle}>
+                                                    <Typography id="nutrition-data-popup" variant="h6" component="h2">
+                                                        No Nutrition Data Available
+                                                    </Typography>
+                                                    <Typography id="nutrition-data-popup-desc" sx={{ mt: 2 }}>
+                                                    </Typography>
+                                                    </Box>
+                                                ):(
+                                                    <Box sx={popupStyle}>
+                                                    <Typography id="nutrition-data-popup" variant="h6" component="h2">
+                                                        {itemName} Nutritional Data
+                                                    </Typography>
+                                                    <Typography id="nutrition-data-popup-desc" sx={{ mt: 2 }}>
+                                                        Calories: {itemNutrition.calories}
+                                                    </Typography>
+                                                    <Typography id="nutrition-data-popup-desc" sx={{ mt: 2 }}>
+                                                        Protein: {itemNutrition.protein} grams
+                                                    </Typography>
+                                                    <Typography id="nutrition-data-popup-desc" sx={{ mt: 2 }}>
+                                                        Carbohydrates: {itemNutrition.carbohydrates} grams
+                                                    </Typography>
+                                                    <Typography id="nutrition-data-popup-desc" sx={{ mt: 2 }}>
+                                                        Fibre: {itemNutrition.fibre} grams
+                                                    </Typography>
+                                                    <Typography id="nutrition-data-popup-desc" sx={{ mt: 2 }}>
+                                                        Sugar: {itemNutrition.sugar} grams
+                                                    </Typography>
+                                                    <Typography id="nutrition-data-popup-desc" sx={{ mt: 2 }}>
+                                                        Fat: {itemNutrition.fat} grams
+                                                    </Typography>
+                                                    <Typography id="nutrition-data-popup-desc" sx={{ mt: 2 }}>
+                                                        Saturated fat: {itemNutrition.saturated_fat} grams
+                                                    </Typography>
+                                                    <Typography id="nutrition-data-popup-desc" sx={{ mt: 2 }}>
+                                                        Trans fat: {itemNutrition.trans_fat} grams
+                                                    </Typography>
+                                                    <Typography id="nutrition-data-popup-desc" sx={{ mt: 2 }}>
+                                                        Cholesterol: {itemNutrition.cholesterol} milligrams
+                                                    </Typography>
+                                                    <Typography id="nutrition-data-popup-desc" sx={{ mt: 2 }}>
+                                                        Sodium: {itemNutrition.sodium} milligrams
+                                                    </Typography>
+                                                    </Box>
+                                                )
+                                            }
+                                            </Modal>
+                                        </Box>
+                                    </Box>
+                                </CardContent>
+                            </Card>
+                        </Box>
                         {item!.customizations!.map((element, itemIndex)=>
                             (<CategoryCard index={itemIndex} category={element!} itemSelectionHandler={toggleSelected} />))
                         }
