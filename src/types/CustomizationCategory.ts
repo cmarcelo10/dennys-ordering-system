@@ -1,12 +1,21 @@
 import CustomizationOption from "./CustomizationOption"
 type CustomizationCategory = 
 {
-    index?: number,
     name: string, // the internal name.
     label?: string,
-    customizations: CustomizationOption[];
+    customizations: 
+    {
+        [key:string]: 
+        {
+            price: number,
+            selected: boolean,
+            parentCategory: string,
+        }
+    }
     isRequired: boolean,
+    optionsAreMutuallyExclusive: boolean,
     maxSelectAmount: number,
+    amountSelected: number,
     parentItem?: string,
     totalPrice?: number,
 }

@@ -9,6 +9,7 @@ type FoodItem =
     largeImage?: string,
     preferredFontSize?: string | number,
     customizations?: CustomizationCategory[],
+    parentCategory?: string,
     salad?: FoodItem,
 }
 
