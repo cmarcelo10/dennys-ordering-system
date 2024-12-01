@@ -1,7 +1,11 @@
 import FoodItem from "./FoodItem";
 export default interface CartItem
 {
-    id: number,
-    item: FoodItem,
+    id: number, 
+    itemName: string,
+    customizations:
+    {
+        [key: string]: string,
+    }
     quantity: number,
 }
