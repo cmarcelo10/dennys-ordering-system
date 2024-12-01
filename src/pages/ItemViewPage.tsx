@@ -1,5 +1,10 @@
 import React from 'react'
+import Modal from '@mui/material/Modal'
 import Slamburger from '../types/Slamburger'
+import Allergen from '../types/AllergenData'
+import { AllergenDataTable } from '../types/AllergenData'
+import NutritionalData from '../types/NutritionalData'
+import { NutritionalDataTable } from '../types/NutritionalData'
 import NavBar from '../components/Navbar'
 import FoodItem from '../types/FoodItem'
 import CustomizationCategory from '../types/CustomizationCategory'
@@ -132,15 +137,17 @@ const CategoryCard = ({index, category, itemSelectionHandler}: CategoryCardProps
         </Card>
     );
 }
+// Hopefully this works
 const ItemViewPage = ()=>
 {
-    const navigate = useNavigate();
+    const navigate = useNavigate()
     const queryParams = new URLSearchParams(location.search);
     const itemName = queryParams.get('item');
     const [item, setFoodItem] = React.useState<FoodItem>(); // Adding the types 
     const [custOptions, setCustOptions] = React.useState<CustomizationCategory[]>([])
     const [price, setPrice] = React.useState<number>(0);
     const [sideSaladSelected, setSideSaladSelected] = React.useState<boolean>(false);
+    const [itemNutrition, setItemNutrition] = React.useState<NutritionalData | null>(null);
     React.useEffect(()=>{
         const foundItem = HandheldsList.find((entry)=>entry.name === itemName);
         if(foundItem)
@@ -150,12 +157,33 @@ const ItemViewPage = ()=>
             setCustOptions(foundItem.customizations);
             setPrice(foundItem.price);
         }
-
+        const foundNutritionItem = NutritionalDataTable.find((entry)=>entry.name === itemName);
+        if (foundNutritionItem)
+        {
+            setItemNutrition(foundNutritionItem)
+        }
+      
     }, [item]);
-
+    const popupStyle = {
+        position: 'absolute',
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        width: 400,
+        bgcolor: 'background.paper',
+        border: '2px solid #000',
+        boxShadow: 24,
+        p: 4,
+    };
+    
+    const [open, setOpen] = React.useState(false);
+    const handleOpen = () => setOpen(true);
+    const handleClose = () => setOpen(false);
+  
     const parentLocation = item ? `/browse?category=${encodeURIComponent(item.parentCategory)}` : "/";
     const image = item ? ( item.largeImage ? item.largeImage : item.image) : undefined;
     const updatePrice = () =>
+
     {
         let newPrice = item!.price;
         custOptions.forEach(option => {
@@ -229,6 +257,7 @@ const ItemViewPage = ()=>
     {
         return(
             <ThemeProvider theme={theme}>
+
                 <NavBar bottomLabel={`Add to Cart - $${price}`}>
                     <Box display="flex" flexDirection="row" alignContent={'center'}>
                         <IconButton sx={{pr: 3}} size="large" onClick={()=>navigate(parentLocation)}>
@@ -242,6 +271,31 @@ const ItemViewPage = ()=>
                             </Typography>
                         </Breadcrumbs>
                     </Box>
+                    <Button onClick={handleOpen}>Nutritional Data</Button>
+                    <Modal open={open} onClose={handleClose} aria-labelledby="nutrition-data-popup" aria-describedby="nutrition-data-popup-desc">
+
+
+                    {(itemNutrition === undefined) ? (
+                            <Box sx={popupStyle}>
+                            <Typography id="nutrition-data-popup" variant="h6" component="h2">
+                                No Nutrition Data Available
+                            </Typography>
+                            <Typography id="nutrition-data-popup-desc" sx={{ mt: 2 }}>
+                            </Typography>
+                            </Box>
+                        ):(
+                            <Box sx={popupStyle}>
+                            <Typography id="nutrition-data-popup" variant="h6" component="h2">
+                                {name} Nutritional Data
+                            </Typography>
+                            <Typography id="nutrition-data-popup-desc" sx={{ mt: 2 }}>
+                                Filler for now  
+                            </Typography>
+                            </Box>
+                        )
+                    }
+
+                    </Modal>
                     <Stack className='customizationStack' spacing={3} pb={'70px'}>
                         <Card key={item.name} elevation={5} sx={{display: "flex", flexDirection: 'column', borderRadius: 8, backgroundColor: "#F2EEEA"}}>
                             <Box padding='4px' paddingLeft={1} paddingRight={1}>
