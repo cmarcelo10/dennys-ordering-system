@@ -22,7 +22,58 @@ const imageDimensions =
     width: 112.5,
     height: 112.5,
 }
-
+interface MenuCardProps
+{
+    name: string,
+    image?: string, 
+    description?: string,
+    price: number,
+}
+const MenuCard = ({name, image, description, price}:MenuCardProps)=>
+{
+    const navigate = useNavigate();
+    const openItemPage = (itemName: string) =>
+    {
+        const encodedName = encodeURIComponent(itemName);
+        navigate(`/browse/customize?item=${encodedName}`);
+    }
+    return (
+        <Card key={name} elevation={5} sx={{display: "flex", flexDirection: 'column', borderRadius: 8, backgroundColor: "#F2EEEA"}}>
+            <CardActionArea onClick={()=>{openItemPage(name);}}>
+                <Box padding='4px' paddingLeft={1} paddingRight={1}>
+                    <CardHeader sx={{
+                        fontWeight: 500, 
+                        '&.MuiCardHeader-root': 
+                        {
+                            p: '8px', 
+                            pl: 1, 
+                            pr: 1,
+                        }
+                    }} title={
+                        <Typography variant='h4' fontSize={28} fontWeight={500}>
+                            {name}
+                            </Typography>
+                        }/>
+                    <CardContent sx={{
+                        textAlign: 'left',
+                        '&.MuiCardContent-root':
+                        {
+                            padding: '2px'
+                        }
+                        }}>
+                        <Box display='flex' flexDirection={'row'} alignItems={'top'}  justifyContent={'space-between'}>
+                            <Typography fontSize={14}  sx={{padding: '4px', maxLines: 4, overflow: 'hidden', paddingTop: 0}} variant='body1' color="black">{description}</Typography>
+                            <Box display='flex' flexDirection='column' textAlign={'right'}>
+                                <Box component='img' loading='lazy' height={imageDimensions.height} width={imageDimensions.width} paddingLeft={1} borderColor={'black'} src={image}/>
+                                <Typography margin='4px' fontSize={20} fontWeight={500}>${price}</Typography>
+                            </Box>
+                        </Box>
+                    </CardContent>
+                </Box>
+            </CardActionArea>
+        </Card>
+    );
+}
 const CategoryMenu = () =>
 {
     const navigate = useNavigate();
@@ -37,7 +88,7 @@ const CategoryMenu = () =>
     const [cardsArray, setCardsArray] = React.useState<FoodItem[]>([]);
     const [categoryFound, setCategoryFound] = React.useState<boolean>(false);
     const [categoryName, setCategoryName] = React.useState('Not Found');
-
+    
     React.useEffect((()=>
     {
         console.log(menuCategory);
@@ -99,41 +150,8 @@ const CategoryMenu = () =>
             <Stack spacing={3} sx={{paddingTop: 3, paddingBottom: 3, overflowY: 'scroll'}}>
             {
                 cardsArray.map(item=>(
-                <Card key={item.name} elevation={5} sx={{display: "flex", flexDirection: 'column', borderRadius: 8, backgroundColor: "#F2EEEA"}}>
-                    <CardActionArea onClick={()=>{openItemPage(item.name);}}>
-                        <Box padding='4px' paddingLeft={1} paddingRight={1}>
-                            <CardHeader sx={{
-                                fontWeight: 500, 
-                                '&.MuiCardHeader-root': 
-                                {
-                                    p: '8px', 
-                                    pl: 1, 
-                                    pr: 1,
-                                }
-                            }} title={
-                                <Typography variant='h4' fontSize={28} fontWeight={500}>
-                                    {item.name}
-                                    </Typography>
-                                }/>
-                            <CardContent sx={{
-                                textAlign: 'left', 
-                                textJustify: 'justify', 
-                                '&.MuiCardContent-root':
-                                {
-                                    padding: '2px'
-                                }
-                                }}>
-                                <Box display='flex' flexDirection={'row'} alignItems={'top'}  justifyContent={'space-between'}>
-                                    <Typography fontSize={14}  sx={{textAlign: 'justify', textJustify: 'justify', padding: '4px', maxLines: 4, overflow: 'hidden', paddingTop: 0}} variant='body1' color="black">{item.description}</Typography>
-                                    <Box display='flex' flexDirection='column' textAlign={'right'}>
-                                        <Box component='img' height={imageDimensions.height} width={imageDimensions.width} paddingLeft={1} borderColor={'black'} src={item.image}/>
-                                        <Typography margin='4px' fontSize={20} fontWeight={500}> $19.99</Typography>
-                                    </Box>
-                                </Box>
-                            </CardContent>
-                        </Box>
-                    </CardActionArea>
-                </Card>)) 
+                    <MenuCard name={item.name} description={item.description} image={item.image} price={item.price} />
+                )) 
             }
         </Stack>
         </Navbar>
