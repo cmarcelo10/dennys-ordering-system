@@ -47,7 +47,6 @@ const ItemSearch = () => {
                             filteredItems.map((item) => (
                                 <ListItem
                                     key={item.name}
-                                    button
                                     sx={{
                                         display: 'flex',
                                         alignItems: 'center',

@@ -1,7 +1,9 @@
 import FoodItem from "./FoodItem";
+import CustomizationCategory from "./CustomizationCategory";
 const GardenSaladSide: FoodItem = 
 {
     name: "Garden Salad",
+    parentCategory: "Sides and Salads",
     price: 4.29,
     customizations: 
     [
@@ -44,9 +46,20 @@ const GardenSaladSide: FoodItem =
                     isMutuallyExclusive: true
                 },
             ],
-            maxSelectAmount: 1
+            maxSelectAmount: 1,
+            amountSelected: 0,
         }
     ]
+
 }
 
+export const SideSaladOptions:CustomizationCategory = {
+    index: 255,
+    name: "Garden Salad",
+    isRequired: false,
+    customizations: [{index: 1028, name: "Add Garden Salad", price: 4.29, isMutuallyExclusive: false}],
+    maxSelectAmount: 1,
+    amountSelected: 0,
+    // Really terrible workaround for the implementation
+}
 export default GardenSaladSide
