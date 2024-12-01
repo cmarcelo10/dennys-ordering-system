@@ -286,7 +286,7 @@ const ItemViewPage = ()=>
                         ):(
                             <Box sx={popupStyle}>
                             <Typography id="nutrition-data-popup" variant="h6" component="h2">
-                                {name} Nutritional Data
+                                {itemName} Nutritional Data
                             </Typography>
                             <Typography id="nutrition-data-popup-desc" sx={{ mt: 2 }}>
                                 Filler for now  
