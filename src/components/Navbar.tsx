@@ -17,28 +17,8 @@ const NavBar = ({bottomLabel, children}: NavBarProps) => {
     const navigate = useNavigate();
     return (
         <ThemeProvider theme={theme}>
-            <AppBar sx={{zIndex: 1000, backgroundColor: '#464340', height: 70}} elevation={1} position='fixed'>
+            <AppBar sx={{zIndex: 1000, backgroundColor: '#464340'}} elevation={1} position='fixed'>
                 <Toolbar sx={{justifyContent: 'space-between'}}>
-                    <Box component='img' src={DennysLogo} sx={{postiion: 'absolute', left: '10px', right: 'auto', backgroundColor: theme.palette.dennysYellow.main, height: 40, width: 40, borderRadius: 2, padding: 0.5}} onClick={()=>{navigate("/")}}/>
-                    <InputBase inputMode='search' placeholder='Search' size='small' sx={{
-                        backgroundColor: 'white',
-                        paddingLeft: '2px',
-                        borderRadius: 4,
-                        pl: 1,
-                        '& .MuiInputBase-input': 
-                        {
-                            fontSize: 14.5,
-                            paddingBottom: 0,
-                            paddingTop: 0,
-                            height: '35px',
-                            width: '200px',
-                            borderRadius: 4,
-                            backgroundColor: 'white', 
-                            paddingLeft: '2px',
-                            paddingRight: '4px',
-                            alignSelf: 'right',
-                            zIndex: 100,
-                        }}}/>
                     <Box component='img' src={DennysLogo} sx={{postiion: 'absolute', left: '10px', right: 'auto', backgroundColor: theme.palette.dennysYellow.main, height: 40, width: 40, borderRadius: 2, padding: 0.5}}/>
                     <ItemSearch />
                 </Toolbar>
