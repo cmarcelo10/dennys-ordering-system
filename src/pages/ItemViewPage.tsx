@@ -96,11 +96,21 @@ const ItemViewPage = ()=>
     {
         let totalPrice = 0;
         const category = custOptions[categoryName];
+        console.log(`the total price for the category ${categoryName} is currently $${category.totalPrice}`);
         category.totalPrice = newPrice;
-        Object.values(custOptions).forEach(c => totalPrice+=c.totalPrice);
+        console.log(`the total price for the category ${categoryName} is now $${category.totalPrice}`);
+        Object.entries(custOptions).forEach(([key, value])=> 
+        {
+            console.log(`the total price for the category ${key} is currently $${value.totalPrice}`);
+            totalPrice += value.totalPrice
+        }); // have to do this because the children don't handle the price well
+
+        console.log(`the total price f is now $${totalPrice}`);
         category.options = updatedOptions;
         category.amountSelected = newAmountSelected;
-        setPrice(parseFloat((foodItem.current!.price + totalPrice).toFixed(2)));
+        const finalPrice = price + totalPrice;
+        console.log(`the total price is now $${finalPrice}`);
+        setPrice(parseFloat((finalPrice).toFixed(2)));
         setCustOptions({...custOptions});
     }
    

@@ -16,32 +16,44 @@ const CategoryCard = ({name, category, disableNewSelection, onChange}: CategoryC
     const [options, setOptions] = React.useState(category.options);
     function handleSelection(key: string)
     {
-        console.log("Handing selection of %s", key);
         const updatedOptions = options
         const customization = updatedOptions[key];
         if(customization.selected)
         {
             // we are DE-selecting an item
+            customization.selected = false;
+            console.log(`${key} was selected and has a price of $${customization.price}`);
+            console.log(`the total price for the category ${name} is $${category.totalPrice}`);
             category.totalPrice-=customization.price;
+            console.log(`the total price for the category ${name} is now $${category.totalPrice}`);
             category.amountSelected--;
         }
         else
         {
+            customization.selected = true;
+            console.log(`${key} was selected and has a price of $${customization.price}`);
+            console.log(`the total price for the category ${name} is $${category.totalPrice}`);
             category.totalPrice+=customization.price;
+            console.log(`the total price for the category ${name} is now $${category.totalPrice}`);
             category.amountSelected++;
             if(category.optionsAreMutuallyExclusive)
             {
                 // deselect all others.
-                console.log(`Category \"${key}\" is mutually exclusive`);
-                Object.values(updatedOptions).forEach(opt => opt.selected = false);
+                Object.entries(updatedOptions).forEach(([optKey, opt]) => 
+                {
+                    if(optKey != key)
+                    {
+                        if(opt.selected)
+                        {
+                            category.totalPrice -= opt.price;
+                            category.amountSelected--; 
+                            // the amount selected per category should always remain consistent, 
+                            // even if the options are mutually exclusive
+                            opt.selected = false;
+                        }
+                    }
+                });
             }
-        }
-   
-        customization.selected = !customization.selected;
-        if(category.optionsAreMutuallyExclusive && !customization.selected)
-        {
-            // prevent the user from deselecting mandatory fields.
-            customization.selected = true;
         }
         console.log(`Selected ${category.amountSelected}`);
         setOptions({...options}); // avoid rewriting the old state.
@@ -70,18 +82,17 @@ const CategoryCard = ({name, category, disableNewSelection, onChange}: CategoryC
                 }
             }}>
                 <Box key={name + " Box"} display='flex' flexDirection={'column'}>
-                    {<>{console.log(`Amount selected for ${name}: ${category.amountSelected}`)}</>}
                     {
                         Object.entries(options).map(([itemName, properties], index) =>
-                        {
-                            return(
+                        (
                             <React.Fragment key={itemName + " Fragment"}>
                                 <CustomizationPanel key={itemName+"panel"} name={itemName} price={properties.price} selected={properties.selected!} 
                                     onClick={handleSelection}
                                     disabled={disableNewSelection && !properties.selected && !category.optionsAreMutuallyExclusive}/>
                                     {index < Object.keys(options).length - 1 ? (<Divider key={itemName + "divider"}/>) : (<></>)}
-                            </React.Fragment>)
-                        })}
+                            </React.Fragment>
+                        ))
+                    }
                 </Box>
             </CardContent>
         </Card>

@@ -231,7 +231,7 @@ const CategoryMenu = () =>
                     <ArrowBackIosRounded/>
                 </IconButton>
                 <Breadcrumbs sx={{alignContent: 'center'}}>
-                    <Link to={"/"} style={{textDecoration: 'none', color: 'inherit'}}> Main Menu </Link>{/* Need to link this to the main menu... it's kind of annoying that */}
+                    <Link to={"/"} style={{textDecoration: 'none', color: 'inherit'}}> Main Menu </Link>
                     <Typography>
                         Sandwiches and Burgers
                     </Typography>
@@ -252,8 +252,3 @@ const CategoryMenu = () =>
     }
 }
 export default CategoryMenu
-
-
-//<Box position='fixed' left={0} height={height} width={width} paddingBottom={2} overflow='scroll'>
-//</Box>
-//
