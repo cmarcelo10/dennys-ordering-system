@@ -115,7 +115,7 @@ const CategoryMenu = () =>
     const ErrorComponent = ()=>
     (
         <ThemeProvider theme={theme}>
-            <Navbar bottomLabel={"Page Not Implemented"}> {/* Bump this up to Main and use context*/}
+            <Navbar bottomLabel={"Page Not Implemented"} bottomRoute='/'> {/* Bump this up to Main and use context*/}
             <Box display="flex" flexDirection="row" alignContent={'center'}>
                 <IconButton size="medium" onClick={()=>navigate('/')}>
                     <ArrowBackIosRounded/>

@@ -5,6 +5,7 @@ import './index.css'
 import MainMenu from './pages/MainMenu.tsx'
 import CategoryMenu from './pages/CategoryMenu.tsx'
 import ItemViewPage from './pages/ItemViewPage.tsx'
+import CartPage from './pages/CartPage.tsx'
 import { CartContext, CartProvider } from './contexts/CartContext.tsx'
 
 // insert all new pages as
@@ -30,7 +31,11 @@ const router = createBrowserRouter([
     {
         path: "/review/edit",
         element: <ItemViewPage/>
-    }
+    },
+    {
+        path: "/cart",
+        element: <CartPage/>,
+    },
 ]);
 
 createRoot(document.getElementById('root')!).render(
