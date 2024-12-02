@@ -2,10 +2,12 @@ import React, { useState } from 'react';
 import SearchBar from './SearchBar'; // Adjust the import path
 import { Box, Paper, List, ListItem, ListItemText, ListItemAvatar, Avatar} from '@mui/material';
 import { HandheldsList } from '../types/MenuItems';
+import { useNavigate } from 'react-router-dom';
 
 const ItemSearch = () => {
     const [searchQuery, setSearchQuery] = useState('');
     const [filteredItems, setFilteredItems] = useState(HandheldsList);
+    const navigate = useNavigate();
 
     const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
         const query = event.target.value.toLowerCase();
@@ -55,6 +57,9 @@ const ItemSearch = () => {
                                         },
                                         marginBottom:'8px'
                                     }}
+                                    onClick={() =>
+                                        navigate(`/browse/customize?item=${item.name}`) 
+                                    }
                                 >
                                     {/* Item Image */}
                                     <ListItemAvatar>
