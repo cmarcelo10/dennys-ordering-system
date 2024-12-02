@@ -169,7 +169,7 @@ const ItemViewPage = ()=>
             setItemAllergens(foundItemAllergens)
         }
       
-    }, [item]);
+    }, [item,itemName]);
     const popupStyle = {
         position: 'absolute',
         top: '50%',

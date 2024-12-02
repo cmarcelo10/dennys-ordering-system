@@ -4,15 +4,17 @@ import InputBase from '@mui/material/InputBase'
 interface SearchBarProps {
     placeholder?: string;
     onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void; 
+    value?:string;
 }
 
-const SearchBar = ({ placeholder, onChange }: SearchBarProps) => {
+const SearchBar = ({ placeholder, onChange , value}: SearchBarProps) => {
     return (
         <InputBase
             inputMode="search"
             placeholder={placeholder}
             onChange={onChange} 
             size="small"
+            value={value}
             sx={{
                 fontSize: 14.5,
                 pb: 1,

@@ -1,13 +1,18 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import SearchBar from './SearchBar'; // Adjust the import path
 import { Box, Paper, List, ListItem, ListItemText, ListItemAvatar, Avatar} from '@mui/material';
 import { HandheldsList } from '../types/MenuItems';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 
 const ItemSearch = () => {
     const [searchQuery, setSearchQuery] = useState('');
     const [filteredItems, setFilteredItems] = useState(HandheldsList);
+    const [searchParams, setSearchParams] = useSearchParams();
     const navigate = useNavigate();
+
+    useEffect(() => {
+        setSearchQuery(''); // Clear search text
+    }, [searchParams]);
 
     const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
         const query = event.target.value.toLowerCase();
@@ -21,12 +26,19 @@ const ItemSearch = () => {
         );
     };
 
+    const handleItemClick = (itemName: string) => {
+        setSearchQuery(''); // Clear the search query
+        setSearchParams({ item: itemName }); 
+        navigate(`/browse/customize?item=${encodeURIComponent(itemName)}`); 
+    }
+
     return (
         <Box >
             {/* Search Bar */}
             <SearchBar
                 placeholder="Search"
                 onChange={handleSearch}
+                value={searchQuery}
             />
 
             {/* Dropdown Menu */}
@@ -57,9 +69,7 @@ const ItemSearch = () => {
                                         },
                                         marginBottom:'8px'
                                     }}
-                                    onClick={() =>
-                                        navigate(`/browse/customize?item=${item.name}`) 
-                                    }
+                                    onClick={() => handleItemClick(item.name)}
                                 >
                                     {/* Item Image */}
                                     <ListItemAvatar>
