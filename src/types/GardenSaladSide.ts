@@ -14,6 +14,7 @@ const GardenSaladSide: FoodItem =
                 optionsAreMutuallyExclusive: true,
                 maxSelectAmount: 1,
                 amountSelected: 0,
+                totalPrice: 0,
                 options:
                 {
                     // parentCategory name and the actual name of the parent cateogry must match
@@ -34,6 +35,7 @@ export const SideSaladOptions:CustomizationCategory =
     optionsAreMutuallyExclusive: true,
     maxSelectAmount: 1,
     amountSelected: 0,
+    totalPrice: 0,
     // Really terrible workaround for the implementation
 }
 export default GardenSaladSide

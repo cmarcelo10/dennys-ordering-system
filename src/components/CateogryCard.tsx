@@ -2,37 +2,53 @@ import { Card, CardHeader, Typography, Divider, CardContent, Box } from "@mui/ma
 import React from "react";
 import theme from "../styles/Theme";
 import CustomizationCategory, { CustomizationOption } from "../types/CustomizationCategory";
-import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
-import TaskAltRoundedIcon from '@mui/icons-material/TaskAltRounded';
+import CustomizationPanel from "./CustomizationPanel";
 interface CategoryCardProps
 {
     name: string,
     category: CustomizationCategory,
-    itemSelectionHandler: () => void
+    disableNewSelection: boolean,
+    onChange: (newPrice: number, newAmountSelected: number, categoryName: string, updatedOptions:{[key:string]:CustomizationOption}) => void
 }
-function shouldGreyOutChoice(cat: CustomizationCategory, cust: CustomizationOption)
+
+const CategoryCard = ({name, category, disableNewSelection, onChange}: CategoryCardProps)=>
 {
-    if(cat.amountSelected == cat.maxSelectAmount)
+    const [options, setOptions] = React.useState(category.options);
+    function handleSelection(key: string)
     {
-        if(!cust.selected)
+        console.log("Handing selection of %s", key);
+        const updatedOptions = options
+        const customization = updatedOptions[key];
+        if(customization.selected)
         {
-            return true;
+            // we are DE-selecting an item
+            category.totalPrice-=customization.price;
+            category.amountSelected--;
         }
+        else
+        {
+            category.totalPrice+=customization.price;
+            category.amountSelected++;
+            if(category.optionsAreMutuallyExclusive)
+            {
+                // deselect all others.
+                console.log(`Category \"${key}\" is mutually exclusive`);
+                Object.values(updatedOptions).forEach(opt => opt.selected = false);
+            }
+        }
+   
+        customization.selected = !customization.selected;
+        if(category.optionsAreMutuallyExclusive && !customization.selected)
+        {
+            // prevent the user from deselecting mandatory fields.
+            customization.selected = true;
+        }
+        console.log(`Selected ${category.amountSelected}`);
+        setOptions({...options}); // avoid rewriting the old state.
+        onChange(category.totalPrice, category.amountSelected, name, options);
     }
-    return false;
-}
-
-const CategoryCard = ({category, itemSelectionHandler}: CategoryCardProps)=>
-{
-    const shouldGreyOutOption = React.useCallback(function (amountSelected: number, maxSelectAmount: number, customizationIsSelected: boolean)
-    {
-        return amountSelected === maxSelectAmount && !customizationIsSelected;
-
-    }, [])
-    const toggleSelected = React.useCallback(itemSelectionHandler, []);
-
     return(
-        <Card sx={{backgroundColor: "#F2EEEA"}}>
+        <Card key={`${name} Card`} sx={{backgroundColor: "#F2EEEA"}}>
             <CardHeader sx={{
                 fontWeight: 500, 
                 '& .MuiCardHeader-root': 
@@ -43,47 +59,29 @@ const CategoryCard = ({category, itemSelectionHandler}: CategoryCardProps)=>
                 }
             }} title={
                 <Typography variant='h4' fontSize={20} fontWeight={500}>
-                {category.label}
+                {category.label ? category.label : name}
                 </Typography>}/>
             <Divider/>
             <CardContent sx={{
                 '&.MuiCardContent-root':
                 {
-                    m: '5px',
+                    m: '3px',
                     p: 0,
                 }
             }}>
-                <Box display='flex' flexDirection={'column'}>
-                    {Object.entries(category.customizations).map(([itemName, properties], key) =>
-                        (
-                            // Get the parent category of the customization
-                            // Find the customization
-                            // Change its state to selected.
-                            <> {/*<> </> is shorthand for react fragments*/}
-                            <Box key={key} display='flex' alignContent='center' flexDirection='row' justifyContent = 'space-between' bgcolor={properties.selected && theme.palette.dennysYellow.main}
-                                onClick={()=>{toggleSelected(key, itemName)}}
-                                borderColor={theme.palette.dennysGrey.main} width={'100%'} 
-                                sx={{
-                                    borderBox: 'content-box',
-                                    fontSize: 16,
-                                    }}>
-                                <Box display='flex' flexDirection='row' alignItems='center' m={1}>
-                                    {properties.selected ? (
-                                        <TaskAltRoundedIcon sx={{p: 1, fontSize: 30, fontWeight: 1000, color: 'black'}} />
-                                    ):(
-                                        <RadioButtonUncheckedIcon sx={{p: 1, fontSize: 30, fontWeight: 1000, color: shouldGreyOutOption(category.maxSelectAmount, category.amountSelected, customization.selected!) ? theme.palette.text.disabled : undefined}} />
-                                    ) }
-                                    <Typography color={shouldGreyOutChoice(category, properties) ? theme.palette.text.disabled : undefined} fontSize={16} alignSelf='center' pl={0.25} fontWeight={ customization.selected? 500 : undefined}>{customization.name}</Typography>
-                                </Box>
-                                <Typography color={shouldGreyOutChoice(category, properties) ? theme.palette.text.disabled : undefined} fontSize='inherit'  alignSelf='center' pr={2} fontWeight={ customization.selected? 500 : undefined}>
-                                    {properties.price > 0 ? (<>+ ${property.price}</>):(<>{/* render nothing */}</>)}
-                                </Typography>
-                            </Box>
-                            {key < Object.keys(category.customizations).length - 1 ? (<Divider key={(index+1)*100}/>) : (<></>)}
-                            </>
-                        )
-                    )
-                    }
+                <Box key={name + " Box"} display='flex' flexDirection={'column'}>
+                    {<>{console.log(`Amount selected for ${name}: ${category.amountSelected}`)}</>}
+                    {
+                        Object.entries(options).map(([itemName, properties], index) =>
+                        {
+                            return(
+                            <React.Fragment key={itemName + " Fragment"}>
+                                <CustomizationPanel key={itemName+"panel"} name={itemName} price={properties.price} selected={properties.selected!} 
+                                    onClick={handleSelection}
+                                    disabled={disableNewSelection && !properties.selected && !category.optionsAreMutuallyExclusive}/>
+                                    {index < Object.keys(options).length - 1 ? (<Divider key={itemName + "divider"}/>) : (<></>)}
+                            </React.Fragment>)
+                        })}
                 </Box>
             </CardContent>
         </Card>

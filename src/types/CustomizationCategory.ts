@@ -11,7 +11,7 @@ type CustomizationCategory =
     maxSelectAmount: number,
     amountSelected: number,
     parentItem?: string,
-    totalPrice?: number,
+    totalPrice: number,
 }
 
 export default CustomizationCategory

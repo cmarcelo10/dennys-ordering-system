@@ -21,6 +21,7 @@ export const TCSSideOptions:CustomizationCategory =
         "Smothered Fries":{price: 4.39, selected: false,parentCategory: "Side"},
         "Poutine":{price: 4.39, selected: false, parentCategory: "Side"},
     },
+    totalPrice: 0,
 }
 
 export const TCSExtras:CustomizationCategory =
@@ -36,11 +37,12 @@ export const TCSExtras:CustomizationCategory =
     },
     maxSelectAmount: 4,
     amountSelected: 0,
+    totalPrice: 0,
 }
 export const TraditionalClubSandwichCustomizations = 
 {
-    "Side": TCSSideOptions, 
     "Extras": TCSExtras,
+    "Side": TCSSideOptions, 
     "Side Salad": SideSaladOptions
 };
 

@@ -7,7 +7,7 @@ import GardenSaladSide, {SideSaladOptions} from "./GardenSaladSide.ts";
 export const EggStyleOptions:CustomizationCategory =
 {
     isRequired: true,
-    optionsAreMutuallyExclusive:false,
+    optionsAreMutuallyExclusive: true,
     options: {
         "Over Easy": 
         {
@@ -54,6 +54,7 @@ export const EggStyleOptions:CustomizationCategory =
     },
     maxSelectAmount: 1,
     amountSelected: 0,
+    totalPrice: 0,
 }
 
 export const BurgerPattyOptions:CustomizationCategory = 
@@ -68,6 +69,7 @@ export const BurgerPattyOptions:CustomizationCategory =
     },
     maxSelectAmount: 1,
     amountSelected: 0,
+    totalPrice: 0,
 }
 
 export const BurgerFillingOptions:CustomizationCategory = 
@@ -85,6 +87,7 @@ export const BurgerFillingOptions:CustomizationCategory =
     optionsAreMutuallyExclusive: false,
     maxSelectAmount: 4,
     amountSelected: 0,
+    totalPrice: 0,
 }
 
 export const SlamburgerSideOptions:CustomizationCategory = 
@@ -94,6 +97,7 @@ export const SlamburgerSideOptions:CustomizationCategory =
     optionsAreMutuallyExclusive: true,
     maxSelectAmount: 1,
     amountSelected: 0,
+    totalPrice: 0,
     options:
     {
         "Hash Browns":{price: 0, selected: false, parentCategory: "Side"},
@@ -121,6 +125,7 @@ export const SauceOptions:CustomizationCategory =
     },
     amountSelected: 0,
     maxSelectAmount: 5,
+    totalPrice: 0,
 }
 
 export const SlamburgerCustomizations = 
@@ -129,8 +134,8 @@ export const SlamburgerCustomizations =
     "Burger Patty": BurgerPattyOptions,
     "Extras": BurgerFillingOptions,
     "Sauce": SauceOptions,
-    "Side": SlamburgerSideOptions,
     "Side Salad": SideSaladOptions,
+    "Side": SlamburgerSideOptions,
 }
 
 const Slamburger:FoodItem = 

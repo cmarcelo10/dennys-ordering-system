@@ -48,107 +48,62 @@ const ItemDetailsTextArea = ({description}:{description: string | undefined}) =>
             {description}
     </Typography>
 );
+const initCustomizations = (item: FoodItem) =>
+{
+    Object.values(item.customizations).forEach(cat => 
+        {
+            cat.amountSelected = 0;
+            cat.totalPrice = 0;
+            Object.values(cat.options).forEach(opt => opt.selected = false)
+        }
+    );
+}
+interface Customizations
+{
+    [key: string]: CustomizationCategory,
+}
 
 const ItemViewPage = ()=>
 {
+    const menu = React.useRef(HandheldsList);
     const navigate = useNavigate();
     const queryParams = new URLSearchParams(location.search);
-    const itemName = queryParams.get('item');
+    const itemName = React.useRef(queryParams.get('item'));
     const [item, setFoodItem] = React.useState<FoodItem>(); // Adding the types 
-    const [custOptions, setCustOptions] = React.useState<CustomizationCategory[]>([])
+    const foodItem = React.useRef<FoodItem>();
+    const [custOptions, setCustOptions] = React.useState<Customizations>({})
     const [price, setPrice] = React.useState<number>(0);
     const [sideSaladSelected, setSideSaladSelected] = React.useState<boolean>(false);
-    React.useEffect(()=>{
-        // useEffect is usually used for handling external events, but in this case
-        // I use it to prevent this initialization from happening every time.
-        const foundItem = HandheldsList.find((entry)=>entry.name === itemName);
-        if(foundItem)
-        {
-            foundItem.customizations.forEach(e => 
-                {
-                    e.amountSelected = 0;
-                    Object.values(e.customizations).forEach(c => c.selected = false)
-                });
-            setFoodItem(foundItem);
-            setCustOptions(foundItem.customizations);
-            setPrice(foundItem.price);
-        }
     
-    }, [item]);
+    React.useEffect(()=>
+        {
+            // useEffect is usually used for handling external events, but in this case
+            // I use it to prevent this initialization from happening every time.
+            const foundItem = menu.current.find((entry)=>entry.name === itemName.current);
+            if(foundItem)
+            {
+                initCustomizations(foundItem);
+                foodItem.current = foundItem; // this will be used for data tracking purposes
+                setFoodItem(foundItem);
+                setCustOptions(foundItem.customizations);
+                setPrice(foundItem.price);
+            }
+        }, []);
     
     const parentLocation = item ? `/browse?category=${encodeURIComponent(item.parentCategory)}` : "/";
     const image = item ? ( item.largeImage ? item.largeImage : item.image) : undefined;
-    const updatePrice = () =>
+    function handleChange(newPrice: number, newAmountSelected:number, categoryName: string, updatedOptions: {[key:string]:CustomizationOption})
     {
-        let newPrice = item!.price;
-        custOptions.forEach(option => {
-            Object.values(option.customizations).forEach((customization)=>
-            {
-                if(customization.selected)
-                {
-                    newPrice+=customization.price;
-                }
-            })
-        });
-        // JavaScript isn't great at floating point arithmetic
-        // This is good enough for a demo implementation.
-        setPrice(Number.parseFloat(newPrice.toFixed(2)));
+        let totalPrice = 0;
+        const category = custOptions[categoryName];
+        category.totalPrice = newPrice;
+        Object.values(custOptions).forEach(c => totalPrice+=c.totalPrice);
+        category.options = updatedOptions;
+        category.amountSelected = newAmountSelected;
+        setPrice(parseFloat((foodItem.current!.price + totalPrice).toFixed(2)));
+        setCustOptions({...custOptions});
     }
-    const toggleSelected = ()=>
-    {
-        const parentCateogyr
-    }
-    const toggleSelected = React.useCallback((parentIndex: number, childIndex: number, isMutuallyExclusive: boolean) =>
-    {
-        // whew!
-        const updated = custOptions.map((element, parentKey) => 
-        { 
-            if(parentKey === parentIndex)
-            {
-                element.customizations = element.customizations.map((property, index) =>
-                {
-                    if(isMutuallyExclusive)
-                    {
-                        if(property.selected) // avoid redrawing elements that haven't changed.
-                        {
-                            property.selected = false;
-                        }
-                        if(index === childIndex)
-                        {
-                            property.selected = !property.selected;
-                        }
-                        return property
-                    }
-                    else if(index === childIndex)
-                    {
-                        if(property.index !== 1028) // side salad is 1028
-                        {
-                            if(!property.selected && element.amountSelected < element.maxSelectAmount)
-                            {
-                                element.amountSelected++;
-                                property.selected = true;
-                            }
-                            else if(property.selected)
-                            {
-                                property.selected = false
-                                element.amountSelected--;
-                            }
-                        }
-                        else
-                        {
-                            property.selected = !property.selected;
-                            setSideSaladSelected(property.selected);
-                        }
-                    }
-                    return property;
-                });
-            }
-            return element;
-        });
-        setCustOptions(updated);
-        updatePrice(); 
-        // Performing this calculation prior to updating the item's state will show the incorrect price
-    }, [custOptions]);
+   
     if(item === undefined || item === null)
     {
         return(<ErrorPage />)
@@ -157,7 +112,7 @@ const ItemViewPage = ()=>
     {
         return(
             <ThemeProvider theme={theme}>
-                <NavBar bottomLabel={`Add to Cart - $${price}`}>
+                <NavBar bottomLabel={'Add to Cart - $' + price.toFixed(2)}>
                     <Box display="flex" flexDirection="row" alignContent={'center'}>
                         <IconButton sx={{pr: 3}} size="large" onClick={()=>navigate(parentLocation)}>
                             <ArrowBackIosRounded/>
@@ -207,8 +162,14 @@ const ItemViewPage = ()=>
                                 </CardContent>
                             </Box>
                         </Card>
-                        {item!.customizations!.map((element, itemIndex)=>
-                            (<CategoryCard key={itemIndex} category={element!} itemSelectionHandler={toggleSelected} />))
+                        {Object.entries(custOptions).map(([nameKey, category], index)=>
+                        (
+                            <CategoryCard key={index} 
+                                name={nameKey} 
+                                category={category!}
+                                disableNewSelection={category.amountSelected === category.maxSelectAmount} 
+                                onChange={handleChange}/>
+                        ))
                         }
                     </Stack>
                  </NavBar>
