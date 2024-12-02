@@ -22,8 +22,11 @@ import theme from '../styles/Theme.ts'
 import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
 import TaskAltRoundedIcon from '@mui/icons-material/TaskAltRounded';
 import { Immer } from 'immer'
-import { CardGiftcard } from '@mui/icons-material'
+import { CardGiftcard, EnhancedEncryptionRounded } from '@mui/icons-material'
 import CategoryCard from '../components/CateogryCard.tsx'
+import ImportantInfoCard from '../components/ImportantInfoCard.tsx'
+import { CartContext } from '../contexts/CartContext.tsx'
+import CartItem from '../types/CartItem.ts'
 // Later problem: lifting the state up to the parent.
 
 // The cart object will only save the "selected" parameters of the item. 
@@ -41,14 +44,16 @@ const ItemDetailsTextArea = ({description}:{description: string | undefined}) =>
             textAlign: 'justify', 
             textJustify: 'justify', 
             padding: '4px', 
-            maxLines: 4, overflow: 
-            'hidden', paddingTop: 0}
+            maxLines: 4, 
+            overflow: 
+            'hidden', 
+            paddingTop: 0}
         } variant='body1' 
         color="black">
             {description}
     </Typography>
 );
-const initCustomizations = (item: FoodItem) =>
+const purgeCustomizations = (item: FoodItem) =>
 {
     Object.values(item.customizations).forEach(cat => 
         {
@@ -65,72 +70,84 @@ interface Customizations
 
 const ItemViewPage = ()=>
 {
+    const {cartItems, addToCart} = React.useContext(CartContext);
     const menu = React.useRef(HandheldsList);
     const navigate = useNavigate();
-    const queryParams = new URLSearchParams(location.search);
-    const itemName = React.useRef(queryParams.get('item'));
     const [item, setFoodItem] = React.useState<FoodItem>(); // Adding the types 
     const foodItem = React.useRef<FoodItem>();
     const [custOptions, setCustOptions] = React.useState<Customizations>({})
     const [price, setPrice] = React.useState<number>(0);
+    const [quantity, setQuantity] = React.useState(0);
     const [sideSaladSelected, setSideSaladSelected] = React.useState<boolean>(false);
-    
-    React.useEffect(()=>
-        {
-            // useEffect is usually used for handling external events, but in this case
-            // I use it to prevent this initialization from happening every time.
-            const foundItem = menu.current.find((entry)=>entry.name === itemName.current);
-            if(foundItem)
-            {
-                initCustomizations(foundItem);
-                foodItem.current = foundItem; // this will be used for data tracking purposes
-                setFoodItem(foundItem);
-                setCustOptions(foundItem.customizations);
-                setPrice(foundItem.price);
-            }
-        }, []);
-    
-    const [itemNutrition, setItemNutrition] = React.useState<NutritionalData | null>(null);
-    const [itemAllergens, setItemAllergens] = React.useState<AllergenData | null>(null);
-    React.useEffect(()=>{
-        const foundItem = HandheldsList.find((entry)=>entry.name === itemName.current);
-        if(foundItem)
-        {
-            Object.values(foundItem.customizations).forEach(e => { e.amountSelected = 0; Object.values(e.options).forEach(c => c.selected = false)});
-            setFoodItem(foundItem);
-            setCustOptions(foundItem.customizations);
-            setPrice(foundItem.price);
-        }
-        const foundNutritionItem = NutritionalDataTable.find((entry)=>entry.name === itemName.current);
-        if (foundNutritionItem)
-        {
-            setItemNutrition(foundNutritionItem)
-        }
-        const foundItemAllergens = AllergenDataTable.find((entry)=>entry.name === itemName.current);
-        if (foundItemAllergens)
-        {
-            setItemAllergens(foundItemAllergens)
-        }
-      
-    }, [item]);
-    const popupStyle = {
-        position: 'absolute',
-        top: '50%',
-        left: '50%',
-        transform: 'translate(-50%, -50%)',
-        width: 400,
-        bgcolor: 'background.paper',
-        border: '2px solid #000',
-        boxShadow: 24,
-        p: 4,
-    };
-    
     const [open, setOpen] = React.useState(false);
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
-  
     const parentLocation = item ? `/browse?category=${encodeURIComponent(item.parentCategory)}` : "/";
     const image = item ? ( item.largeImage ? item.largeImage : item.image) : undefined;
+    const [disableAddItem, setDisableAddItem] =React.useState(true);
+    function handleAddToCart()
+    {
+        if(item)
+        {
+            let foodItemCopy =  structuredClone(item);
+            foodItemCopy.customizations = structuredClone(custOptions);
+            addToCart({id: crypto.randomUUID(), item: foodItemCopy, price: price, quantity: quantity});
+            cartItems.forEach(cartItem => console.log(cartItem.item.name));
+            navigate(parentLocation)
+        }
+        else console.error("unable to add item to cart");
+        return; // error.
+    }
+
+    React.useEffect(()=>
+    {
+        // useEffect is usually used for handling external events, but in this case
+        // I use it to prevent this initialization from happening every time.
+        const queryParams = new URLSearchParams(window.location.search);
+        const itemName = queryParams.get('item');
+        const cartItemID = queryParams.get('id');
+        if(cartItemID)
+        {
+            // edit mode.
+            const foundCartItem = cartItems.find((entry) => entry.id = cartItemID);
+            if(foundCartItem)
+            {
+                setPrice(foundCartItem.price);
+                setFoodItem(foundCartItem.item);
+                setQuantity(foundCartItem.quantity);
+                setCustOptions(foundCartItem.item.customizations);
+                console.log("ItemViewPage did mount")
+            }
+        }
+        else if(itemName)
+        {
+            const foundItem = menu.current.find((entry)=>entry.name === itemName);
+            if(foundItem)
+            {
+                foodItem.current = foundItem; // this will be used for data tracking purposes
+                purgeCustomizations(foundItem);
+                setFoodItem(foundItem);
+                setCustOptions(foundItem.customizations);
+                setPrice(foundItem.price);
+                console.log("ItemViewPage did mount")
+            }
+        }
+        else
+        {
+            console.error("not found");
+        }
+
+        return(
+            ()=>
+            {
+                if(item) purgeCustomizations(item); 
+                // reset the selections when the component unmounts
+                // but only do this if we're not editing, because shallow copying is a thing.
+                console.log("ItemViewPage did unmount");
+            }
+        )
+    }, []);
+
     function handleChange(newPrice: number, newAmountSelected:number, categoryName: string, updatedOptions: {[key:string]:CustomizationOption})
     {
         let totalPrice = 0;
@@ -138,8 +155,11 @@ const ItemViewPage = ()=>
         console.log(`the total price for the category ${categoryName} is currently $${category.totalPrice}`);
         category.totalPrice = newPrice;
         console.log(`the total price for the category ${categoryName} is now $${category.totalPrice}`);
+        let shouldEnableCheckout = true;
         Object.entries(custOptions).forEach(([key, value])=> 
         {
+            shouldEnableCheckout = shouldEnableCheckout && !(value.isRequired && value.amountSelected == 0); // once false, can never be true;
+
             console.log(`the total price for the category ${key} is currently $${value.totalPrice}`);
             totalPrice += value.totalPrice
         }); // have to do this because the children don't handle the price well
@@ -151,6 +171,7 @@ const ItemViewPage = ()=>
         console.log(`the total price is now $${finalPrice}`);
         setPrice(parseFloat((finalPrice).toFixed(2)));
         setCustOptions({...custOptions});
+        setDisableAddItem(!shouldEnableCheckout);
     }
    
     if(item === undefined || item === null)
@@ -161,7 +182,7 @@ const ItemViewPage = ()=>
     {
         return(
             <ThemeProvider theme={theme}>
-                <NavBar bottomLabel={'Add to Cart - $' + price.toFixed(2)}>
+                <NavBar bottomLabel={'Add to Cart - $' + price.toFixed(2)} onClick={handleAddToCart} disableButton={disableAddItem}>
                     <Box display="flex" flexDirection="row" alignContent={'center'}>
                         <IconButton sx={{pr: 3}} size="large" onClick={()=>navigate(parentLocation)}>
                             <ArrowBackIosRounded/>
@@ -175,7 +196,7 @@ const ItemViewPage = ()=>
                         </Breadcrumbs>
                     </Box>
                     <Stack className='customizationStack' spacing={3} pb={'70px'}>
-                        <Card key={item.name} elevation={5} sx={{display: "flex", flexDirection: 'column', borderRadius: 8, backgroundColor: "#F2EEEA"}}>
+                        <Card key={item.name} elevation={5} sx={{display: "flex", flexDirection: 'column', borderRadius: 2, backgroundColor: "#F2EEEA"}}>
                             <Box padding='4px' paddingLeft={1} paddingRight={1}>
                                 <CardHeader sx={{
                                     fontWeight: 500, 
@@ -201,109 +222,14 @@ const ItemViewPage = ()=>
                                     <Box display='flex' flexDirection={'row'} alignItems={'top'}  justifyContent={'space-between'}>
                                     <ItemDetailsTextArea description={item.description}/>
                                         <Box display='flex' flexDirection='column' textAlign={'right'} >
-                                            <Box component='img' height={130} width={'auto'} paddingLeft={1} borderColor={'black'} src={image}/>
+                                            <Box component='img' height={'auto'} width={200} paddingLeft={1} borderColor={'black'} src={image}/>
                                             <Typography margin='4px' fontSize={20} fontWeight={500}>${item.price}</Typography>
                                         </Box>
                                     </Box>
-
-                                    {/* allergy and nutritional stuff would go here */}
-
                                 </CardContent>
                             </Box>
                         </Card>
-                        <Box>
-                            <Card>
-                                <CardHeader sx={{
-                                    fontWeight: 500, 
-                                    '&.MuiCardHeader-root': 
-                                    {
-                                        p: '8px', 
-                                        pl: 1, 
-                                        pr: 1,
-                                    }
-                                }} title={
-                                    <Typography variant='h4' fontSize={28} fontWeight={500} color="red">
-                                        Important Information
-                                    </Typography>
-                                    }/>
-                                <CardContent sx={{
-                                    textAlign: 'left', 
-                                    textJustify: 'justify', 
-                                    '&.MuiCardContent-root':
-                                    {
-                                        padding: '5px'
-                                    }
-                                    }}>
-                                    
-                                    <Box display='flex' flexDirection='column'>
-                                        <Box display='flex' flexDirection='row' justifyContent='space-between'>
-                                            <Typography margin='4px' fontSize={20} color="red">
-                                                Allergens
-                                            </Typography>
-                                            <Typography margin='4px' fontSize={20} color="red">
-                                                {itemAllergens?.allergens}
-                                            </Typography>
-                                        </Box>
-                                        <Box display='flex' flexDirection='row' justifyContent='space-between'>
-                                            <Typography margin='4px' fontSize={20}>
-                                                Nutritional Data
-                                            </Typography>
-                                            <Button onClick={handleOpen}>View</Button>
-                                            <Modal open={open} onClose={handleClose} aria-labelledby="nutrition-data-popup" aria-describedby="nutrition-data-popup-desc">
-
-
-                                            {(itemNutrition === null) ? (
-                                                    <Box sx={popupStyle}>
-                                                    <Typography id="nutrition-data-popup" variant="h6" component="h2">
-                                                        No Nutrition Data Available
-                                                    </Typography>
-                                                    <Typography id="nutrition-data-popup-desc" sx={{ mt: 2 }}>
-                                                    </Typography>
-                                                    </Box>
-                                                ):(
-                                                    <Box sx={popupStyle}>
-                                                    <Typography id="nutrition-data-popup" variant="h6" component="h2">
-                                                        {itemName} Nutritional Data
-                                                    </Typography>
-                                                    <Typography id="nutrition-data-popup-desc" sx={{ mt: 2 }}>
-                                                        Calories: {itemNutrition.calories}
-                                                    </Typography>
-                                                    <Typography id="nutrition-data-popup-desc" sx={{ mt: 2 }}>
-                                                        Protein: {itemNutrition.protein} grams
-                                                    </Typography>
-                                                    <Typography id="nutrition-data-popup-desc" sx={{ mt: 2 }}>
-                                                        Carbohydrates: {itemNutrition.carbohydrates} grams
-                                                    </Typography>
-                                                    <Typography id="nutrition-data-popup-desc" sx={{ mt: 2 }}>
-                                                        Fibre: {itemNutrition.fibre} grams
-                                                    </Typography>
-                                                    <Typography id="nutrition-data-popup-desc" sx={{ mt: 2 }}>
-                                                        Sugar: {itemNutrition.sugar} grams
-                                                    </Typography>
-                                                    <Typography id="nutrition-data-popup-desc" sx={{ mt: 2 }}>
-                                                        Fat: {itemNutrition.fat} grams
-                                                    </Typography>
-                                                    <Typography id="nutrition-data-popup-desc" sx={{ mt: 2 }}>
-                                                        Saturated fat: {itemNutrition.saturated_fat} grams
-                                                    </Typography>
-                                                    <Typography id="nutrition-data-popup-desc" sx={{ mt: 2 }}>
-                                                        Trans fat: {itemNutrition.trans_fat} grams
-                                                    </Typography>
-                                                    <Typography id="nutrition-data-popup-desc" sx={{ mt: 2 }}>
-                                                        Cholesterol: {itemNutrition.cholesterol} milligrams
-                                                    </Typography>
-                                                    <Typography id="nutrition-data-popup-desc" sx={{ mt: 2 }}>
-                                                        Sodium: {itemNutrition.sodium} milligrams
-                                                    </Typography>
-                                                    </Box>
-                                                )
-                                            }
-                                            </Modal>
-                                        </Box>
-                                    </Box>
-                                </CardContent>
-                            </Card>
-                        </Box>
+                        <ImportantInfoCard nutritionalData={item.nutritionalData} allergenData={item.allergens} modalOpen={open} openModal={handleOpen} closeModal={handleClose}/>
                         {Object.entries(custOptions).map(([nameKey, category], index)=>
                         (
                             <CategoryCard key={index} 

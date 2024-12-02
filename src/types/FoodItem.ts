@@ -1,4 +1,6 @@
+import AllergenData from "./AllergenData"
 import CustomizationCategory from "./CustomizationCategory"
+import NutritionalData from "./NutritionalData"
 type FoodItem =
 {
     name: string,
@@ -12,14 +14,9 @@ type FoodItem =
     {
         [key: string]: CustomizationCategory,
     }
+    allergens?: string,
+    nutritionalData?: NutritionalData;
     preferredFontSize?: string | number,
     salad?: FoodItem,
 }
 export default FoodItem
-
-
-/*
-
-Category
-
-*/

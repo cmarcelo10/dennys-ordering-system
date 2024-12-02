@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import Typography from '@mui/material/Typography'
 import {createBrowserRouter, Link,  useLocation,  useNavigate} from 'react-router-dom'
 import Stack from '@mui/material/Stack'
@@ -18,6 +18,7 @@ import theme from '../styles/Theme.ts'
 import ArrowBackIosRounded from '@mui/icons-material/ArrowBackIosRounded'
 import DiscountItem from '../types/DiscountItem.ts'
 import * as DiscountItems from '../types/DiscountMenuItems.ts'
+import { CartContext } from '../contexts/CartContext.tsx'
 
 const imageDimensions = 
 {
@@ -79,6 +80,7 @@ const MenuCard = ({name, image, description, price}:MenuCardProps)=>
 const CategoryMenu = () =>
 {
     const navigate = useNavigate();
+    const {totalPrice} = useContext(CartContext);
     const openItemPage = (itemName: string) =>
     {
         const encodedName = encodeURIComponent(itemName);
@@ -133,9 +135,7 @@ const CategoryMenu = () =>
 
     if(!categoryFound)
     {
-        return (
-            <ErrorComponent />
-        )
+        return (<ErrorComponent />)
     }
     else if (menuCategory == "Deals and Promos"){
         return(
@@ -225,7 +225,7 @@ const CategoryMenu = () =>
     } else{
     return (
         <ThemeProvider theme={theme}>
-            <Navbar bottomLabel='foo'> {/* Bump this up to Main and use context*/}
+            <Navbar bottomLabel={`Review Order - $${totalPrice.toFixed(2)}`}> {/* Bump this up to Main and use context*/}
             <Box display="flex" flexDirection="row" alignContent={'center'}>
                 <IconButton size="medium" onClick={()=>navigate('/')}>
                     <ArrowBackIosRounded/>

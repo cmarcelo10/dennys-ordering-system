@@ -26,6 +26,10 @@ const router = createBrowserRouter([
     {
         path: "/browse/customize",
         element: <ItemViewPage/>
+    },
+    {
+        path: "/review/edit",
+        element: <ItemViewPage/>
     }
 ]);
 
