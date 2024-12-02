@@ -1,7 +1,7 @@
 import React from 'react'
 import Modal from '@mui/material/Modal'
 import Slamburger from '../types/Slamburger'
-import Allergen from '../types/AllergenData'
+import AllergenData from '../types/AllergenData'
 import { AllergenDataTable } from '../types/AllergenData'
 import NutritionalData from '../types/NutritionalData'
 import { NutritionalDataTable } from '../types/NutritionalData'
@@ -90,6 +90,45 @@ const ItemViewPage = ()=>
             }
         }, []);
     
+    const [itemNutrition, setItemNutrition] = React.useState<NutritionalData | null>(null);
+    const [itemAllergens, setItemAllergens] = React.useState<AllergenData | null>(null);
+    React.useEffect(()=>{
+        const foundItem = HandheldsList.find((entry)=>entry.name === itemName.current);
+        if(foundItem)
+        {
+            Object.values(foundItem.customizations).forEach(e => { e.amountSelected = 0; Object.values(e.options).forEach(c => c.selected = false)});
+            setFoodItem(foundItem);
+            setCustOptions(foundItem.customizations);
+            setPrice(foundItem.price);
+        }
+        const foundNutritionItem = NutritionalDataTable.find((entry)=>entry.name === itemName.current);
+        if (foundNutritionItem)
+        {
+            setItemNutrition(foundNutritionItem)
+        }
+        const foundItemAllergens = AllergenDataTable.find((entry)=>entry.name === itemName.current);
+        if (foundItemAllergens)
+        {
+            setItemAllergens(foundItemAllergens)
+        }
+      
+    }, [item]);
+    const popupStyle = {
+        position: 'absolute',
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        width: 400,
+        bgcolor: 'background.paper',
+        border: '2px solid #000',
+        boxShadow: 24,
+        p: 4,
+    };
+    
+    const [open, setOpen] = React.useState(false);
+    const handleOpen = () => setOpen(true);
+    const handleClose = () => setOpen(false);
+  
     const parentLocation = item ? `/browse?category=${encodeURIComponent(item.parentCategory)}` : "/";
     const image = item ? ( item.largeImage ? item.largeImage : item.image) : undefined;
     function handleChange(newPrice: number, newAmountSelected:number, categoryName: string, updatedOptions: {[key:string]:CustomizationOption})
@@ -172,6 +211,99 @@ const ItemViewPage = ()=>
                                 </CardContent>
                             </Box>
                         </Card>
+                        <Box>
+                            <Card>
+                                <CardHeader sx={{
+                                    fontWeight: 500, 
+                                    '&.MuiCardHeader-root': 
+                                    {
+                                        p: '8px', 
+                                        pl: 1, 
+                                        pr: 1,
+                                    }
+                                }} title={
+                                    <Typography variant='h4' fontSize={28} fontWeight={500} color="red">
+                                        Important Information
+                                    </Typography>
+                                    }/>
+                                <CardContent sx={{
+                                    textAlign: 'left', 
+                                    textJustify: 'justify', 
+                                    '&.MuiCardContent-root':
+                                    {
+                                        padding: '5px'
+                                    }
+                                    }}>
+                                    
+                                    <Box display='flex' flexDirection='column'>
+                                        <Box display='flex' flexDirection='row' justifyContent='space-between'>
+                                            <Typography margin='4px' fontSize={20} color="red">
+                                                Allergens
+                                            </Typography>
+                                            <Typography margin='4px' fontSize={20} color="red">
+                                                {itemAllergens?.allergens}
+                                            </Typography>
+                                        </Box>
+                                        <Box display='flex' flexDirection='row' justifyContent='space-between'>
+                                            <Typography margin='4px' fontSize={20}>
+                                                Nutritional Data
+                                            </Typography>
+                                            <Button onClick={handleOpen}>View</Button>
+                                            <Modal open={open} onClose={handleClose} aria-labelledby="nutrition-data-popup" aria-describedby="nutrition-data-popup-desc">
+
+
+                                            {(itemNutrition === null) ? (
+                                                    <Box sx={popupStyle}>
+                                                    <Typography id="nutrition-data-popup" variant="h6" component="h2">
+                                                        No Nutrition Data Available
+                                                    </Typography>
+                                                    <Typography id="nutrition-data-popup-desc" sx={{ mt: 2 }}>
+                                                    </Typography>
+                                                    </Box>
+                                                ):(
+                                                    <Box sx={popupStyle}>
+                                                    <Typography id="nutrition-data-popup" variant="h6" component="h2">
+                                                        {itemName} Nutritional Data
+                                                    </Typography>
+                                                    <Typography id="nutrition-data-popup-desc" sx={{ mt: 2 }}>
+                                                        Calories: {itemNutrition.calories}
+                                                    </Typography>
+                                                    <Typography id="nutrition-data-popup-desc" sx={{ mt: 2 }}>
+                                                        Protein: {itemNutrition.protein} grams
+                                                    </Typography>
+                                                    <Typography id="nutrition-data-popup-desc" sx={{ mt: 2 }}>
+                                                        Carbohydrates: {itemNutrition.carbohydrates} grams
+                                                    </Typography>
+                                                    <Typography id="nutrition-data-popup-desc" sx={{ mt: 2 }}>
+                                                        Fibre: {itemNutrition.fibre} grams
+                                                    </Typography>
+                                                    <Typography id="nutrition-data-popup-desc" sx={{ mt: 2 }}>
+                                                        Sugar: {itemNutrition.sugar} grams
+                                                    </Typography>
+                                                    <Typography id="nutrition-data-popup-desc" sx={{ mt: 2 }}>
+                                                        Fat: {itemNutrition.fat} grams
+                                                    </Typography>
+                                                    <Typography id="nutrition-data-popup-desc" sx={{ mt: 2 }}>
+                                                        Saturated fat: {itemNutrition.saturated_fat} grams
+                                                    </Typography>
+                                                    <Typography id="nutrition-data-popup-desc" sx={{ mt: 2 }}>
+                                                        Trans fat: {itemNutrition.trans_fat} grams
+                                                    </Typography>
+                                                    <Typography id="nutrition-data-popup-desc" sx={{ mt: 2 }}>
+                                                        Cholesterol: {itemNutrition.cholesterol} milligrams
+                                                    </Typography>
+                                                    <Typography id="nutrition-data-popup-desc" sx={{ mt: 2 }}>
+                                                        Sodium: {itemNutrition.sodium} milligrams
+                                                    </Typography>
+                                                    </Box>
+                                                )
+                                            }
+                                            </Modal>
+                                        </Box>
+                                    </Box>
+                                </CardContent>
+                            </Card>
+                        </Box>
                         {Object.entries(custOptions).map(([nameKey, category], index)=>
                         (
                             <CategoryCard key={index} 
