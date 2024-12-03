@@ -36,7 +36,7 @@ export const CartProvider = ({children}:{children: React.ReactNode}) =>
     const saveToCart = (item: CartItem) =>
     {
         let newPrice = 0;
-        Object.values(cart).forEach((value)=>newPrice += value.price);
+        Object.values(cart).forEach((value)=>newPrice += value.price * value.quantity);
         setPrice(newPrice);
         console.log(item);
         setCart((prev)=>({...prev, [item.id]: item}));

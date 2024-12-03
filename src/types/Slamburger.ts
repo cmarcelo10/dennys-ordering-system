@@ -8,6 +8,7 @@ export const EggStyleOptions:CustomizationCategory =
 {
     isRequired: true,
     optionsAreMutuallyExclusive: true,
+    label: "Choose Your Egg Style",
     options: {
         "Over Easy": 
         {
@@ -59,13 +60,14 @@ export const EggStyleOptions:CustomizationCategory =
 
 export const BurgerPattyOptions:CustomizationCategory = 
 {
-    label: "Substitute Burger Patty",
-    isRequired: false,
+    label: "Substitute Burger Patty?",
+    isRequired: true,
     optionsAreMutuallyExclusive: true,
     options: {
-        "Beyond Meat Patty": {price: 4.98, selected: true, parentCategory: "Burger Patty"},
-        "Crispy Chicken Breast": {price: 0, selected: true, parentCategory: "Burger Patty"},
-        "Grilled Seasoned Chicken Breast": {price: 0, selected: true, parentCategory: "Burger Patty"},
+        "No thanks": {price: 0, selected: false, parentCategory: "BurgerPatty"},
+        "Crispy Chicken Breast": {price: 0, selected: false, parentCategory: "Burger Patty"},
+        "Grilled Seasoned Chicken Breast": {price: 0, selected: false, parentCategory: "Burger Patty"},
+        "Beyond Meat Patty": {price: 4.98, selected: false, parentCategory: "Burger Patty"},
     },
     maxSelectAmount: 1,
     amountSelected: 0,
@@ -130,12 +132,12 @@ export const SauceOptions:CustomizationCategory =
 
 export const SlamburgerCustomizations = 
 {
+    "Side": SlamburgerSideOptions,
     "Egg Style": EggStyleOptions,
     "Burger Patty": BurgerPattyOptions,
     "Extras": BurgerFillingOptions,
     "Sauce": SauceOptions,
     "Side Salad": SideSaladOptions,
-    "Side": SlamburgerSideOptions,
 }
 
 const Slamburger:FoodItem = 

@@ -22,7 +22,7 @@ import theme from '../styles/Theme.ts'
 import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
 import TaskAltRoundedIcon from '@mui/icons-material/TaskAltRounded';
 import { Immer } from 'immer'
-import { CardGiftcard, EnhancedEncryptionRounded, Window } from '@mui/icons-material'
+import { CardGiftcard, Diversity1, EnhancedEncryptionRounded, Window } from '@mui/icons-material'
 import CategoryCard from '../components/CateogryCard.tsx'
 import ImportantInfoCard from '../components/ImportantInfoCard.tsx'
 import { CartContext } from '../contexts/CartContext.tsx'
@@ -93,8 +93,7 @@ const ItemViewPage = ()=>
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
     const parentLocation = item ? `/browse?category=${encodeURIComponent(item.parentCategory)}` : "/";
-    const image = item ? ( item.largeImage ? item.largeImage : item.image) : undefined;
-    const [disableAddItem, setDisableAddItem] =React.useState(true);
+    const [disableAddItem, setDisableAddItem] = React.useState(true);
     function handleIncreaseQuantity(_event: React.MouseEvent)
     {
         setQuantity((prev)=>prev + 1);
@@ -134,7 +133,7 @@ const ItemViewPage = ()=>
     {
         async function waitForPageLoad()
         {
-            timeout(1000);
+            timeout(500);
         }
         waitForPageLoad();
         // useEffect is usually used for handling external events, but in this case
@@ -150,7 +149,7 @@ const ItemViewPage = ()=>
             {
                 console.log("Found an item in the cart that matches");
                 console.log(foundCartItem);
-                setPrice(foundCartItem.item.price);
+                setPrice(foundCartItem.price);
                 setFoodItem(foundCartItem.item);
                 setQuantity(foundCartItem.quantity);
                 setCustOptions(foundCartItem.item.customizations);
@@ -199,7 +198,6 @@ const ItemViewPage = ()=>
         Object.entries(custOptions).forEach(([key, value])=> 
         {
             shouldEnableCheckout = shouldEnableCheckout && !(value.isRequired && value.amountSelected == 0); // once false, can never be true;
-
             console.log(`the total price for the category ${key} is currently $${value.totalPrice}`);
             totalPrice += value.totalPrice
         }); // have to do this because the children don't handle the price well
@@ -284,7 +282,7 @@ const ItemViewPage = ()=>
                                     <Box display='flex' flexDirection={'row'} alignItems={'top'}  justifyContent={'space-between'}>
                                     <ItemDetailsTextArea description={item.description}/>
                                         <Box display='flex' flexDirection='column' textAlign={'right'} >
-                                            <Box component='img' height={'auto'} width={200} paddingLeft={1} src={image}/>
+                                            <Box component='img' height={'auto'} width={150} paddingLeft={1} src={item.image}/>
                                             <Typography margin='4px' fontSize={20} fontWeight={500}>${item.price}</Typography>
                                         </Box>
                                     </Box>
@@ -301,7 +299,12 @@ const ItemViewPage = ()=>
                                 </Box>
                             </Box>
                         </Card>
-                        <ImportantInfoCard nutritionalData={item.nutritionalData} allergenData={item.allergens} modalOpen={open} openModal={handleOpen} closeModal={handleClose}/>
+                        <ImportantInfoCard key={'importantInfoCard'} nutritionalData={item.nutritionalData} allergenData={item.allergens} modalOpen={open} openModal={handleOpen} closeModal={handleClose}/>
+                        <Divider key={'contentDivider'} variant='fullWidth' sx={{
+                            
+                             borderBottomWidth: '10px'}}>
+                        <Typography sx={{fontWeight: 500, fontSize: 20, textAlign: 'center'}}>Sides & Customizations</Typography>
+                            </Divider>
                         {Object.entries(custOptions).map(([nameKey, category], index)=>
                         (
                             <CategoryCard key={index} 

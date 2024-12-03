@@ -1,6 +1,6 @@
 import React, { useContext, useEffect } from 'react';
 import NavBar from '../components/Navbar';
-import { Box, Button, Typography, ThemeProvider, Grid2, Breadcrumbs, IconButton, Stack} from '@mui/material';
+import { Box, Button, Typography, ThemeProvider, Grid2, Breadcrumbs, IconButton, Stack, Paper, Dialog, DialogTitle, DialogContent, DialogActions} from '@mui/material';
 import theme from '../styles/Theme';
 import CartItemCard from '../components/CartItemCard';
 import { CartContext } from '../contexts/CartContext';
@@ -21,10 +21,12 @@ const isStrictMode = ()=>
         return !this;
     });
 }
+
 const CartPage = () => {
     const navigate = useNavigate();
     // set up cart context to get cart items
-    const { cartItems, totalPrice, saveToCart, removeFromCart} = useContext(CartContext);
+    const { cartItems, totalPrice, saveToCart, addToCart, removeFromCart} = useContext(CartContext);
+    const [dialogOpen, setDialogOpen] = React.useState(false);
     function handleChangeQuantity(itemID: string, newQuantity: number)
     {
         const item = cartItems[itemID];
@@ -34,9 +36,12 @@ const CartPage = () => {
             saveToCart(item);
         }
     }
+
+    // cart appears to be doubling price whenever edit is enabled
+    React.useEffect(()=>{addToCart({id: '', item: Slamburger, quantity: 1, price: Slamburger.price});}, [])
     return (
       <ThemeProvider theme={theme}>
-        <NavBar bottomLabel='Confirm & Place Order'>
+        <NavBar bottomLabel='Confirm & Place Order' hideCallServerButton>
             <Box display="flex" flexDirection="row" alignContent={'center'}>
                 <IconButton sx={{pr: 3}} size="large" onClick={()=>navigate('/')}>
                     <ArrowBackIosRounded/>
@@ -48,7 +53,7 @@ const CartPage = () => {
                     </Typography>
                 </Breadcrumbs>
             </Box>
-          <Typography sx={{ paddingTop: 3, width: '100%' }} variant='h2' fontFamily={'Roboto'} color={theme.palette.dennysRed.main} textAlign="center" fontWeight={555} fontSize={30}>
+          <Typography sx={{ paddingTop: 1, width: '100%' }} variant='h2' fontFamily={'Roboto'} color={theme.palette.dennysRed.main} textAlign="center" fontWeight={555} fontSize={30}>
             Review Order
           </Typography>
           <Box sx={{ paddingTop: 1, width: '100%', display: 'flex', flexDirection: 'column', alignContent: 'center', justifyContent: 'space-around'}}>
@@ -58,9 +63,12 @@ const CartPage = () => {
                 ))}
             </Stack>
           </Box>
-            <Typography sx={{ paddingTop: 2, width: '100%' }} variant='h5' textAlign="center">
-            Total Price: ${totalPrice.toFixed(2)}
-            </Typography>
+            <Paper elevation={2} sx={{backgroundColor: '#F2EEEA', borderWidth: 1, borderStyle: 'solid', borderColor: theme.palette.dennysGrey.main, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'space-around', height: 60, width: 300, borderBox: 'content-box', borderTopRadius: 5, position: 'fixed', bottom: 56, left: '50%', transform: "translateX(-50%)"}}>
+                <Typography variant='h6' textAlign="center">
+                        Total: ${totalPrice.toFixed(2)}
+                </Typography>
+            </Paper>
+
         </NavBar>
       </ThemeProvider>
     );

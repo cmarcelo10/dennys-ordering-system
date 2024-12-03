@@ -14,7 +14,7 @@ interface CustomizationPanelProps
     onClick: (name: string)=> void, // for bubbling up the selection
 }
 
-const CustomizationPanel = ({name, price, selected, disabled, onClick}:CustomizationPanelProps)=>
+const CustomizationPanel = React.memo(({name, price, selected, disabled, onClick}:CustomizationPanelProps)=>
 {
     const handleClick = React.useCallback(function handleClick(_event: React.MouseEvent)
     {
@@ -52,5 +52,5 @@ const CustomizationPanel = ({name, price, selected, disabled, onClick}:Customiza
             </Typography>
         </Box>
     </ThemeProvider>);
-};
+}, (prev, next)=>(next.disabled === prev.disabled && next.selected === prev.selected));
 export default CustomizationPanel
