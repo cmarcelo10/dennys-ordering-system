@@ -12,10 +12,10 @@ export const BaconAvocadoCheeseBurger:FoodItem =
 {
     name: "Bacon Avocado Cheeseburger",
     parentCategory: "Sandwiches and Burgers",
-    description: DummyText,
-    price: 19.99,
-    preferredFontSize: 23.5,
-    customizations: [],
+    description: "Bacon, fresh avocado, aged white cheddar cheese, red relish, mayo, shredded iceberg lettuce, tomato, red onions and pickles on a brioche bun.",
+    price: 19.39,
+    preferredFontSize: 20.5,
+    customizations: {},
     image: BaconAvocadoCheeseburgerImg,
     //  customizations are "optional"
     // -> when  in cart, pushing the selected customization options into the cart with the food item. 
@@ -25,19 +25,29 @@ export const PotRoastMelt:FoodItem =
 {
     name: "Pot Roast Melt",
     parentCategory: "Sandwiches and Burgers",
-    description: DummyText,
+    description: "Tender slow-roasted beef, caramelized onions and aged white cheddar on grilled sourdough bread.",
     price: 19.99,
-    customizations: [],
+    customizations: {},
     image: PotRoastMeltImg,
+}
+
+export const SingleCheeseburger:FoodItem =
+{
+    name: "Single Cheeseburger",
+    parentCategory: "Sandwiches and Burgers",
+    description: "Your choice of Canadian, Swiss, or aged white cheddar cheese with red relish, mayo, shredded iceberg lettuce, tomato, red onions, and pickles on a brioche bun.",
+    price: 17.99,
+    customizations: {},
+    image: DoubleCheeseburgerImg,
 }
 
 export const DoubleCheeseburger:FoodItem =
 {
     name: "Double Cheeseburger",
     parentCategory: "Sandwiches and Burgers",
-    description: DummyText,
-    price: 19.99,
-    customizations: [],
+    description: "Your choice of Canadian, Swiss, or aged white cheddar cheese with red relish, mayo, shredded iceberg lettuce, tomato, red onions, and pickles on a brioche bun.",
+    price: 20.19,
+    customizations: {},
     image: DoubleCheeseburgerImg,
 }
 
@@ -45,10 +55,10 @@ export const Flaming5PepperBurger:FoodItem =
 {
     name: "Flaming 5 Pepper Burger",
     parentCategory: "Sandwiches and Burgers",
-    description: DummyText,
-    price: 19.99,
-    customizations: [],
+    description: "Aged white cheddar cheese, bacon, jalapeños, 5-pepper sauce, mayo, shredded iceberg lettuce, tomato, red onions and pickles on a brioche bun",
+    price: 19.39,
+    customizations: {},
     image: Flaming5PepperBurgerImg,
 }
 
-export const HandheldsList: FoodItem[] = [BaconAvocadoCheeseBurger, PotRoastMelt, Slamburger, TraditionalClubSandwich, DoubleCheeseburger, Flaming5PepperBurger];
+export const HandheldsList: FoodItem[] = [BaconAvocadoCheeseBurger, PotRoastMelt, Slamburger, TraditionalClubSandwich, SingleCheeseburger, DoubleCheeseburger, Flaming5PepperBurger];

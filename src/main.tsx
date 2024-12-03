@@ -5,7 +5,10 @@ import './index.css'
 import MainMenu from './pages/MainMenu.tsx'
 import CategoryMenu from './pages/CategoryMenu.tsx'
 import ItemViewPage from './pages/ItemViewPage.tsx'
+import CartPage from './pages/CartPage.tsx'
 import { CartContext, CartProvider } from './contexts/CartContext.tsx'
+import theme from './styles/Theme.ts'
+import { ThemeProvider } from '@mui/material'
 
 // insert all new pages as
 /*
@@ -26,13 +29,21 @@ const router = createBrowserRouter([
     {
         path: "/browse/customize",
         element: <ItemViewPage/>
-    }
+    },
+    {
+        path: "/cart/edit",
+        element: <ItemViewPage/>
+    },
+    {
+        path: "/cart",
+        element: <CartPage/>,
+    },
 ]);
 
 createRoot(document.getElementById('root')!).render(
-  <React.StrictMode>
-    <CartProvider>
-    <RouterProvider router={router} />
-    </CartProvider>
-  </React.StrictMode>
+    <ThemeProvider theme={theme}>
+        <CartProvider>
+            <RouterProvider router={router} />
+        </CartProvider>
+    </ThemeProvider>
 )

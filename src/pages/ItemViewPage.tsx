@@ -15,256 +15,234 @@ import { Link, useNavigate, useParams } from 'react-router-dom'
 import Typography from '@mui/material/Typography'
 import HandheldsMenu from './CategoryMenu'
 import { HandheldsList } from '../types/MenuItems'
-import { Box, Button, Card, CardActionArea, CardContent, CardHeader, Container, createTheme, Divider, IconButton, Stack, Table, ThemeProvider, useTheme } from '@mui/material'
+import { Box, Button, Card, CardActionArea, CardActions, CardContent, CardHeader, CardMedia, CircularProgress, Container, createTheme, Divider, IconButton, Stack, Table, ThemeProvider, useTheme } from '@mui/material'
 import ArrowBackIosRounded from '@mui/icons-material/ArrowBackIosRounded'
 import ErrorPage from "../components/ErrorPage"
 import theme from '../styles/Theme.ts'
 import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
 import TaskAltRoundedIcon from '@mui/icons-material/TaskAltRounded';
 import { Immer } from 'immer'
-import { CardGiftcard } from '@mui/icons-material'
+import { CardGiftcard, Diversity1, EnhancedEncryptionRounded, Window } from '@mui/icons-material'
+import CategoryCard from '../components/CateogryCard.tsx'
+import ImportantInfoCard from '../components/ImportantInfoCard.tsx'
+import { CartContext } from '../contexts/CartContext.tsx'
+import CartItem from '../types/CartItem.ts'
+import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOutlined';
+import RemoveCircleOutlineOutlinedIcon from '@mui/icons-material/RemoveCircleOutlineOutlined';
+import { v4 } from 'uuid'
+import WindowDimensions from '../components/WindowDimensions.tsx'
 // Later problem: lifting the state up to the parent.
 
-// The cart object will only save the "selected" parameters of the item. 
-// This involves manipulating the context, but I'm not quite familiar with context at the moment.
-const imageDimensions =
-{
-    width: 112.5,
-    height: 112.5,
-}
+
+
 
 const ItemDetailsTextArea = ({description}:{description: string | undefined}) =>
 (
     <Typography fontSize={14}  sx={
         {
-            textAlign: 'justify', 
-            textJustify: 'justify', 
+            textAlign: 'left',
+            lineHeight: 2,
             padding: '4px', 
-            maxLines: 4, overflow: 
-            'hidden', paddingTop: 0}
+            maxLines: 4, 
+            overflow: 
+            'hidden', 
+            paddingTop: 0}
         } variant='body1' 
         color="black">
             {description}
     </Typography>
 );
 
-function shouldGreyOutChoice(cat: CustomizationCategory, cust: CustomizationOption)
+const purgeCustomizations = (item: FoodItem) =>
 {
-    if(cat.amountSelected == cat.maxSelectAmount)
-    {
-        if(!cust.selected)
+    Object.values(item.customizations).forEach(cat => 
         {
-            return true;
+            cat.amountSelected = 0;
+            cat.totalPrice = 0;
+            Object.values(cat.options).forEach(opt => opt.selected = false)
         }
-    }
-    return false;
-}
-
-interface CustomizationRowBox
-{
-    index: number,
-    maxAmountForCategory: number,
-    currentAmountForCategory: number
-}
-
-interface CategoryCardProps
-{
-    index: number,
-    category: CustomizationCategory,
-    itemSelectionHandler: (index: number, childIndex: number, isMutuallyExclusiveOption: boolean) => void
-}
-
-const CategoryCard = ({index, category, itemSelectionHandler}: CategoryCardProps)=>
-{
-    const shouldGreyOutOption = React.useCallback(function (amountSelected: number, maxSelectAmount: number, customizationIsSelected: boolean)
-    {
-        return amountSelected === maxSelectAmount && !customizationIsSelected;
-
-    }, [])
-    const toggleSelected = React.useCallback(itemSelectionHandler, []);
-
-    return(
-        <Card key={index} sx={{backgroundColor: "#F2EEEA"}}>
-            <CardHeader sx={{
-                fontWeight: 500, 
-                '& .MuiCardHeader-root': 
-                {
-                    p: '2px', 
-                    pl: 1, 
-                    pr: 1,
-                }
-            }} title={
-                <Typography variant='h4' fontSize={20} fontWeight={500}>
-                {category.name}
-                </Typography>}/>
-            <Divider/>
-            <CardContent sx={{
-                '&.MuiCardContent-root':
-                {
-                    m: '5px',
-                    p: 0,
-                }
-            }}>
-                <Box key={(category.index!)} display='flex' flexDirection={'column'}>
-                    {category.customizations.map((customization, keyValue)=>
-                        (
-                            <> {/*<> </> is shorthand for react fragments*/}
-                            <Box key={keyValue} display='flex' alignContent='center' flexDirection='row' justifyContent = 'space-between' bgcolor={customization.selected ? theme.palette.dennysYellow.main : 'none'}
-                                onClick={()=>{toggleSelected(index, keyValue, customization.isMutuallyExclusive)}}
-                                borderColor={theme.palette.dennysGrey.main} width={'100%'} 
-                                sx={{
-                                    borderBox: 'content-box',
-                                    fontSize: 16,
-                                    }}>
-                                <Box key={customization.index!} display='flex' flexDirection='row' alignItems='center' m={1}>
-                                    {customization.selected ? (
-                                        <TaskAltRoundedIcon sx={{p: 1, fontSize: 30, fontWeight: 1000, color: 'black'}} />
-                                    ):(
-                                        <RadioButtonUncheckedIcon sx={{p: 1, fontSize: 30, fontWeight: 1000, color: shouldGreyOutOption(category.maxSelectAmount, category.amountSelected, customization.selected!) ? theme.palette.text.disabled : undefined}} />
-                                    ) }
-                                    <Typography color={shouldGreyOutChoice(category, customization) ? theme.palette.text.disabled : undefined} fontSize={16} alignSelf='center' pl={0.25} fontWeight={ customization.selected? 500 : undefined}>{customization.name}</Typography>
-                                </Box>
-                                <Typography color={shouldGreyOutChoice(category, customization) ? theme.palette.text.disabled : undefined} fontSize='inherit'  alignSelf='center' pr={2} fontWeight={ customization.selected? 500 : undefined}>
-                                    {customization.price > 0 ? (<>+ ${customization.price}</>):(<>{/* render nothing */}</>)}
-                                </Typography>
-                            </Box>
-                            {keyValue < category.customizations.length - 1 ? (<Divider key={(index+1)*100}/>) : (<></>)}
-                            </>
-                        )
-                    )}
-                </Box>
-            </CardContent>
-        </Card>
     );
 }
-// Hopefully this works
+
+interface Customizations
+{
+    [key: string]: CustomizationCategory,
+}
+function timeout(delay: number)
+{
+    return new Promise(res =>setTimeout(res, delay));
+}
 const ItemViewPage = ()=>
 {
-    const navigate = useNavigate()
-    const queryParams = new URLSearchParams(location.search);
-    const itemName = queryParams.get('item');
+    const {height, width} = WindowDimensions();
+    const {cartItems, addToCart, saveToCart} = React.useContext(CartContext);
+    const menu = React.useRef(HandheldsList);
+    const [editing, setEditing] = React.useState(false);
+    const [loading, setLoading] = React.useState(false);
+    const [itemID, setItemID] = React.useState('');
+    const navigate = useNavigate();
+    const [itemFound, setItemFound] = React.useState(true);
     const [item, setFoodItem] = React.useState<FoodItem>(); // Adding the types 
-    const [custOptions, setCustOptions] = React.useState<CustomizationCategory[]>([])
+    const foodItem = React.useRef<FoodItem>();
+    const [cartItem, setCartItem] = React.useState<CartItem>();
+    const [custOptions, setCustOptions] = React.useState<Customizations>({})
     const [price, setPrice] = React.useState<number>(0);
+    const [quantity, setQuantity] = React.useState(1);
     const [sideSaladSelected, setSideSaladSelected] = React.useState<boolean>(false);
-    const [itemNutrition, setItemNutrition] = React.useState<NutritionalData | null>(null);
-    const [itemAllergens, setItemAllergens] = React.useState<AllergenData | null>(null);
-    React.useEffect(()=>{
-        const foundItem = HandheldsList.find((entry)=>entry.name === itemName);
-        if(foundItem)
-        {
-            foundItem.customizations.forEach(e => {e.amountSelected = 0; e.customizations.forEach(c => c.selected = false)});
-            setFoodItem(foundItem);
-            setCustOptions(foundItem.customizations);
-            setPrice(foundItem.price);
-        }
-        const foundNutritionItem = NutritionalDataTable.find((entry)=>entry.name === itemName);
-        if (foundNutritionItem)
-        {
-            setItemNutrition(foundNutritionItem)
-        }
-        const foundItemAllergens = AllergenDataTable.find((entry)=>entry.name === itemName);
-        if (foundItemAllergens)
-        {
-            setItemAllergens(foundItemAllergens)
-        }
-      
-    }, [item,itemName]);
-    const popupStyle = {
-        position: 'absolute',
-        top: '50%',
-        left: '50%',
-        transform: 'translate(-50%, -50%)',
-        width: 400,
-        bgcolor: 'background.paper',
-        border: '2px solid #000',
-        boxShadow: 24,
-        p: 4,
-    };
-    
     const [open, setOpen] = React.useState(false);
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
-  
     const parentLocation = item ? `/browse?category=${encodeURIComponent(item.parentCategory)}` : "/";
-    const image = item ? ( item.largeImage ? item.largeImage : item.image) : undefined;
-    const updatePrice = () =>
-
+    const [disableAddItem, setDisableAddItem] = React.useState(true);
+    function handleIncreaseQuantity(_event: React.MouseEvent)
     {
-        let newPrice = item!.price;
-        custOptions.forEach(option => {
-            option.customizations.forEach(customization => {
-                if(customization.selected)
-                {
-                    newPrice+=customization.price;
-                }
-            })
-        });
-        // JavaScript isn't great at floating point arithmetic
-        // This is good enough for a demo implementation.
-        setPrice(Number.parseFloat(newPrice.toFixed(2)));
+        setQuantity((prev)=>prev + 1);
     }
-    const toggleSelected = React.useCallback((parentIndex: number, childIndex: number, isMutuallyExclusive: boolean) =>
+    function handleDecreaseQuantity(_event: React.MouseEvent)
     {
-        // whew!
-        const updated = custOptions.map((element, parentKey) => 
-        { 
-            if(parentKey === parentIndex)
+        setQuantity((prev)=>prev - 1);
+    }
+    function handleAddToCart()
+    {
+        if(item)
+        {
+            // deep-copying to avoid memory shenanigans 
+            let foodItemCopy =  structuredClone(item);
+            foodItemCopy.customizations = structuredClone(custOptions);
+            let id = '';
+            addToCart({id: '', item: foodItemCopy, price: price, quantity: quantity});
+            navigate(parentLocation)
+        }
+        else console.error("unable to add item to cart");
+        return; // error.
+    }
+    function handleSaveEdits()
+    {
+        if(cartItem)
+        {
+            // structured clone is not required here.
+            cartItem.item.customizations = custOptions;
+            cartItem.price = price;
+            cartItem.quantity = quantity;
+            saveToCart(cartItem);
+        }
+        navigate('/cart');
+    }
+
+    React.useEffect(()=>
+    {
+        async function waitForPageLoad()
+        {
+            timeout(500);
+        }
+        waitForPageLoad();
+        // useEffect is usually used for handling external events, but in this case
+        // I use it to prevent this initialization from happening every time.
+        const queryParams = new URLSearchParams(window.location.search);
+        const itemName = queryParams.get('item');
+        const cartItemID = queryParams.get('id');
+        if(cartItemID)
+        {
+            // edit mode.
+            const foundCartItem = cartItems[decodeURIComponent(cartItemID)];
+            if(foundCartItem)
             {
-                element.customizations = element.customizations.map((property, index) =>
-                {
-                    if(isMutuallyExclusive)
-                    {
-                        if(property.selected) // avoid redrawing elements that haven't changed.
-                        {
-                            property.selected = false;
-                        }
-                        if(index === childIndex)
-                        {
-                            property.selected = !property.selected;
-                        }
-                        return property
-                    }
-                    else if(index === childIndex)
-                    {
-                        if(property.index !== 1028) // side salad is 1028
-                        {
-                            if(!property.selected && element.amountSelected < element.maxSelectAmount)
-                            {
-                                element.amountSelected++;
-                                property.selected = true;
-                            }
-                            else if(property.selected)
-                            {
-                                property.selected = false
-                                element.amountSelected--;
-                            }
-                        }
-                        else
-                        {
-                            property.selected = !property.selected;
-                            setSideSaladSelected(property.selected);
-                        }
-                    }
-                    return property;
-                })
+                console.log("Found an item in the cart that matches");
+                console.log(foundCartItem);
+                setPrice(foundCartItem.price);
+                setFoodItem(foundCartItem.item);
+                setQuantity(foundCartItem.quantity);
+                setCustOptions(foundCartItem.item.customizations);
+                setDisableAddItem(false);
+                setEditing(true);
             }
-            return element;
-        });
-        setCustOptions(updated);
-        updatePrice(); 
-        // Performing this calculation prior to updating the item's state will show the incorrect price
-    }, [custOptions]);
-    if(item === undefined || item === null)
+        }
+        else if(itemName)
+        {
+            const foundItem = menu.current.find((entry)=>entry.name === itemName);
+            if(foundItem)
+            {
+                foodItem.current = structuredClone(foundItem); // this will be used for data tracking purposes
+                purgeCustomizations(foundItem);
+                setFoodItem(foundItem);
+                setCustOptions(foundItem.customizations);
+                setPrice(foundItem.price);
+                console.log("ItemViewPage did mount")
+            }
+        }
+        else
+        {
+            console.error("not found");
+        }
+        // TO DO: event listeners and saving state.
+
+        return(
+            ()=>
+            {
+                if(item) purgeCustomizations(item); 
+                // reset the selections when the component unmounts
+                // but only do this if we're not editing, because shallow copying is a thing.
+                console.log("ItemViewPage did unmount");
+            }
+        )
+    }, []);
+
+    function handleChange(newPrice: number, newAmountSelected:number, categoryName: string, updatedOptions: {[key:string]:CustomizationOption})
     {
-        return(<ErrorPage />)
+        let totalPrice = 0;
+        const category = custOptions[categoryName];
+        console.log(`the total price for the category ${categoryName} is currently $${category.totalPrice}`);
+        category.totalPrice = newPrice;
+        console.log(`the total price for the category ${categoryName} is now $${category.totalPrice}`);
+        let shouldEnableCheckout = true;
+        Object.entries(custOptions).forEach(([key, value])=> 
+        {
+            shouldEnableCheckout = shouldEnableCheckout && !(value.isRequired && value.amountSelected == 0); // once false, can never be true;
+            console.log(`the total price for the category ${key} is currently $${value.totalPrice}`);
+            totalPrice += value.totalPrice
+        }); // have to do this because the children don't handle the price well
+
+        console.log(`the total price is now $${totalPrice}`);
+        category.options = updatedOptions;
+        category.amountSelected = newAmountSelected;
+        const finalPrice = price + totalPrice;
+        console.log(`the total price is now $${finalPrice}`);
+        setPrice(parseFloat((finalPrice).toFixed(2)));
+        setCustOptions({...custOptions});
+        setDisableAddItem(!shouldEnableCheckout);
+    }
+   
+    if(!item)
+    {
+        // some loading animation would be nice.
+        if(!itemFound)
+        {
+            return(<ErrorPage />)
+        }
+        else
+        {
+            return(
+                <NavBar bottomLabel={'GO BACK'} onClick={()=>{navigate('/')}} disableButton={false}>
+                    <Box sx={{
+                            display:'flex',
+                            flexDirection: 'column',
+                            height: height-110,
+                            alignSelf: 'center',
+                            alignItems: 'center', 
+                            justifyContent: 'space-between'
+                            }}>
+                        <Typography variant='h3' color='error' pt={1} pb={1}>Page not found</Typography>
+                    </Box>
+                </NavBar>
+            )
+        }
     }
     else
     {
         return(
-            <ThemeProvider theme={theme}>
-
-                <NavBar bottomLabel={`Add to Cart - $${price}`}>
+                <NavBar bottomLabel={
+                    !editing ? `Add to Cart - ${quantity} x $${price.toFixed(2)}` : `Save Changes - ${quantity} x $${price.toFixed(2)}`
+                    } onClick={ editing ? handleSaveEdits : handleAddToCart} disableButton={disableAddItem}>
                     <Box display="flex" flexDirection="row" alignContent={'center'}>
                         <IconButton sx={{pr: 3}} size="large" onClick={()=>navigate(parentLocation)}>
                             <ArrowBackIosRounded/>
@@ -277,12 +255,9 @@ const ItemViewPage = ()=>
                             </Typography>
                         </Breadcrumbs>
                     </Box>
-                    
-
-                    
-                    <Stack className='customizationStack' spacing={3} pb={'70px'}>
-                        <Card key={item.name} elevation={5} sx={{display: "flex", flexDirection: 'column', borderRadius: 8, backgroundColor: "#F2EEEA"}}>
-                            <Box padding='4px' paddingLeft={1} paddingRight={1}>
+                    <Stack className='customizationStack' spacing={3} pb={'70px'} pt={3}>
+                        <Card key={item.name}  elevation={5} sx={{position: 'sticky', display: "flex", flexDirection: 'column', borderRadius: 2, backgroundColor: "#F2EEEA"}}>
+                            <Box sx={{padding:'4px', paddingLeft: 1, paddingRight: 1}}>
                                 <CardHeader sx={{
                                     fontWeight: 500, 
                                     '&.MuiCardHeader-root': 
@@ -296,9 +271,9 @@ const ItemViewPage = ()=>
                                         {item.name}
                                     </Typography>
                                     }/>
+                              
                                 <CardContent sx={{
-                                    textAlign: 'left', 
-                                    textJustify: 'justify', 
+                                    textAlign: 'left',
                                     '&.MuiCardContent-root':
                                     {
                                         padding: '2px'
@@ -307,113 +282,44 @@ const ItemViewPage = ()=>
                                     <Box display='flex' flexDirection={'row'} alignItems={'top'}  justifyContent={'space-between'}>
                                     <ItemDetailsTextArea description={item.description}/>
                                         <Box display='flex' flexDirection='column' textAlign={'right'} >
-                                            <Box component='img' height={130} width={'auto'} paddingLeft={1} borderColor={'black'} src={image}/>
+                                            <Box component='img' height={'auto'} width={150} paddingLeft={1} src={item.image}/>
                                             <Typography margin='4px' fontSize={20} fontWeight={500}>${item.price}</Typography>
                                         </Box>
                                     </Box>
                                 </CardContent>
+                                <Box sx={{display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'right'}}>
+                                    <Typography> Quantity: </Typography>
+                                    <IconButton size='large' disabled={quantity <= 1} onClick={handleDecreaseQuantity}>
+                                        <RemoveCircleOutlineOutlinedIcon fontSize='large'/>
+                                    </IconButton>
+                                    <Typography sx={{fontSize: 20, ml: 3, mr: 3, fontWeight: 500}}>{quantity}</Typography>
+                                    <IconButton size='large' disabled={quantity >= 10} onClick={handleIncreaseQuantity}>
+                                         <AddCircleOutlineOutlinedIcon fontSize='large'/>
+                                    </IconButton>
+                                </Box>
                             </Box>
                         </Card>
-                        <Box>
-                            <Card>
-                                <CardHeader sx={{
-                                    fontWeight: 500, 
-                                    '&.MuiCardHeader-root': 
-                                    {
-                                        p: '8px', 
-                                        pl: 1, 
-                                        pr: 1,
-                                    }
-                                }} title={
-                                    <Typography variant='h4' fontSize={28} fontWeight={500} color="red">
-                                        Important Information
-                                    </Typography>
-                                    }/>
-                                <CardContent sx={{
-                                    textAlign: 'left', 
-                                    textJustify: 'justify', 
-                                    '&.MuiCardContent-root':
-                                    {
-                                        padding: '5px'
-                                    }
-                                    }}>
-                                    
-                                    <Box display='flex' flexDirection='column'>
-                                        <Box display='flex' flexDirection='row' justifyContent='space-between'>
-                                            <Typography margin='4px' fontSize={20} color="red">
-                                                Allergens
-                                            </Typography>
-                                            <Typography margin='4px' fontSize={20} color="red">
-                                                {itemAllergens?.allergens}
-                                            </Typography>
-                                        </Box>
-                                        <Box display='flex' flexDirection='row' justifyContent='space-between'>
-                                            <Typography margin='4px' fontSize={20}>
-                                                Nutritional Data
-                                            </Typography>
-                                            <Button onClick={handleOpen}>View</Button>
-                                            <Modal open={open} onClose={handleClose} aria-labelledby="nutrition-data-popup" aria-describedby="nutrition-data-popup-desc">
-
-
-                                            {(itemNutrition === null) ? (
-                                                    <Box sx={popupStyle}>
-                                                    <Typography id="nutrition-data-popup" variant="h6" component="h2">
-                                                        No Nutrition Data Available
-                                                    </Typography>
-                                                    <Typography id="nutrition-data-popup-desc" sx={{ mt: 2 }}>
-                                                    </Typography>
-                                                    </Box>
-                                                ):(
-                                                    <Box sx={popupStyle}>
-                                                    <Typography id="nutrition-data-popup" variant="h6" component="h2">
-                                                        {itemName} Nutritional Data
-                                                    </Typography>
-                                                    <Typography id="nutrition-data-popup-desc" sx={{ mt: 2 }}>
-                                                        Calories: {itemNutrition.calories}
-                                                    </Typography>
-                                                    <Typography id="nutrition-data-popup-desc" sx={{ mt: 2 }}>
-                                                        Protein: {itemNutrition.protein} grams
-                                                    </Typography>
-                                                    <Typography id="nutrition-data-popup-desc" sx={{ mt: 2 }}>
-                                                        Carbohydrates: {itemNutrition.carbohydrates} grams
-                                                    </Typography>
-                                                    <Typography id="nutrition-data-popup-desc" sx={{ mt: 2 }}>
-                                                        Fibre: {itemNutrition.fibre} grams
-                                                    </Typography>
-                                                    <Typography id="nutrition-data-popup-desc" sx={{ mt: 2 }}>
-                                                        Sugar: {itemNutrition.sugar} grams
-                                                    </Typography>
-                                                    <Typography id="nutrition-data-popup-desc" sx={{ mt: 2 }}>
-                                                        Fat: {itemNutrition.fat} grams
-                                                    </Typography>
-                                                    <Typography id="nutrition-data-popup-desc" sx={{ mt: 2 }}>
-                                                        Saturated fat: {itemNutrition.saturated_fat} grams
-                                                    </Typography>
-                                                    <Typography id="nutrition-data-popup-desc" sx={{ mt: 2 }}>
-                                                        Trans fat: {itemNutrition.trans_fat} grams
-                                                    </Typography>
-                                                    <Typography id="nutrition-data-popup-desc" sx={{ mt: 2 }}>
-                                                        Cholesterol: {itemNutrition.cholesterol} milligrams
-                                                    </Typography>
-                                                    <Typography id="nutrition-data-popup-desc" sx={{ mt: 2 }}>
-                                                        Sodium: {itemNutrition.sodium} milligrams
-                                                    </Typography>
-                                                    </Box>
-                                                )
-                                            }
-                                            </Modal>
-                                        </Box>
-                                    </Box>
-                                </CardContent>
-                            </Card>
-                        </Box>
-                        {item!.customizations!.map((element, itemIndex)=>
-                            (<CategoryCard index={itemIndex} category={element!} itemSelectionHandler={toggleSelected} />))
+                        <ImportantInfoCard key={'importantInfoCard'} nutritionalData={item.nutritionalData} allergenData={item.allergens} modalOpen={open} openModal={handleOpen} closeModal={handleClose}/>
+                        <Divider key={'contentDivider'} variant='fullWidth' sx={{
+                            
+                             borderBottomWidth: '10px'}}>
+                        <Typography sx={{fontWeight: 500, fontSize: 20, textAlign: 'center'}}>Sides & Customizations</Typography>
+                            </Divider>
+                        {Object.entries(custOptions).map(([nameKey, category], index)=>
+                        (
+                            <CategoryCard key={index} 
+                                name={nameKey} 
+                                category={category!}
+                                disableNewSelection={category.amountSelected === category.maxSelectAmount} 
+                                onChange={handleChange}/>
+                        ))
                         }
                     </Stack>
-                 </NavBar>
-            </ThemeProvider>
+                </NavBar>
         )
-    }
+}
+    
 }
 export default ItemViewPage
+//
+//   <CardMedia image={item.largeImage ? item.largeImage : item.image} sx={{height: 175, backgroundSize: item.largeImage ? 'cover' : 'contain'}}/>

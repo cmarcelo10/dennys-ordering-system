@@ -20,12 +20,23 @@ const SearchBar = ({ placeholder, onChange , value}: SearchBarProps) => {
                 pb: 1,
                 pt: 1,
                 height: '35px',
-                width: '200px',
+                width: '175px',
                 borderRadius: 4,
                 backgroundColor: 'white',
                 paddingLeft: '10px',
                 paddingRight: '4px',
                 alignSelf: 'right',
+                alignContent: 'center',
+                "& .MuiInputBase-input":
+                {
+                    pb: 0,
+                    fontSize: 12,
+                },
+                "&.MuiInputBase-root":
+                {
+                    p: 0.5,
+                    pl: 1,
+                }
             }} 
         />
     );

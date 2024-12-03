@@ -1,31 +1,31 @@
 type NutritionalData =
 {
     name: string,
-    calories: number,
-    protein: number,
-    carbohydrates: number,
-    fibre: number,
-    sugar: number,
-    fat: number,
-    saturated_fat: number,
-    trans_fat: number,
-    cholesterol: number,
-    sodium: number
+    calories: string,
+    fat: string,
+    saturated_fat: string,
+    trans_fat: string,
+    cholesterol: string,
+    sodium: string
+    carbohydrates: string,
+    fibre: string,
+    sugar: string,
+    protein: string,
 }
 export default NutritionalData
 
-const SlamburgerNutritionData:NutritionalData = {
+export const SlamburgerNutritionalData:NutritionalData = {
     name: "Slamburger",
-    calories: 1090,
-    protein: 53.6,
-    carbohydrates: 55.4,
-    fibre: 11.6,
-    sugar: 7.7,
-    fat: 73.6,
-    saturated_fat: 27.9,
-    trans_fat: 1.3,
-    cholesterol: 212,
-    sodium: 2106
+    calories: "1090",
+    fat: "73.6 g",
+    saturated_fat: "27.9 g",
+    trans_fat: "1.3 g",
+    cholesterol: "212 mg",
+    sodium: "2106 mg",
+    carbohydrates: "55.4 g",
+    fibre: "11.6 g",
+    sugar: "7.7 g",
+    protein: "53.6 g",
 }
 
-export const NutritionalDataTable = [SlamburgerNutritionData]
+export const NutritionalDataTable = [SlamburgerNutritionalData]

@@ -1,12 +1,9 @@
-type CustomizationOption =
+interface CustomizationOption
 {
-    index?: number, // can be assigned dynamically at runtime.
-    name: string,
     price: number,
+    parentCategory: string
     calories?: number,
     selected?: boolean,
-    parentCategory?: string
-    isMutuallyExclusive: boolean
 }
 
 export default CustomizationOption
