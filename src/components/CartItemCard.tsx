@@ -1,82 +1,90 @@
 import React, { useState, useContext } from 'react';
-import { Card, CardContent, Typography, Divider, Button, Grid } from '@mui/material';
+import { Card, CardContent, Typography, Divider, Button, Grid2, IconButton } from '@mui/material';
 import { CartContext } from '../contexts/CartContext';
+import CartItem from '../types/CartItem';
+import FoodItem from '../types/FoodItem';
+import RemoveIcon from '@mui/icons-material/RemoveCircleOutlineOutlined'
+import AddIcon from '@mui/icons-material/AddCircleOutlineOutlined'
+import { useNavigate } from 'react-router-dom';
+interface CartItemCardProps
+{
+    cartItem: CartItem,
+    handleRemoveItem: (itemID: string) => void,
+    handleChangeQuantity: (itemID: string, updatedQuantity: number) => void
+}
 
-const CartItemCard = ({ item, quantity }) => {
-    const { cartItems, totalPrice, setCartContext } = useContext(CartContext);
+const CartItemCard = ({cartItem, handleRemoveItem, handleChangeQuantity}:CartItemCardProps) => {
+    const navigate = useNavigate();
     const [expanded, setExpanded] = useState(false);
-
     const toggleExpanded = () => {
         setExpanded(!expanded);
     };
 
     const removeItemFromCart = () => {
-        // create a new array with the item removed
-        const updatedCartItems = cartItems.filter((cartItem) => cartItem.item.name !== item.name);
-        
-        // calculate the new total price
-        const newTotalPrice = updatedCartItems.reduce((total, cartItem) => total + (cartItem.price * cartItem.quantity), 0);
-        setCartContext(updatedCartItems, newTotalPrice);
+        console.log("Removing item");
+        handleRemoveItem(cartItem.id);
     };
 
-    const editItem = () => [
-        // TODO: implement edit functionality -> maybe navigate to a page or open a modal where we can edit the cartItem object
-    ];
-
-    const changeItemQuantity = (newQuantity) => {
-        console.log(newQuantity);
-        // create a new array with the item updated
-        const updatedCartItems = cartItems.map(cartItem => cartItem.item.name === item.name ? { ...cartItem, quantity: newQuantity } : cartItem);
-    
-        // calculate the new total price
-        const newTotalPrice = updatedCartItems.reduce((total, cartItem) => total + (cartItem.price * cartItem.quantity), 0);
-
-        // update the cart context
-        setCartContext(updatedCartItems, newTotalPrice);
+    const handleIncrease = ()=>
+    {
+        handleChangeQuantity(cartItem.id, cartItem.quantity + 1);
     }
+    const handleDecrease = () =>
+    {
+        handleChangeQuantity(cartItem.id, cartItem.quantity - 1);
+    }
+  
+    const editItem = () => [
+        navigate(`/cart/edit?id=${encodeURIComponent(cartItem.id)}`)
+    ];
 
     return (
         <Card elevation={3} sx={{ display: 'flex', flexDirection: 'column', padding: 2, marginBottom: 2 }}>
-        <Grid container justifyContent="space-between">
-            <Typography variant="h6">{item.name}</Typography>
-            <Typography variant="h6">{quantity} x ${item.price.toFixed(2)}</Typography>
-        </Grid>
+        <Grid2 container justifyContent="space-between">
+            <Typography variant="h6">{cartItem.item.name}</Typography>
+            <Typography variant="h6">{cartItem.quantity} ⨉ ${cartItem.price.toFixed(2)}</Typography>
+        </Grid2>
         { expanded && (
             <>
                 <Divider variant="middle" sx={{ marginY: 1 }} />
                 <Typography variant="body1">Customizations:</Typography>
-                {item.customizations && item.customizations.map((category, index) => (
-                    <div key={index}>
+                {cartItem.item.customizations && Object.values(cartItem.item.customizations).map((category, index) => (
+                    <React.Fragment key={index}>
                     <Typography variant="body2">{category.label}:</Typography>
-                    {category.customizations.map((option, idx) => (
-                        <Typography key={idx} variant="body2" sx={{ marginLeft: 2 }}>
-                        - {option.name} (+${option.price.toFixed(2)})
-                        </Typography>
-                    ))}
-                    </div>
+                    {Object.entries(category.options).map(([key, option], idx) => {
+
+                        if(option.selected)
+                        {
+                            return (<Typography key={idx} sx={{ marginLeft: 2 }}>
+                        - {key} (+$ {option.price.toFixed(2)})
+                        </Typography>)
+                        }
+                        return (<React.Fragment key={idx}></React.Fragment>)
+                    })}
+                    </React.Fragment>
                 ))}
                 <Divider variant="middle" sx={{ marginY: 1 }} />
                 <Typography variant="body1">Special Comments:</Typography>
             </>
         )}
         <Divider variant="middle" sx={{ marginY: 1 }} />
-        <Grid container justifyContent="space-between" alignItems="center">
+        <Grid2 container justifyContent="space-between" alignItems="center">
             <Typography variant="body1">
                     Quantity:
-                    <Button onClick={() => changeItemQuantity(quantity - 1)} disabled={quantity <= 1}>
-                        - 
-                    </Button>     
-                        {quantity}
-                    <Button onClick={() => changeItemQuantity(quantity + 1)}>
-                        +
-                    </Button>
+                    <IconButton size='large' disabled={cartItem.quantity <= 1} onClick={handleDecrease}>
+                        <RemoveIcon fontSize='large'/>
+                    </IconButton>
+                    <Typography sx={{fontSize: 20, ml: 3, mr: 3, fontWeight: 500}}>{cartItem.quantity}</Typography>
+                    <IconButton size='large' disabled={cartItem.quantity >= 10} onClick={handleIncrease}>
+                            <AddIcon fontSize='large'/>
+                    </IconButton>
                 </Typography>
-            <div>
+            <React.Fragment>
             <Button variant="outlined" size="small" sx={{ marginRight: 1 }} onClick={removeItemFromCart}>Remove</Button>
             <Button variant="outlined" size="small" sx={{ marginRight: 1 }} onClick={editItem}>Edit</Button>
             <Button variant="outlined" size="small" onClick={toggleExpanded}>{expanded ? 'Show Less' : 'Show More'}</Button>
-            </div>
-        </Grid>
+            </React.Fragment>
+        </Grid2>
         </Card>
     );
 };

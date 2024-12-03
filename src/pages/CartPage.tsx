@@ -1,108 +1,62 @@
-import react, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect } from 'react';
 import NavBar from '../components/Navbar';
-import { Box, Button, Typography, ThemeProvider, Grid } from '@mui/material';
+import { Box, Button, Typography, ThemeProvider, Grid2, Breadcrumbs, IconButton, Stack} from '@mui/material';
 import theme from '../styles/Theme';
 import CartItemCard from '../components/CartItemCard';
 import { CartContext } from '../contexts/CartContext';
-
+import CartItem from '../types/CartItem';
+import Slamburger from '../types/Slamburger';
 // dummy menu items for testing
 import { HandheldsList } from '../types/MenuItems';
-import FoodItem from './types/FoodItem';
+import FoodItem from '../types/FoodItem';
+import { v4 } from 'uuid';
+import { ArrowBackIosRounded } from '@mui/icons-material';
+import {Link, useNavigate} from 'react-router-dom';
 
-// dummy CartItem list
-const dummyCartItems = [
+const isStrictMode = ()=>
+{
+    return (function()
     {
-      id: 1,
-      item: {
-        name: "Bacon Cheeseburger",
-        parentCategory: "Burgers",
-        price: 8.99,
-        customizations: [
-          {
-            name: "Sides",
-            label: "Side",
-            customizations: [
-              { name: "Fries", price: 2.0, isMutuallyExclusive: true, selected: true },
-            ],
-            isRequired: true,
-            maxSelectAmount: 1,
-            amountSelected: 1
-          },
-          {
-            name: "Extras",
-            label: "Add extras",
-            customizations: [
-              { name: "Extra Bacon", price: 1.5, isMutuallyExclusive: false, selected: true },
-              { name: "Cheese", price: 1.0, isMutuallyExclusive: false, selected: true }
-            ],
-            isRequired: false,
-            maxSelectAmount: 2,
-            amountSelected: 2
-          }
-        ]
-      },
-      quantity: 2
-    },
-    {
-      id: 2,
-      item: {
-        name: "Veggie Pizza",
-        parentCategory: "Pizzas",
-        price: 12.99,
-        customizations: [
-          {
-            name: "Crust",
-            label: "Crust",
-            customizations: [
-              { name: "Thin Crust", price: 0, isMutuallyExclusive: true, selected: true },
-            ],
-            isRequired: true,
-            maxSelectAmount: 1,
-            amountSelected: 1
-          },
-          {
-            name: "Toppings",
-            label: "Toppings",
-            customizations: [
-              { name: "Olives", price: 0.5, isMutuallyExclusive: false, selected: true },
-              { name: "Mushrooms", price: 0.5, isMutuallyExclusive: false, selected: true }
-            ],
-            isRequired: false,
-            maxSelectAmount: 2,
-            amountSelected: 2
-          }
-        ]
-      },
-      quantity: 1
-    }
-  ];
-
-
+         // @ts-ignore
+        return !this;
+    });
+}
 const CartPage = () => {
+    const navigate = useNavigate();
     // set up cart context to get cart items
-    const { cartItems, totalPrice, setCartContext } = useContext(CartContext);
-
-    // set up cart with dummy cart data
-    useEffect(() => {
-        const totalPrice = dummyCartItems.reduce((total, cartItem) => total + (cartItem.item.price * cartItem.quantity), 0);
-        setCartContext(dummyCartItems, totalPrice);
-    }, [setCartContext]);
-
-
+    const { cartItems, totalPrice, saveToCart, removeFromCart} = useContext(CartContext);
+    function handleChangeQuantity(itemID: string, newQuantity: number)
+    {
+        const item = cartItems[itemID];
+        if(item)
+        {
+            item.quantity = newQuantity;
+            saveToCart(item);
+        }
+    }
     return (
       <ThemeProvider theme={theme}>
         <NavBar bottomLabel='Confirm & Place Order'>
+            <Box display="flex" flexDirection="row" alignContent={'center'}>
+                <IconButton sx={{pr: 3}} size="large" onClick={()=>navigate('/')}>
+                    <ArrowBackIosRounded/>
+                </IconButton>
+                <Breadcrumbs sx={{alignContent: 'center'}} expandText='false'>
+                    <Link to={"/"} style={{textDecoration: 'none', color: 'inherit'}}> Main Menu </Link>{/* Need to link this to the main menu... it's kind of annoying that */}
+                    <Typography>
+                        Review Order
+                    </Typography>
+                </Breadcrumbs>
+            </Box>
           <Typography sx={{ paddingTop: 3, width: '100%' }} variant='h2' fontFamily={'Roboto'} color={theme.palette.dennysRed.main} textAlign="center" fontWeight={555} fontSize={30}>
             Review Order
           </Typography>
-          <Box sx={{ paddingTop: 1, width: '100%' }}>
-            <Grid container spacing={2}>
-                {cartItems.map((cartItem, index) => (
-                    <Grid item xs={12} key={index}>
-                    <CartItemCard item={cartItem.item} quantity={cartItem.quantity} />
-                    </Grid>
+          <Box sx={{ paddingTop: 1, width: '100%', display: 'flex', flexDirection: 'column', alignContent: 'center', justifyContent: 'space-around'}}>
+            <Stack spacing={2} justifyContent={'space-around'}>
+                {Object.values(cartItems).map((cartItem) => (
+                    <CartItemCard key={cartItem.item.name + cartItem.id} cartItem={cartItem} handleChangeQuantity={handleChangeQuantity} handleRemoveItem={removeFromCart}/>
                 ))}
-            </Grid>
+            </Stack>
           </Box>
             <Typography sx={{ paddingTop: 2, width: '100%' }} variant='h5' textAlign="center">
             Total Price: ${totalPrice.toFixed(2)}

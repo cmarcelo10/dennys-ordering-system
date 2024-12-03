@@ -77,7 +77,7 @@ const ImportantInfoCard=({nutritionalData, allergenData, modalOpen, openModal, c
                             <Typography margin='4px' fontSize={20}>
                                 Nutritional Info
                             </Typography>
-                            <Button sx={{borderRadius: 3, width: 8}}variant='outlined'onClick={openModal} disabled={!nutritionalData}>{nutritionalData ? <>View</>:<>Unavailable</>}</Button>
+                            <Button sx={{borderRadius: 3}}variant='outlined'onClick={openModal} disabled={!nutritionalData}>{nutritionalData ? (<>View</>):(<>Unavailable</>)}</Button>
                             <Modal open={modalOpen} onClose={closeModal} aria-labelledby="nutrition-data-popup" aria-describedby="nutrition-data-popup-desc">
                             <Box sx={popupStyle}>
                                 {(!nutritionalData) ? (

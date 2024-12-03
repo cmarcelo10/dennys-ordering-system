@@ -23,10 +23,13 @@ const MainMenu = () =>
         console.log(encodeURIComponent(categoryName));
         navigate(`/browse?category=${encodeURIComponent(categoryName)}`);
     }
-
+    const goToCart = () =>
+    {
+        navigate('/cart');
+    }
     return (
         <ThemeProvider theme={theme}>
-        <Navbar bottomLabel='Review Order'>
+        <Navbar bottomLabel='Review Order' onClick={goToCart}>
             <Typography sx={{paddingTop: 3, width: '100%'}} variant='h2' fontFamily={"'Roboto', 'Helvetica', 'Arial', sans-serif"} color={theme.palette.dennysRed.main} textAlign="center" fontWeight={555} fontSize={30}>Main Menu</Typography>
             <Divider variant='middle'/>
             <Grid2 container alignContent="center" justifyContent='space-evenly' alignSelf='center' columnSpacing={0.5} rowSpacing={2} paddingBottom={3} pt={3}>

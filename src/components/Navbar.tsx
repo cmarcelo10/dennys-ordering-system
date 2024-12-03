@@ -14,10 +14,15 @@ interface NavBarProps
     bottomLabel: string,
     children?: React.ReactNode,
     disableButton?: boolean,
+    hideCallServerButton?: boolean
     onClick?: ()=>void;
 }
 
-const NavBar = ({bottomLabel, onClick, disableButton, children}: NavBarProps) => {
+const Logo = React.memo(()=>
+(
+    <Box component='img' src={DennysLogo} sx={{postiion: 'absolute', left: '10px', right: 'auto', backgroundColor: theme.palette.dennysYellow.main, height: 40, width: 40, borderRadius: 2, padding: 0.5}}/>
+)); // never reload the image.
+const NavBar = ({bottomLabel, onClick, disableButton, children, hideCallServerButton}: NavBarProps) => {
     const navigate = useNavigate();
     function handleClick(_event: React.MouseEvent)
     {
@@ -25,29 +30,41 @@ const NavBar = ({bottomLabel, onClick, disableButton, children}: NavBarProps) =>
         {
             onClick();
         }
+        else
+        {
+            navigate('/cart');
+        }
     }
     return (
         <ThemeProvider theme={theme}>
             <AppBar sx={{zIndex: 1000, backgroundColor: '#464340'}} elevation={1} position='fixed'>
                 <Toolbar sx={{justifyContent: 'space-between'}}>
-                    <Box component='img' src={DennysLogo} sx={{postiion: 'absolute', left: '10px', right: 'auto', backgroundColor: theme.palette.dennysYellow.main, height: 40, width: 40, borderRadius: 2, padding: 0.5}}/>
+                    <Logo />
                     <Box display='flex' flexDirection={'row'} alignItems={'center'}>
                         <ItemSearch />
-                        <IconButton>
-                            <ShoppingCartTwoToneIcon htmlColor='white'/>
-                        </IconButton>
                     </Box>
                 </Toolbar>
             </AppBar>
-            <Toolbar/>
+            <Toolbar/> {/*These empty toolbars are used for spacing*/}
                 {children}
-                <Fab sx={{position: 'fixed', bottom: '7%', left: '5%', backgroundColor: theme.palette.primary.main}} color='primary' variant='extended'>
-                       <Typography p={1} fontWeight={500}> Call <br /> Server</Typography>
-                </Fab>
+                {!hideCallServerButton && (<Fab sx={{position: 'fixed', bottom: '7.5%', left: '5%', backgroundColor: theme.palette.primary.main}} color='primary' variant='extended'>
+                       <Typography p={1} fontWeight={500}> Call <br/> Server</Typography>
+                </Fab>)}
             <Toolbar/>
             <AppBar sx={{zIndex: 1000, backgroundColor: '#464340', alignContent: 'center', justifyContent:'center', position: 'fixed', bottom: 0, top: 'auto'}} elevation={0}>
                     <Toolbar sx={{display: 'flex', flexDirection: 'row', alignContent: 'center', justifyContent: 'center'}}>
-                        <Button variant='contained' disabled={disableButton} onClick={onClick ? handleClick : undefined} sx={{backgroundColor: theme.palette.dennysRed.main, color: theme.palette.dennysRed.contrastText, width: '50%', height: '40px', fontSize: 20, textTransform: 'none'}}><Typography fontWeight={1000}>{bottomLabel}</Typography></Button>
+                        <Button variant='contained' disabled={disableButton} onClick={handleClick} 
+                        sx={{backgroundColor: theme.palette.dennysRed.main, 
+                            color: theme.palette.dennysRed.contrastText, 
+                            minWidth: '50%', 
+                            height: '40px', 
+                            fontSize: 20, 
+                            textTransform: 'none',
+                            '&:disabled':
+                            {
+                                color: '#cccccc',
+                            }
+                            }}><Typography fontWeight={!disableButton ? 1000 : 500}>{bottomLabel}</Typography></Button>
                     </Toolbar>
             </AppBar>
         </ThemeProvider>

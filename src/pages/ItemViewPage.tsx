@@ -15,34 +15,33 @@ import { Link, useNavigate, useParams } from 'react-router-dom'
 import Typography from '@mui/material/Typography'
 import HandheldsMenu from './CategoryMenu'
 import { HandheldsList } from '../types/MenuItems'
-import { Box, Button, Card, CardActionArea, CardContent, CardHeader, Container, createTheme, Divider, IconButton, Stack, Table, ThemeProvider, useTheme } from '@mui/material'
+import { Box, Button, Card, CardActionArea, CardActions, CardContent, CardHeader, CardMedia, CircularProgress, Container, createTheme, Divider, IconButton, Stack, Table, ThemeProvider, useTheme } from '@mui/material'
 import ArrowBackIosRounded from '@mui/icons-material/ArrowBackIosRounded'
 import ErrorPage from "../components/ErrorPage"
 import theme from '../styles/Theme.ts'
 import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
 import TaskAltRoundedIcon from '@mui/icons-material/TaskAltRounded';
 import { Immer } from 'immer'
-import { CardGiftcard, EnhancedEncryptionRounded } from '@mui/icons-material'
+import { CardGiftcard, EnhancedEncryptionRounded, Window } from '@mui/icons-material'
 import CategoryCard from '../components/CateogryCard.tsx'
 import ImportantInfoCard from '../components/ImportantInfoCard.tsx'
 import { CartContext } from '../contexts/CartContext.tsx'
 import CartItem from '../types/CartItem.ts'
+import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOutlined';
+import RemoveCircleOutlineOutlinedIcon from '@mui/icons-material/RemoveCircleOutlineOutlined';
+import { v4 } from 'uuid'
+import WindowDimensions from '../components/WindowDimensions.tsx'
 // Later problem: lifting the state up to the parent.
 
-// The cart object will only save the "selected" parameters of the item. 
-// This involves manipulating the context, but I'm not quite familiar with context at the moment.
-const imageDimensions =
-{
-    width: 112.5,
-    height: 112.5,
-}
+
+
 
 const ItemDetailsTextArea = ({description}:{description: string | undefined}) =>
 (
     <Typography fontSize={14}  sx={
         {
-            textAlign: 'justify', 
-            textJustify: 'justify', 
+            textAlign: 'left',
+            lineHeight: 2,
             padding: '4px', 
             maxLines: 4, 
             overflow: 
@@ -53,6 +52,7 @@ const ItemDetailsTextArea = ({description}:{description: string | undefined}) =>
             {description}
     </Typography>
 );
+
 const purgeCustomizations = (item: FoodItem) =>
 {
     Object.values(item.customizations).forEach(cat => 
@@ -63,21 +63,31 @@ const purgeCustomizations = (item: FoodItem) =>
         }
     );
 }
+
 interface Customizations
 {
     [key: string]: CustomizationCategory,
 }
-
+function timeout(delay: number)
+{
+    return new Promise(res =>setTimeout(res, delay));
+}
 const ItemViewPage = ()=>
 {
-    const {cartItems, addToCart} = React.useContext(CartContext);
+    const {height, width} = WindowDimensions();
+    const {cartItems, addToCart, saveToCart} = React.useContext(CartContext);
     const menu = React.useRef(HandheldsList);
+    const [editing, setEditing] = React.useState(false);
+    const [loading, setLoading] = React.useState(false);
+    const [itemID, setItemID] = React.useState('');
     const navigate = useNavigate();
+    const [itemFound, setItemFound] = React.useState(true);
     const [item, setFoodItem] = React.useState<FoodItem>(); // Adding the types 
     const foodItem = React.useRef<FoodItem>();
+    const [cartItem, setCartItem] = React.useState<CartItem>();
     const [custOptions, setCustOptions] = React.useState<Customizations>({})
     const [price, setPrice] = React.useState<number>(0);
-    const [quantity, setQuantity] = React.useState(0);
+    const [quantity, setQuantity] = React.useState(1);
     const [sideSaladSelected, setSideSaladSelected] = React.useState<boolean>(false);
     const [open, setOpen] = React.useState(false);
     const handleOpen = () => setOpen(true);
@@ -85,22 +95,48 @@ const ItemViewPage = ()=>
     const parentLocation = item ? `/browse?category=${encodeURIComponent(item.parentCategory)}` : "/";
     const image = item ? ( item.largeImage ? item.largeImage : item.image) : undefined;
     const [disableAddItem, setDisableAddItem] =React.useState(true);
+    function handleIncreaseQuantity(_event: React.MouseEvent)
+    {
+        setQuantity((prev)=>prev + 1);
+    }
+    function handleDecreaseQuantity(_event: React.MouseEvent)
+    {
+        setQuantity((prev)=>prev - 1);
+    }
     function handleAddToCart()
     {
         if(item)
         {
+            // deep-copying to avoid memory shenanigans 
             let foodItemCopy =  structuredClone(item);
             foodItemCopy.customizations = structuredClone(custOptions);
-            addToCart({id: crypto.randomUUID(), item: foodItemCopy, price: price, quantity: quantity});
-            cartItems.forEach(cartItem => console.log(cartItem.item.name));
+            let id = '';
+            addToCart({id: '', item: foodItemCopy, price: price, quantity: quantity});
             navigate(parentLocation)
         }
         else console.error("unable to add item to cart");
         return; // error.
     }
+    function handleSaveEdits()
+    {
+        if(cartItem)
+        {
+            // structured clone is not required here.
+            cartItem.item.customizations = custOptions;
+            cartItem.price = price;
+            cartItem.quantity = quantity;
+            saveToCart(cartItem);
+        }
+        navigate('/cart');
+    }
 
     React.useEffect(()=>
     {
+        async function waitForPageLoad()
+        {
+            timeout(1000);
+        }
+        waitForPageLoad();
         // useEffect is usually used for handling external events, but in this case
         // I use it to prevent this initialization from happening every time.
         const queryParams = new URLSearchParams(window.location.search);
@@ -109,14 +145,17 @@ const ItemViewPage = ()=>
         if(cartItemID)
         {
             // edit mode.
-            const foundCartItem = cartItems.find((entry) => entry.id = cartItemID);
+            const foundCartItem = cartItems[decodeURIComponent(cartItemID)];
             if(foundCartItem)
             {
-                setPrice(foundCartItem.price);
+                console.log("Found an item in the cart that matches");
+                console.log(foundCartItem);
+                setPrice(foundCartItem.item.price);
                 setFoodItem(foundCartItem.item);
                 setQuantity(foundCartItem.quantity);
                 setCustOptions(foundCartItem.item.customizations);
-                console.log("ItemViewPage did mount")
+                setDisableAddItem(false);
+                setEditing(true);
             }
         }
         else if(itemName)
@@ -124,7 +163,7 @@ const ItemViewPage = ()=>
             const foundItem = menu.current.find((entry)=>entry.name === itemName);
             if(foundItem)
             {
-                foodItem.current = foundItem; // this will be used for data tracking purposes
+                foodItem.current = structuredClone(foundItem); // this will be used for data tracking purposes
                 purgeCustomizations(foundItem);
                 setFoodItem(foundItem);
                 setCustOptions(foundItem.customizations);
@@ -136,6 +175,7 @@ const ItemViewPage = ()=>
         {
             console.error("not found");
         }
+        // TO DO: event listeners and saving state.
 
         return(
             ()=>
@@ -164,7 +204,7 @@ const ItemViewPage = ()=>
             totalPrice += value.totalPrice
         }); // have to do this because the children don't handle the price well
 
-        console.log(`the total price f is now $${totalPrice}`);
+        console.log(`the total price is now $${totalPrice}`);
         category.options = updatedOptions;
         category.amountSelected = newAmountSelected;
         const finalPrice = price + totalPrice;
@@ -174,15 +214,37 @@ const ItemViewPage = ()=>
         setDisableAddItem(!shouldEnableCheckout);
     }
    
-    if(item === undefined || item === null)
+    if(!item)
     {
-        return(<ErrorPage />)
+        // some loading animation would be nice.
+        if(!itemFound)
+        {
+            return(<ErrorPage />)
+        }
+        else
+        {
+            return(
+                <NavBar bottomLabel={'GO BACK'} onClick={()=>{navigate('/')}} disableButton={false}>
+                    <Box sx={{
+                            display:'flex',
+                            flexDirection: 'column',
+                            height: height-110,
+                            alignSelf: 'center',
+                            alignItems: 'center', 
+                            justifyContent: 'space-between'
+                            }}>
+                        <Typography variant='h3' color='error' pt={1} pb={1}>Page not found</Typography>
+                    </Box>
+                </NavBar>
+            )
+        }
     }
     else
     {
         return(
-            <ThemeProvider theme={theme}>
-                <NavBar bottomLabel={'Add to Cart - $' + price.toFixed(2)} onClick={handleAddToCart} disableButton={disableAddItem}>
+                <NavBar bottomLabel={
+                    !editing ? `Add to Cart - ${quantity} x $${price.toFixed(2)}` : `Save Changes - ${quantity} x $${price.toFixed(2)}`
+                    } onClick={ editing ? handleSaveEdits : handleAddToCart} disableButton={disableAddItem}>
                     <Box display="flex" flexDirection="row" alignContent={'center'}>
                         <IconButton sx={{pr: 3}} size="large" onClick={()=>navigate(parentLocation)}>
                             <ArrowBackIosRounded/>
@@ -195,9 +257,9 @@ const ItemViewPage = ()=>
                             </Typography>
                         </Breadcrumbs>
                     </Box>
-                    <Stack className='customizationStack' spacing={3} pb={'70px'}>
-                        <Card key={item.name} elevation={5} sx={{display: "flex", flexDirection: 'column', borderRadius: 2, backgroundColor: "#F2EEEA"}}>
-                            <Box padding='4px' paddingLeft={1} paddingRight={1}>
+                    <Stack className='customizationStack' spacing={3} pb={'70px'} pt={3}>
+                        <Card key={item.name}  elevation={5} sx={{position: 'sticky', display: "flex", flexDirection: 'column', borderRadius: 2, backgroundColor: "#F2EEEA"}}>
+                            <Box sx={{padding:'4px', paddingLeft: 1, paddingRight: 1}}>
                                 <CardHeader sx={{
                                     fontWeight: 500, 
                                     '&.MuiCardHeader-root': 
@@ -211,9 +273,9 @@ const ItemViewPage = ()=>
                                         {item.name}
                                     </Typography>
                                     }/>
+                              
                                 <CardContent sx={{
-                                    textAlign: 'left', 
-                                    textJustify: 'justify', 
+                                    textAlign: 'left',
                                     '&.MuiCardContent-root':
                                     {
                                         padding: '2px'
@@ -222,11 +284,21 @@ const ItemViewPage = ()=>
                                     <Box display='flex' flexDirection={'row'} alignItems={'top'}  justifyContent={'space-between'}>
                                     <ItemDetailsTextArea description={item.description}/>
                                         <Box display='flex' flexDirection='column' textAlign={'right'} >
-                                            <Box component='img' height={'auto'} width={200} paddingLeft={1} borderColor={'black'} src={image}/>
+                                            <Box component='img' height={'auto'} width={200} paddingLeft={1} src={image}/>
                                             <Typography margin='4px' fontSize={20} fontWeight={500}>${item.price}</Typography>
                                         </Box>
                                     </Box>
                                 </CardContent>
+                                <Box sx={{display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'right'}}>
+                                    <Typography> Quantity: </Typography>
+                                    <IconButton size='large' disabled={quantity <= 1} onClick={handleDecreaseQuantity}>
+                                        <RemoveCircleOutlineOutlinedIcon fontSize='large'/>
+                                    </IconButton>
+                                    <Typography sx={{fontSize: 20, ml: 3, mr: 3, fontWeight: 500}}>{quantity}</Typography>
+                                    <IconButton size='large' disabled={quantity >= 10} onClick={handleIncreaseQuantity}>
+                                         <AddCircleOutlineOutlinedIcon fontSize='large'/>
+                                    </IconButton>
+                                </Box>
                             </Box>
                         </Card>
                         <ImportantInfoCard nutritionalData={item.nutritionalData} allergenData={item.allergens} modalOpen={open} openModal={handleOpen} closeModal={handleClose}/>
@@ -240,9 +312,11 @@ const ItemViewPage = ()=>
                         ))
                         }
                     </Stack>
-                 </NavBar>
-            </ThemeProvider>
+                </NavBar>
         )
-    }
+}
+    
 }
 export default ItemViewPage
+//
+//   <CardMedia image={item.largeImage ? item.largeImage : item.image} sx={{height: 175, backgroundSize: item.largeImage ? 'cover' : 'contain'}}/>
