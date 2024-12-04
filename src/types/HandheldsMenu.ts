@@ -71,4 +71,4 @@ export const HandheldsMenu =
     "Flaming 5 Pepper Burger": Flaming5PepperBurger,
 }
 
-export const HandheldsList: FoodItem[] = [BaconAvocadoCheeseBurger, PotRoastMelt, SingleCheeseburger, DoubleCheeseburger, Slamburger, Flaming5PepperBurger]
+export const HandheldsList: FoodItem[] = [BaconAvocadoCheeseBurger, PotRoastMelt, TraditionalClubSandwich, SingleCheeseburger, DoubleCheeseburger, Slamburger, Flaming5PepperBurger]
