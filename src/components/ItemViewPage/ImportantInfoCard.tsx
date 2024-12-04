@@ -11,6 +11,7 @@ interface ImportantInfoCardProps
     openModal: ()=>void,
     closeModal: ()=>void,
 }
+
 const popupStyle = {
     display: 'flex',
     flexDirection: 'column',
