@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import SearchBar from './SearchBar'; // Adjust the import path
 import { Box, Paper, List, ListItem, ListItemText, ListItemAvatar, Avatar} from '@mui/material';
 import { HandheldsList } from '../types/HandheldsMenu';
@@ -6,6 +6,12 @@ import { HandheldsList } from '../types/HandheldsMenu';
 const ItemSearch = () => {
     const [searchQuery, setSearchQuery] = useState('');
     const [filteredItems, setFilteredItems] = useState(HandheldsList);
+    const [searchParams, setSearchParams] = useSearchParams();
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        setSearchQuery(''); // Clear search text
+    }, [searchParams]);
 
     const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
         const query = event.target.value.toLowerCase();
@@ -19,10 +25,17 @@ const ItemSearch = () => {
         );
     };
 
+    const handleItemClick = (itemName: string) => {
+        setSearchQuery(''); // Clear the search query
+        setSearchParams({ item: itemName }); 
+        navigate(`/browse/customize?item=${encodeURIComponent(itemName)}`); 
+    }
+
     return (
         <Box >
             {/* Search Bar */}
             <SearchBar placeholder="Search" onChange={handleSearch}/>
+
             {/* Dropdown Menu */}
             {searchQuery && (
                 <Paper
@@ -50,6 +63,7 @@ const ItemSearch = () => {
                                         },
                                         marginBottom:'8px'
                                     }}
+                                    onClick={() => handleItemClick(item.name)}
                                 >
                                     {/* Item Image */}
                                     <ListItemAvatar>

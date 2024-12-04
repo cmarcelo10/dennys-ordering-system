@@ -1,5 +1,4 @@
 import DiscountItem from "./DiscountItem.ts";
-import DummyText from "./DummyText.ts";
 
 export const KidsHourDiscount:DiscountItem = 
 {
