@@ -155,7 +155,7 @@ const CategoryMenu = () =>
             setCardsArray(FoodItems.HandheldsList);
             setCategoryName(catName)
         } else if (catName === "Deals and Promos"){
-            setCategoryName(categoryName);
+            setCategoryName(catName);
         }
     }));
 

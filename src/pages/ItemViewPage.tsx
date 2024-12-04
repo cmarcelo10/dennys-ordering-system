@@ -11,7 +11,7 @@ import CustomizationCategory from '../types/CustomizationCategory'
 import CustomizationOption from '../types/CustomizationOption'
 import Breadcrumbs from '@mui/material/Breadcrumbs'
 import BreadcrumbNode from '../types/BreadcrumbNode'
-import { Link, useNavigate, useParams } from 'react-router-dom'
+import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import Typography from '@mui/material/Typography'
 import HandheldsMenu from './CategoryMenu'
 import { HandheldsList } from '../types/HandheldsMenu.ts'
@@ -77,6 +77,7 @@ const ItemViewPage = ()=>
     const {height, width} = WindowDimensions();
     const [pageModified, setPageModified] = React.useState(false); // to track whether the user has changed parts of the page
     const basePrice = React.useRef(0);
+    const [URLSearchParams, setURLSearchParams] = useSearchParams();
     const originalSelections = React.useRef<Customizations>({});
     const cartInitialized = React.useRef(false);
     const {cartItems, addToCart, saveToCart} = React.useContext(CartContext);
@@ -195,7 +196,6 @@ const ItemViewPage = ()=>
             window.removeEventListener("beforeunload", warnBeforeUnload);
         });
     },[pageModified]);
-    
     React.useEffect(()=>
     {
         window.scrollTo(0,0);
@@ -210,7 +210,7 @@ const ItemViewPage = ()=>
             waitForPageLoad();
             // useEffect is usually used for handling external events, but in this case
             // I use it to prevent this initialization from happening every time.
-            const queryParams = new URLSearchParams(window.location.search);
+            const queryParams = URLSearchParams;
             const itemName = queryParams.get('item');
             if(itemName)
             {
@@ -266,7 +266,7 @@ const ItemViewPage = ()=>
                 console.log("ItemViewPage did unmount");
             }
         )
-    }, []);
+    }, [URLSearchParams]);
 
     function handleChange(newPrice: number, newAmountSelected:number, categoryName: string, updatedOptions: {[key:string]:CustomizationOption})
     {
