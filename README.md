@@ -1,50 +1,20 @@
-# React + TypeScript + Vite
+# Dennys Ordering System - CPSC 481
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## To Do:
 
-Currently, two official plugins are available:
+### High Priority
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+#### Estimated time: 2 hrs
+* ``BeforeUnload`` guards on all pages (post-development)
+* Confirmation Dialog for saving changes / adding item
+* Investigate issue where refreshing on vercel causes a crash
+* Snackbars for applying deals / adding items (use ``state`` on ``navigate``)
+* Unique assets for all categories **(critical task)**
+* Increase the height of the bottom bar
 
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
-
-- Configure the top-level `parserOptions` property like this:
-
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
-
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
-
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
-
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
-```
+### Low Priority
+* Side Salad
+* Session Storage
+* Adding other pages
+* Code organization (for readability while developing / optimization)
+    * If reorganization takes > 10 mins, not worth it

@@ -1,4 +1,5 @@
 import SlamburgerImage from '../assets/food/Slamburger.png'
+import SignatureBreakfastsImage from '../assets/food/SignatureBreakfasts.jpg'
 import Category from './Category.ts';
 const Categories: Category[] = [
     {index: 0, name: 'Featured', image: SlamburgerImage},
@@ -10,6 +11,7 @@ const Categories: Category[] = [
     {index: 6, name: 'Savoury Omelettes', image: SlamburgerImage},
     {index: 7, name: 'Premium Pancakes', image: SlamburgerImage},
     {index: 8, name: 'Entrées', image: SlamburgerImage},
+    {index: 9, name: 'Signature Breakfasts', image: SignatureBreakfastsImage}
 ];
 
 export default Categories;

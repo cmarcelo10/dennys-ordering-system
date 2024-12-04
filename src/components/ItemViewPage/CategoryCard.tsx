@@ -1,7 +1,7 @@
 import { Card, CardHeader, Typography, Divider, CardContent, Box } from "@mui/material";
 import React from "react";
-import theme from "../styles/Theme";
-import CustomizationCategory, { CustomizationOption } from "../types/CustomizationCategory";
+import theme from "../../styles/Theme";
+import CustomizationCategory, { CustomizationOption } from "../../types/CustomizationCategory";
 import CustomizationPanel from "./CustomizationPanel";
 interface CategoryCardProps
 {
@@ -89,7 +89,7 @@ const CategoryCard = ({name, category, disableNewSelection, onChange}: CategoryC
                                 <CustomizationPanel key={itemName+"panel"} name={itemName} price={properties.price} selected={properties.selected!} 
                                     onClick={handleSelection}
                                     disabled={disableNewSelection && !properties.selected && !category.optionsAreMutuallyExclusive}/>
-                                    {index < Object.keys(options).length - 1 ? (<Divider key={itemName + "divider"}/>) : (<></>)}
+                                {index < Object.keys(options).length - 1 ? (<Divider key={itemName + "divider"}/>) : (<></>)}
                             </React.Fragment>
                         ))
                     }

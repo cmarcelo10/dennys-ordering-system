@@ -7,7 +7,7 @@ import { CartContext } from '../contexts/CartContext';
 import CartItem from '../types/CartItem';
 import Slamburger from '../types/Slamburger';
 // dummy menu items for testing
-import { HandheldsList } from '../types/MenuItems';
+import { HandheldsList } from '../types/HandheldsMenu';
 import FoodItem from '../types/FoodItem';
 import { v4 } from 'uuid';
 import { ArrowBackIosRounded } from '@mui/icons-material';
@@ -24,6 +24,11 @@ const isStrictMode = ()=>
 
 const CartPage = () => {
     const navigate = useNavigate();
+    const [dirty, setDirty] = React.useState(false);
+    function safePageReload(_e: BeforeUnloadEvent)
+    {
+
+    }
     // set up cart context to get cart items
     const { cartItems, totalPrice, saveToCart, addToCart, removeFromCart} = useContext(CartContext);
     function handleChangeQuantity(itemID: string, newQuantity: number)
@@ -35,13 +40,15 @@ const CartPage = () => {
             saveToCart(item);
         }
     }
-    
+
     // cart appears to be doubling price whenever edit is enabled
     React.useEffect(()=>{
+        console.log(window.location.href);
         if(Object.keys(cartItems).length === 0)
         {
             addToCart({id: '', item: Slamburger, quantity: 1, price: Slamburger.price});
         }
+
         }, []);
     return (
       <ThemeProvider theme={theme}>

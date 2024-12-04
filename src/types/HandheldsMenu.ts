@@ -61,4 +61,14 @@ export const Flaming5PepperBurger:FoodItem =
     image: Flaming5PepperBurgerImg,
 }
 
-export const HandheldsList: FoodItem[] = [BaconAvocadoCheeseBurger, PotRoastMelt, Slamburger, TraditionalClubSandwich, SingleCheeseburger, DoubleCheeseburger, Flaming5PepperBurger];
+export const HandheldsMenu = 
+{
+    "Bacon Avocado Cheeseburger": BaconAvocadoCheeseBurger,
+    "Pot Roast Melt": PotRoastMelt,
+    "Single Cheeseburger": SingleCheeseburger,
+    "Double Cheeseburger": DoubleCheeseburger,
+    "Slamburger": Slamburger,
+    "Flaming 5 Pepper Burger": Flaming5PepperBurger,
+}
+
+export const HandheldsList: FoodItem[] = [BaconAvocadoCheeseBurger, PotRoastMelt, SingleCheeseburger, DoubleCheeseburger, Slamburger, Flaming5PepperBurger]
