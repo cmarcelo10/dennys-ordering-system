@@ -1,7 +1,7 @@
 import { Card, CardHeader, Typography, CardContent, Box, Button, Modal, Divider } from "@mui/material";
 import React from "react";
-import AllergenData from "../types/AllergenData";
-import NutritionalData from "../types/NutritionalData";
+import AllergenData from "../../types/AllergenData";
+import NutritionalData from "../../types/NutritionalData";
 
 interface ImportantInfoCardProps
 {

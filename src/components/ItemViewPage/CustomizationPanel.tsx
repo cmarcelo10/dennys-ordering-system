@@ -1,6 +1,6 @@
 import { Box, ThemeProvider, Typography } from "@mui/material";
-import theme from "../styles/Theme";
-import CustomizationOption from "../types/CustomizationOption";
+import theme from "../../styles/Theme";
+import CustomizationOption from "../../types/CustomizationOption";
 import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
 import TaskAltRoundedIcon from '@mui/icons-material/TaskAltRounded';
 import React from "react";

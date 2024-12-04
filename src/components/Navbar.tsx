@@ -8,7 +8,7 @@ import ItemSearch from './ItemSearch';
 import PersonIcon from '@mui/icons-material/Person'
 import ShoppingCartTwoToneIcon from '@mui/icons-material/ShoppingCartTwoTone';
 import { useNavigate } from 'react-router-dom';
-import { Call } from '@mui/icons-material';
+import { Call, Person } from '@mui/icons-material';
 
 interface NavBarProps
 {
@@ -26,9 +26,12 @@ const Logo = React.memo(()=>
 )); // never reload the image.
 
 const CallServerButton = ()=>
-(<Fab sx={{position: 'fixed',height:'auto', borderRadius: 10, bottom: '5%', left: '3%', fontWeight: 1000, fontSize: 20, backgroundColor: theme.palette.dennysRed.main, color: theme.palette.dennysRed.contrastText}} variant='extended'>
-     Call<br/>Server
+(<Fab sx={{position: 'fixed', height:'auto', borderRadius: 10, bottom: '8%', left: '2%', fontWeight: 1000, fontSize: 14, backgroundColor: theme.palette.dennysYellow.main, color: theme.palette.dennysYellow.contrastText}} variant='extended'>
+     <PersonIcon sx={{mr: 1}} />
+    <>Call <br/> Server</>
 </Fab>);
+
+
 const NavBar = ({bottomLabel, onClick, disableButton, children, hideCallServerButton}: NavBarProps) => {
     const navigate = useNavigate();
     function handleClick(_event: React.MouseEvent)
@@ -57,15 +60,17 @@ const NavBar = ({bottomLabel, onClick, disableButton, children, hideCallServerBu
             <Toolbar/>
             {!hideCallServerButton && (<CallServerButton/>)}
             <AppBar sx={{zIndex: 1000, backgroundColor: '#464340', alignContent: 'center', justifyContent:'center', position: 'fixed', bottom: 0, top: 'auto'}} elevation={0}>
-                    <Toolbar sx={{display: 'flex', flexDirection: 'row', alignContent: 'center', justifyContent: 'center'}}>
-                      
-                        
+                    <Toolbar sx={{display: 'flex', flexDirection: 'row', alignContent: 'center', justifyContent: 'center', pb: 0.5, pt: 0.5}}>
+                        <IconButton>
+                            
+                        </IconButton>
                         <Button variant='contained' disabled={disableButton} onClick={handleClick} 
                         sx={{backgroundColor: theme.palette.dennysRed.main, 
                             color: theme.palette.dennysRed.contrastText, 
-                            minWidth: '50%', 
-                            height: '40px', 
+                            minWidth: '40%', 
+                            height: '45px', 
                             fontSize: 20, 
+                            postion: 'fixed',
                             textTransform: 'none',
                             '&:disabled':
                             {

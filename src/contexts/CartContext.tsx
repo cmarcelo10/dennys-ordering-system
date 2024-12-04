@@ -2,9 +2,10 @@ import React, {useState, useEffect} from 'react'
 import CartItem from '../types/CartItem.ts'
 import {v4 as uuid, v4, v5} from 'uuid';
 export type {default} from '../types/CartItem.ts';
+
 export interface Cart
 {
-    [key: string]: CartItem
+    [key: string]: CartItem,
 }
 interface CartContextProps
 {
@@ -14,6 +15,7 @@ interface CartContextProps
     addToCart: (item: CartItem) => void,
     removeFromCart: (itemID: string) => void,
     saveToCart: (item: CartItem) => void,
+    setCartPrice: (price: number) => void,
 }
 
 // React only uses this default context if the component is not wrapped in a context provider:
@@ -25,21 +27,43 @@ export const CartContext = React.createContext<CartContextProps>(
         setCartContext: (_items: Cart, _price: number) => {console.error("Not implemented")},
         addToCart: (_item: CartItem) => {console.error("Function not implemented")},
         removeFromCart: (_itemID: string) => {console.error("Function not implemented")},
-        saveToCart: (_item: CartItem) => {console.error("Function not implemented")}
+        saveToCart: (_item: CartItem) => {console.error("Function not implemented")},
+        setCartPrice: (_price: number) => {console.error("Function not implemented")},
     } // avoids using a "null" default context
 );
+
+export function verboseLogCart(cart: Cart)
+{
+
+    for (const key in cart)
+    {
+        if(cart.hasOwnProperty(key))
+        {
+            console.log(`${key}: ${cart[key]}`);
+        }
+    }
+}
+
 export const CartProvider = ({children}:{children: React.ReactNode}) =>
 {
     const initialized = React.useRef(false);
     const [cart, setCart] = useState<Cart>({});
     const [price, setPrice] = useState(0);
+
     const saveToCart = (item: CartItem) =>
     {
         let newPrice = 0;
-        Object.values(cart).forEach((value)=>newPrice += value.price * value.quantity);
+        Object.entries(cart).forEach(([key, value])=>{
+            console.log(`${key}: $ ${value.price}`);
+            newPrice += value.price * value.quantity
+            console.log(`New Price: $ ${newPrice}`);
+        });
         setPrice(newPrice);
         console.log(item);
-        setCart((prev)=>({...prev, [item.id]: item}));
+        setCart((prev)=>{
+            prev[item.id] = item;
+            return prev;
+        });
     }
     const removeFromCart = (itemID: string) =>
     {
@@ -62,13 +86,17 @@ export const CartProvider = ({children}:{children: React.ReactNode}) =>
         setCart((prevCart)=>({...prevCart, [item.id]:item}));
         setPrice((prev) => prev + item.price);
     }
+    const setCartPrice = (price :number)=>
+    {
+        setPrice(price);
+    }
     const setCartContext = (items: Cart, price: number)=>
     {
         setPrice(price);
         setCart(items); // replace the whole thing
     }
     return (
-        <CartContext.Provider value={{cartItems: cart, totalPrice: price, setCartContext, addToCart, removeFromCart, saveToCart}}>
+        <CartContext.Provider value={{cartItems: cart, totalPrice: price, setCartContext, setCartPrice, addToCart, removeFromCart, saveToCart}}>
             {children}
         </CartContext.Provider>
     );

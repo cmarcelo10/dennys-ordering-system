@@ -41,9 +41,11 @@ const router = createBrowserRouter([
 ]);
 
 createRoot(document.getElementById('root')!).render(
-    <ThemeProvider theme={theme}>
-        <CartProvider>
-            <RouterProvider router={router} />
-        </CartProvider>
-    </ThemeProvider>
+    <React.StrictMode>
+        <ThemeProvider theme={theme}>
+            <CartProvider>
+                <RouterProvider router={router} />
+            </CartProvider>
+        </ThemeProvider>
+    </React.StrictMode>
 )

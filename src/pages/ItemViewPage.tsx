@@ -14,23 +14,19 @@ import BreadcrumbNode from '../types/BreadcrumbNode'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import Typography from '@mui/material/Typography'
 import HandheldsMenu from './CategoryMenu'
-import { HandheldsList } from '../types/MenuItems'
+import { HandheldsList } from '../types/HandheldsMenu.ts'
 import { Box, Button, Card, CardActionArea, CardActions, CardContent, CardHeader, CardMedia, CircularProgress, Container, createTheme, Divider, IconButton, Stack, Table, ThemeProvider, useTheme } from '@mui/material'
 import ArrowBackIosRounded from '@mui/icons-material/ArrowBackIosRounded'
 import ErrorPage from "../components/ErrorPage"
 import theme from '../styles/Theme.ts'
-import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
-import TaskAltRoundedIcon from '@mui/icons-material/TaskAltRounded';
 import { Immer } from 'immer'
-import { CardGiftcard, Diversity1, EnhancedEncryptionRounded, Window } from '@mui/icons-material'
-import CategoryCard from '../components/CateogryCard.tsx'
-import ImportantInfoCard from '../components/ImportantInfoCard.tsx'
+import CategoryCard from '../components/ItemViewPage/CategoryCard.tsx'
+import ImportantInfoCard from '../components/ItemViewPage/ImportantInfoCard.tsx'
 import { CartContext } from '../contexts/CartContext.tsx'
 import CartItem from '../types/CartItem.ts'
-import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOutlined';
-import RemoveCircleOutlineOutlinedIcon from '@mui/icons-material/RemoveCircleOutlineOutlined';
 import { v4 } from 'uuid'
 import WindowDimensions from '../components/WindowDimensions.tsx'
+import QuantitySelector from '../components/ItemViewPage/QuantitySelector.tsx'
 // Later problem: lifting the state up to the parent.
 
 
@@ -72,14 +68,22 @@ function timeout(delay: number)
 {
     return new Promise(res =>setTimeout(res, delay));
 }
+
+
+// 
 const ItemViewPage = ()=>
 {
+    const _itemName = React.useRef<string>('');
     const {height, width} = WindowDimensions();
+    const [pageModified, setPageModified] = React.useState(false); // to track whether the user has changed parts of the page
+    const basePrice = React.useRef(0);
+    const originalSelections = React.useRef<Customizations>({});
+    const cartInitialized = React.useRef(false);
     const {cartItems, addToCart, saveToCart} = React.useContext(CartContext);
     const menu = React.useRef(HandheldsList);
     const [editing, setEditing] = React.useState(false);
-    const [loading, setLoading] = React.useState(false);
-    const [itemID, setItemID] = React.useState('');
+    const [loading, setLoading] = React.useState(false); // this flag is unused
+    const isSaving = React.useRef(false);
     const navigate = useNavigate();
     const [itemFound, setItemFound] = React.useState(true);
     const [item, setFoodItem] = React.useState<FoodItem>(); // Adding the types 
@@ -87,99 +91,176 @@ const ItemViewPage = ()=>
     const [cartItem, setCartItem] = React.useState<CartItem>();
     const [custOptions, setCustOptions] = React.useState<Customizations>({})
     const [price, setPrice] = React.useState<number>(0);
-    const [quantity, setQuantity] = React.useState(1);
-    const [sideSaladSelected, setSideSaladSelected] = React.useState<boolean>(false);
+    const [quantity, setQuantity] = React.useState(1); 
+    const [sideSaladSelected, setSideSaladSelected] = React.useState<boolean>(false); // future to do
     const [open, setOpen] = React.useState(false);
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
     const parentLocation = item ? `/browse?category=${encodeURIComponent(item.parentCategory)}` : "/";
     const [disableAddItem, setDisableAddItem] = React.useState(true);
-    function handleIncreaseQuantity(_event: React.MouseEvent)
+
+    const saveChanges = ()=>
     {
-        setQuantity((prev)=>prev + 1);
+        if(pageModified)
+        {
+            window.sessionStorage.setItem("itemname", _itemName.current)
+            window.sessionStorage.setItem("customizations", JSON.stringify(custOptions));
+            window.sessionStorage.setItem("price", JSON.stringify(price));
+        }
     }
-    function handleDecreaseQuantity(_event: React.MouseEvent)
+
+    // Minor performance optimization so that React doesn't re-create this function object on re-renders
+    const warnBeforeUnload = React.useCallback(function warnBeforeReload(event: BeforeUnloadEvent)
     {
-        setQuantity((prev)=>prev - 1);
-    }
+        saveChanges();
+        window.sessionStorage.setItem("isReload", "true");
+        if(pageModified)
+        {
+            event.preventDefault();
+            event.returnValue = ""; // deprecated, but necessary
+        }
+    }, [pageModified]);
+
     function handleAddToCart()
     {
-        if(item)
+        setLoading(true);
+        if(!isSaving.current)
         {
-            // deep-copying to avoid memory shenanigans 
-            let foodItemCopy =  structuredClone(item);
-            foodItemCopy.customizations = structuredClone(custOptions);
-            let id = '';
-            addToCart({id: '', item: foodItemCopy, price: price, quantity: quantity});
-            navigate(parentLocation)
+            isSaving.current = true;
+            if(item)
+            {
+                // remove the storage items
+                // window.sessionStorage.removeItem('itemname');
+                // window.sessionStorage.removeItem('customizations');
+                // window.sessionStorage.removeItem('price');
+                // window.sessionStorage.removeItem('isReload');
+
+                // deep-copying to avoid memory shenanigans 
+                let foodItemCopy =  structuredClone(item);
+                foodItemCopy.customizations = structuredClone(custOptions);
+                addToCart({id: '', item: foodItemCopy, price: price, quantity: quantity});
+                navigate(parentLocation, {state:{
+                    itemAdded: true,
+                    itemName: item.name
+                }}
+                )
+            }
         }
-        else console.error("unable to add item to cart");
         return; // error.
     }
     function handleSaveEdits()
     {
+        if(isSaving.current) return;
+        isSaving.current = true
         if(cartItem)
         {
+            let comparePrice = 0;
             // structured clone is not required here.
             cartItem.item.customizations = custOptions;
+            Object.entries(custOptions).forEach(([key, value])=>
+                {
+                    let compareCategoryPrice = 0;
+                    console.log(`Selections for ${key}:`);
+                    Object.entries(value.options).forEach(([key, value])=>
+                    {
+                        console.log(`${key} is selected: ${value.selected}`);
+                        if(value.selected)
+                        {
+                            console.log(`the price of ${key} is ${value.price}`);
+                            compareCategoryPrice +=value.price;
+                        }
+                    })
+                    if(compareCategoryPrice !== value.totalPrice)
+                        console.error(`the price of ${key} should be ${compareCategoryPrice} but was ${value.totalPrice}`);
+                    comparePrice+=compareCategoryPrice;
+                }
+            )
+            if(comparePrice + cartItem.item.price !== price)
+            {
+                console.error(`the price should be ${comparePrice} but was ${price}`);
+            }
             cartItem.price = price;
             cartItem.quantity = quantity;
             saveToCart(cartItem);
+            navigate('/cart');
         }
-        navigate('/cart');
     }
 
+    // Separate useEffect to add event listeners on page reloads
     React.useEffect(()=>
     {
-        async function waitForPageLoad()
+        window.addEventListener("beforeunload", warnBeforeUnload);
+        return(()=>
         {
-            timeout(500);
-        }
-        waitForPageLoad();
-        // useEffect is usually used for handling external events, but in this case
-        // I use it to prevent this initialization from happening every time.
-        const queryParams = new URLSearchParams(window.location.search);
-        const itemName = queryParams.get('item');
-        const cartItemID = queryParams.get('id');
-        if(cartItemID)
+            window.removeEventListener("beforeunload", warnBeforeUnload);
+        });
+    },[pageModified]);
+    
+    React.useEffect(()=>
+    {
+        window.scrollTo(0,0);
+        if(!cartInitialized.current)
         {
-            // edit mode.
-            const foundCartItem = cartItems[decodeURIComponent(cartItemID)];
-            if(foundCartItem)
+            async function waitForPageLoad()
             {
-                console.log("Found an item in the cart that matches");
-                console.log(foundCartItem);
-                setPrice(foundCartItem.price);
-                setFoodItem(foundCartItem.item);
-                setQuantity(foundCartItem.quantity);
-                setCustOptions(foundCartItem.item.customizations);
-                setDisableAddItem(false);
-                setEditing(true);
+                setLoading(true);
+                timeout(500);
+                setLoading(false);
             }
-        }
-        else if(itemName)
-        {
-            const foundItem = menu.current.find((entry)=>entry.name === itemName);
-            if(foundItem)
+            waitForPageLoad();
+            // useEffect is usually used for handling external events, but in this case
+            // I use it to prevent this initialization from happening every time.
+            const queryParams = new URLSearchParams(window.location.search);
+            const itemName = queryParams.get('item');
+            if(itemName)
             {
-                foodItem.current = structuredClone(foundItem); // this will be used for data tracking purposes
-                purgeCustomizations(foundItem);
-                setFoodItem(foundItem);
-                setCustOptions(foundItem.customizations);
-                setPrice(foundItem.price);
-                console.log("ItemViewPage did mount")
+                _itemName.current = itemName;
             }
+            const cartItemID = queryParams.get('id');
+            if(cartItemID)
+            {
+                // edit mode.
+                const foundCartItem = cartItems[decodeURIComponent(cartItemID)];
+                if(foundCartItem)
+                {
+                    console.log("Found an item in the cart that matches");
+                    console.log(foundCartItem);
+                    setPrice(foundCartItem.price);
+                    basePrice.current = foundCartItem.item.price;
+                    setFoodItem(foundCartItem.item);
+                    setQuantity(foundCartItem.quantity);
+                    setCustOptions(foundCartItem.item.customizations);
+                    setCartItem(foundCartItem);
+                    setDisableAddItem(false);
+                    setEditing(true);
+                }
+                cartInitialized.current = true;
+            }
+            else if(itemName)
+            {
+                const foundItem = menu.current.find((entry)=>entry.name === itemName);
+                if(foundItem)
+                {
+                    foodItem.current = structuredClone(foundItem); // this will be used for data tracking purposes
+                    purgeCustomizations(foundItem);
+                    setFoodItem(foundItem);
+                    setCustOptions(foundItem.customizations);
+                    setPrice(foundItem.price);
+                    console.log("ItemViewPage did mount");
+                }
+                setItemFound(false);
+            }
+            else
+            {
+                console.error("not found");
+            }
+            // TO DO: event listeners and saving state.
         }
-        else
-        {
-            console.error("not found");
-        }
-        // TO DO: event listeners and saving state.
-
         return(
             ()=>
             {
-                if(item) purgeCustomizations(item); 
+                
+                if(item && !editing) purgeCustomizations(item); 
                 // reset the selections when the component unmounts
                 // but only do this if we're not editing, because shallow copying is a thing.
                 console.log("ItemViewPage did unmount");
@@ -190,6 +271,7 @@ const ItemViewPage = ()=>
     function handleChange(newPrice: number, newAmountSelected:number, categoryName: string, updatedOptions: {[key:string]:CustomizationOption})
     {
         let totalPrice = 0;
+        setPageModified(true);
         const category = custOptions[categoryName];
         console.log(`the total price for the category ${categoryName} is currently $${category.totalPrice}`);
         category.totalPrice = newPrice;
@@ -256,7 +338,7 @@ const ItemViewPage = ()=>
                         </Breadcrumbs>
                     </Box>
                     <Stack className='customizationStack' spacing={3} pb={'70px'} pt={3}>
-                        <Card key={item.name}  elevation={5} sx={{position: 'sticky', display: "flex", flexDirection: 'column', borderRadius: 2, backgroundColor: "#F2EEEA"}}>
+                        <Card key={item.name}  elevation={5} sx={{position: 'sticky', display: "flex", flexDirection: 'column', borderRadius: 2, backgroundColor: theme.palette.beige.main}}>
                             <Box sx={{padding:'4px', paddingLeft: 1, paddingRight: 1}}>
                                 <CardHeader sx={{
                                     fontWeight: 500, 
@@ -287,16 +369,7 @@ const ItemViewPage = ()=>
                                         </Box>
                                     </Box>
                                 </CardContent>
-                                <Box sx={{display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'right'}}>
-                                    <Typography> Quantity: </Typography>
-                                    <IconButton size='large' disabled={quantity <= 1} onClick={handleDecreaseQuantity}>
-                                        <RemoveCircleOutlineOutlinedIcon fontSize='large'/>
-                                    </IconButton>
-                                    <Typography sx={{fontSize: 20, ml: 3, mr: 3, fontWeight: 500}}>{quantity}</Typography>
-                                    <IconButton size='large' disabled={quantity >= 10} onClick={handleIncreaseQuantity}>
-                                         <AddCircleOutlineOutlinedIcon fontSize='large'/>
-                                    </IconButton>
-                                </Box>
+                                <QuantitySelector initial={quantity} min={1} max={10} onChange={setQuantity}/>
                             </Box>
                         </Card>
                         <ImportantInfoCard key={'importantInfoCard'} nutritionalData={item.nutritionalData} allergenData={item.allergens} modalOpen={open} openModal={handleOpen} closeModal={handleClose}/>
@@ -317,9 +390,9 @@ const ItemViewPage = ()=>
                     </Stack>
                 </NavBar>
         )
+    }
 }
-    
-}
+
 export default ItemViewPage
 //
 //   <CardMedia image={item.largeImage ? item.largeImage : item.image} sx={{height: 175, backgroundSize: item.largeImage ? 'cover' : 'contain'}}/>

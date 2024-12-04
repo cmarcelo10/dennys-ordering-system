@@ -23,5 +23,5 @@
     "noUncheckedSideEffectImports": true,
     "noImplicitAny": false
   },
-  "include": ["src"]
+  "include": ["src", "src/types/HandheldsMenu.ts"]
 }

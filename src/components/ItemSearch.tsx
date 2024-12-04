@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import SearchBar from './SearchBar'; // Adjust the import path
 import { Box, Paper, List, ListItem, ListItemText, ListItemAvatar, Avatar} from '@mui/material';
-import { HandheldsList } from '../types/MenuItems';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { HandheldsList } from '../types/HandheldsMenu';
 
 const ItemSearch = () => {
     const [searchQuery, setSearchQuery] = useState('');
@@ -35,11 +34,7 @@ const ItemSearch = () => {
     return (
         <Box >
             {/* Search Bar */}
-            <SearchBar
-                placeholder="Search"
-                onChange={handleSearch}
-                value={searchQuery}
-            />
+            <SearchBar placeholder="Search" onChange={handleSearch}/>
 
             {/* Dropdown Menu */}
             {searchQuery && (
@@ -54,8 +49,7 @@ const ItemSearch = () => {
                         boxShadow: '0px 4px 6px rgba(0,0,0,0.1)',
                         overflow: 'hidden',
                         backgroundColor: 'white',
-                    }}
-                >
+                    }}>
                     <List>
                         {filteredItems.length > 0 ? (
                             filteredItems.map((item) => (
@@ -79,7 +73,6 @@ const ItemSearch = () => {
                                             sx={{ width: 56, height: 56, marginRight:'12px'}}
                                         />
                                     </ListItemAvatar>
-
                                     {/* Item Details */}
                                     <ListItemText
                                         primary={item.name}
