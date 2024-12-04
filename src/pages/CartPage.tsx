@@ -26,7 +26,6 @@ const CartPage = () => {
     const navigate = useNavigate();
     // set up cart context to get cart items
     const { cartItems, totalPrice, saveToCart, addToCart, removeFromCart} = useContext(CartContext);
-    const [dialogOpen, setDialogOpen] = React.useState(false);
     function handleChangeQuantity(itemID: string, newQuantity: number)
     {
         const item = cartItems[itemID];
@@ -36,9 +35,14 @@ const CartPage = () => {
             saveToCart(item);
         }
     }
-
+    
     // cart appears to be doubling price whenever edit is enabled
-    React.useEffect(()=>{addToCart({id: '', item: Slamburger, quantity: 1, price: Slamburger.price});}, [])
+    React.useEffect(()=>{
+        if(Object.keys(cartItems).length === 0)
+        {
+            addToCart({id: '', item: Slamburger, quantity: 1, price: Slamburger.price});
+        }
+        }, []);
     return (
       <ThemeProvider theme={theme}>
         <NavBar bottomLabel='Confirm & Place Order' hideCallServerButton>
@@ -57,7 +61,7 @@ const CartPage = () => {
             Review Order
           </Typography>
           <Box sx={{ paddingTop: 1, width: '100%', display: 'flex', flexDirection: 'column', alignContent: 'center', justifyContent: 'space-around'}}>
-            <Stack spacing={2} justifyContent={'space-around'}>
+            <Stack spacing={2} justifyContent={'space-around'} sx={{paddingBottom: 10}}>
                 {Object.values(cartItems).map((cartItem) => (
                     <CartItemCard key={cartItem.item.name + cartItem.id} cartItem={cartItem} handleChangeQuantity={handleChangeQuantity} handleRemoveItem={removeFromCart}/>
                 ))}
@@ -68,7 +72,6 @@ const CartPage = () => {
                         Total: ${totalPrice.toFixed(2)}
                 </Typography>
             </Paper>
-
         </NavBar>
       </ThemeProvider>
     );

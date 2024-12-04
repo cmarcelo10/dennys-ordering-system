@@ -22,8 +22,8 @@ import theme from '../styles/Theme.ts'
 import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
 import TaskAltRoundedIcon from '@mui/icons-material/TaskAltRounded';
 import { Immer } from 'immer'
-import { CardGiftcard, Diversity1, EnhancedEncryptionRounded, Window } from '@mui/icons-material'
-import CategoryCard from '../components/CateogryCard.tsx'
+import { CardGiftcard, Category, Diversity1, EnhancedEncryptionRounded, Window } from '@mui/icons-material'
+import CategoryCard from '../components/CategoryCard.tsx'
 import ImportantInfoCard from '../components/ImportantInfoCard.tsx'
 import { CartContext } from '../contexts/CartContext.tsx'
 import CartItem from '../types/CartItem.ts'
@@ -75,11 +75,15 @@ function timeout(delay: number)
 const ItemViewPage = ()=>
 {
     const {height, width} = WindowDimensions();
+    const basePrice = React.useRef(0);
+    const originalSelections = React.useRef<Customizations>({});
+    const cartInitialized = React.useRef(false);
     const {cartItems, addToCart, saveToCart} = React.useContext(CartContext);
     const menu = React.useRef(HandheldsList);
     const [editing, setEditing] = React.useState(false);
     const [loading, setLoading] = React.useState(false);
     const [itemID, setItemID] = React.useState('');
+    const isSaving = React.useRef(false);
     const navigate = useNavigate();
     const [itemFound, setItemFound] = React.useState(true);
     const [item, setFoodItem] = React.useState<FoodItem>(); // Adding the types 
@@ -102,84 +106,121 @@ const ItemViewPage = ()=>
     {
         setQuantity((prev)=>prev - 1);
     }
-    function handleAddToCart()
+    async function handleAddToCart()
     {
-        if(item)
+        setLoading(true);
+        if(!isSaving.current)
         {
-            // deep-copying to avoid memory shenanigans 
-            let foodItemCopy =  structuredClone(item);
-            foodItemCopy.customizations = structuredClone(custOptions);
-            let id = '';
-            addToCart({id: '', item: foodItemCopy, price: price, quantity: quantity});
-            navigate(parentLocation)
+            isSaving.current = true;
+            if(item)
+            {
+                // deep-copying to avoid memory shenanigans 
+                let foodItemCopy =  structuredClone(item);
+                foodItemCopy.customizations = structuredClone(custOptions);
+                addToCart({id: '', item: foodItemCopy, price: price, quantity: quantity});
+                navigate(parentLocation)
+            }
         }
-        else console.error("unable to add item to cart");
         return; // error.
     }
     function handleSaveEdits()
     {
+        if(isSaving.current) return;
+        isSaving.current = true
         if(cartItem)
         {
+            let comparePrice = 0;
             // structured clone is not required here.
             cartItem.item.customizations = custOptions;
+            Object.entries(custOptions).forEach(([key, value])=>
+                {
+                    let compareCategoryPrice = 0;
+                    console.log(`Selections for ${key}:`);
+                    Object.entries(value.options).forEach(([key, value])=>
+                    {
+                        console.log(`${key} is selected: ${value.selected}`);
+                        if(value.selected)
+                        {
+                            console.log(`the price of ${key} is ${value.price}`);
+                            compareCategoryPrice +=value.price;
+                        }
+                    })
+                    if(compareCategoryPrice !== value.totalPrice)
+                        console.error(`the price of ${key} should be ${compareCategoryPrice} but was ${value.totalPrice}`);
+                    comparePrice+=compareCategoryPrice;
+                }
+            )
+            if(comparePrice + cartItem.item.price !== price)
+            {
+                console.error(`the price should be ${comparePrice} but was ${price}`);
+            }
             cartItem.price = price;
             cartItem.quantity = quantity;
             saveToCart(cartItem);
+            navigate('/cart');
         }
-        navigate('/cart');
+        //navigate('/cart');
     }
 
     React.useEffect(()=>
     {
-        async function waitForPageLoad()
+        window.scrollTo(0,0);
+        if(!cartInitialized.current)
         {
-            timeout(500);
-        }
-        waitForPageLoad();
-        // useEffect is usually used for handling external events, but in this case
-        // I use it to prevent this initialization from happening every time.
-        const queryParams = new URLSearchParams(window.location.search);
-        const itemName = queryParams.get('item');
-        const cartItemID = queryParams.get('id');
-        if(cartItemID)
-        {
-            // edit mode.
-            const foundCartItem = cartItems[decodeURIComponent(cartItemID)];
-            if(foundCartItem)
+            async function waitForPageLoad()
             {
-                console.log("Found an item in the cart that matches");
-                console.log(foundCartItem);
-                setPrice(foundCartItem.price);
-                setFoodItem(foundCartItem.item);
-                setQuantity(foundCartItem.quantity);
-                setCustOptions(foundCartItem.item.customizations);
-                setDisableAddItem(false);
-                setEditing(true);
+                setLoading(true);
+                timeout(500);
+                setLoading(false);
             }
-        }
-        else if(itemName)
-        {
-            const foundItem = menu.current.find((entry)=>entry.name === itemName);
-            if(foundItem)
+            waitForPageLoad();
+            // useEffect is usually used for handling external events, but in this case
+            // I use it to prevent this initialization from happening every time.
+            const queryParams = new URLSearchParams(window.location.search);
+            const itemName = queryParams.get('item');
+            const cartItemID = queryParams.get('id');
+            if(cartItemID)
             {
-                foodItem.current = structuredClone(foundItem); // this will be used for data tracking purposes
-                purgeCustomizations(foundItem);
-                setFoodItem(foundItem);
-                setCustOptions(foundItem.customizations);
-                setPrice(foundItem.price);
-                console.log("ItemViewPage did mount")
+                // edit mode.
+                const foundCartItem = cartItems[decodeURIComponent(cartItemID)];
+                if(foundCartItem)
+                {
+                    console.log("Found an item in the cart that matches");
+                    console.log(foundCartItem);
+                    setPrice(foundCartItem.price);
+                    basePrice.current = foundCartItem.item.price;
+                    setFoodItem(foundCartItem.item);
+                    setQuantity(foundCartItem.quantity);
+                    setCustOptions(foundCartItem.item.customizations);
+                    setCartItem(foundCartItem);
+                    setDisableAddItem(false);
+                    setEditing(true);
+                }
+                cartInitialized.current = true;
             }
+            else if(itemName)
+            {
+                const foundItem = menu.current.find((entry)=>entry.name === itemName);
+                if(foundItem)
+                {
+                    foodItem.current = structuredClone(foundItem); // this will be used for data tracking purposes
+                    purgeCustomizations(foundItem);
+                    setFoodItem(foundItem);
+                    setCustOptions(foundItem.customizations);
+                    setPrice(foundItem.price);
+                    console.log("ItemViewPage did mount");
+                }
+            }
+            else
+            {
+                console.error("not found");
+            }
+            // TO DO: event listeners and saving state.
         }
-        else
-        {
-            console.error("not found");
-        }
-        // TO DO: event listeners and saving state.
-
         return(
             ()=>
             {
-                if(item) purgeCustomizations(item); 
+                if(item && !editing) purgeCustomizations(item); 
                 // reset the selections when the component unmounts
                 // but only do this if we're not editing, because shallow copying is a thing.
                 console.log("ItemViewPage did unmount");
