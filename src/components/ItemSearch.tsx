@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import SearchBar from './SearchBar'; // Adjust the import path
 import { Box, Paper, List, ListItem, ListItemText, ListItemAvatar, Avatar} from '@mui/material';
 import { HandheldsList } from '../types/HandheldsMenu';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 
 const ItemSearch = () => {
     const [searchQuery, setSearchQuery] = useState('');
