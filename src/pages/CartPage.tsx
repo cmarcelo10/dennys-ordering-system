@@ -30,14 +30,7 @@ const CartPage = () => {
     const [fromLocation, setFromLocation] = React.useState('');
     function navigateBack()
     {
-        if(fromLocation)
-        {
-            navigate(fromLocation);
-        }
-        else
-        {
-            navigate('/');
-        }
+        navigate('/');
     }
     function safePageReload(_e: BeforeUnloadEvent)
     {

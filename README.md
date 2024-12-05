@@ -9,7 +9,7 @@
 * Confirmation Dialog for saving changes / adding item
 * Investigate issue where refreshing on vercel causes a crash
 * Snackbars for applying deals / adding items (use ``state`` on ``navigate``)
-* Unique assets for all categories **(critical task)**
+* `Unique assets for all categories **(critical task)**
 [x] Increase the height of the bottom bar
 * ** 
 * **ADD REQUIRED TAGS TO ITEMS & QUANTITY SELECTORS**
