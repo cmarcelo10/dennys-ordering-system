@@ -58,17 +58,10 @@ export const CartProvider = ({children}:{children: React.ReactNode}) =>
     const saveToCart = (item: CartItem) =>
     {
         let newPrice = 0;
-        Object.entries(cart).forEach(([key, value])=>{
-            console.log('${key}: $ ${value.price}');
-            newPrice += value.price * value.quantity
-            console.log('New Price: $ ${newPrice}');
-        });
+        Object.values(cart).reduce((total, value)=>(total+=value.price * value.quantity), 0);
         setPrice(newPrice);
         console.log(item);
-        setCart((prev)=>{
-            prev[item.id] = item;
-            return prev;
-        });
+        setCart((prev)=>({...prev, [item.id]:item}));
     };
     const removeFromCart = (itemID: string) =>
     {
@@ -141,7 +134,7 @@ export const CartProvider = ({children}:{children: React.ReactNode}) =>
 
     useEffect(() => {
         recalculateTotalPrice(); // Recalculates the total whenever the cart updates. Needed for Discount to work
-    }, [cart]);
+    }, []);
     
     return (
         <CartContext.Provider value={{cartItems: cart, totalPrice: price, appliedDiscounts, setCartContext, setCartPrice, addToCart, removeFromCart, saveToCart, applyDiscount}}>

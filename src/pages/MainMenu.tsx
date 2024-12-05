@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from 'react'
 import Categories from '../types/MenuCategories'
 import Category from '../types/Category'
-import Navbar from '../components/Navbar'
+import Navbar from '../components/NavBar/Navbar.tsx'
 import { Card, createTheme, ThemeProvider, Stack, Typography, Toolbar, Grid2, CardMedia, CardActionArea, Breadcrumbs, Box, Divider} from '@mui/material'
 import CardContent from '@mui/material/CardContent'
 import CardHeader from '@mui/material/CardHeader';

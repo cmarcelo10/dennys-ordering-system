@@ -70,13 +70,11 @@ const DealsPage = ()=>
                                     color="primary" 
                                     onClick={() => handleApplyDiscount(item.appliesTo)}
                                     sx={{
-                                        backgroundColor: appliedDiscounts.includes(item.appliesTo)
-                                        ? "gray"
-                                        : theme.palette.dennysRed.main,
+                                        backgroundColor: theme.palette.dennysRed.main,
                                         width: { xs: '100%', md: 'auto' }, 
                                         maxWidth: '200px', 
                                         marginBottom: '1rem',
-                                    }}>
+                                    }} disabled={appliedDiscounts.includes(item.appliesTo)}>
                                     {appliedDiscounts.includes(item.appliesTo)
                                     ? "Applied"
                                     : "Apply"}

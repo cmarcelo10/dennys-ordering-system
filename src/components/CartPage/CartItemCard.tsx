@@ -1,17 +1,20 @@
 import React, { useState, useContext } from 'react';
-import { Card, CardHeader, CardContent, Typography, Divider, Button, IconButton, Box, CardActions, Accordion, AccordionSummary, ButtonGroup, AccordionDetails, Fade} from '@mui/material';
-import CartItem from '../types/CartItem';
+import { Card, CardHeader, CardContent, Typography, Divider, Button, IconButton, Box, CardActions, Accordion, AccordionSummary, ButtonGroup, AccordionDetails, Fade, TextareaAutosize, TextField} from '@mui/material';
+import CartItem from '../../types/CartItem';
 import RemoveIcon from '@mui/icons-material/RemoveCircleOutlineOutlined'
 import AddIcon from '@mui/icons-material/AddCircleOutlineOutlined'
 import { useNavigate } from 'react-router-dom';
-import theme from '../styles/Theme';
-import ExpandIcon from '@mui/icons-material/ExpandCircleDownTwoTone';
+import theme from '../../styles/Theme';
+import ExpandIcon from '@mui/icons-material/ExpandCircleDownOutlined';
 import DeleteConfirmationDialog from './DeleteConfirmationDialog';
+import CustomizationsAccordion from './CustomizationsAccordion';
+import { CartContext, CartProvider } from '../../contexts/CartContext';
 interface CartItemCardProps
 {
     cartItem: CartItem,
     handleRemoveItem: (itemID: string) => void,
     handleChangeQuantity: (itemID: string, updatedQuantity: number) => void
+    handleFormDataChange?: (itemID: string, comments: string) => void;
 }
 
 const DebugElement = ({debugItem}:{debugItem: any})=>
@@ -22,17 +25,28 @@ const DebugElement = ({debugItem}:{debugItem: any})=>
 
 const ShowHideTextElement = React.memo(({isExpanded}:{isExpanded: boolean}) =>
 (
-    <Typography variant="body1" sx={{width: '50px', textAlign: 'center', mr: 2, fontWeight: !isExpanded ? 600 : 400}}> 
+    <Typography variant="body1" sx={{width: '50px', textAlign: 'center', mr: 2, fontWeight: !isExpanded ? 600 : 400, color:theme.palette.primary.main}}> 
         {isExpanded ? (<>Hide</>) : (<>Show</>)}
     </Typography>
 ),(prev, next)=>(prev.isExpanded === next.isExpanded));
 
+
 const buttonBorderRadius = 8;
 
 const CartItemCard = ({cartItem, handleRemoveItem, handleChangeQuantity}:CartItemCardProps) => {
+    const {cartItems, saveToCart} = React.useContext(CartContext);
     const navigate = useNavigate();
-    const [expanded, setExpanded] = useState(false);
+    const [expanded, setExpanded] = useState(true);
+    const [commentsExpanded, setCommentsExpanded] =  useState(true);
     const [dialogOpen, setDialogOpen] = useState(false); 
+    const isEditingRef = React.useRef(false);
+    const [editing, setEditing] = React.useState(false);
+
+    const onBlur = () =>
+    {
+        
+    }
+
     const toggleExpanded = (_e: React.MouseEvent) => {
         setExpanded((prev)=>(!prev));
     };
@@ -64,7 +78,7 @@ const CartItemCard = ({cartItem, handleRemoveItem, handleChangeQuantity}:CartIte
             handleChangeQuantity(cartItem.id, cartItem.quantity - 1);
         }
     }
-  
+    
     const editItem = () => [
         navigate(`/cart/edit?id=${encodeURIComponent(cartItem.id)}`)
     ];
@@ -93,54 +107,40 @@ const CartItemCard = ({cartItem, handleRemoveItem, handleChangeQuantity}:CartIte
                     }}>{cartItem.item.name}</Typography>
                     </Box>
                 }></CardHeader>
-                <CardContent sx={{p: 1, pt: 1.5}}>
-                <Accordion expanded={expanded} elevation={0} defaultExpanded={true} sx={{
-                    boxShadow: 0,
-                    backgroundColor: '#F2EEEA',
-                    '&. MuiButtonBase-root':
-                    {
-                        minHeight: 0,
-                        height: 'auto',
-                        pl: 0,
-                        pr: 0,
-                    },
-                    }}>
+                <CardContent sx={{p: 1, pt: 0}}>
+                <CustomizationsAccordion customizations={cartItem.item.customizations}/>
+                <Accordion key={'comments'} expanded={expanded} elevation={0} defaultExpanded={true}>
                 <AccordionSummary sx={{
-                        backgroundColor: '#F2EEEA',
+                        backgroundColor: theme.palette.beige.main,
                         '&.MuiButtonBase-root':
                         {
-                            minHeight: 25,
-                            height: 30,
+                            minHeight:'50px',
+                            height: '50px',
                             pl: 0,
                             pr: 0,
+                            pt:1,
                         },
 
-                    }}onClick={toggleExpanded} expandIcon={<ExpandIcon fontSize='large'/>}>
+                    }}onClick={toggleExpanded} expandIcon={<ExpandIcon fontSize='medium'/>}>
                         <Box sx={{display: 'flex', flexDirection: 'row', flexGrow: 1, alignItems:'center', justifyContent: 'space-between', backgroundColor: 'inherit'}}>
-                            <Typography variant="h6" sx={{backgroundColor: 'inherit'}}> 
-                                Customizations:
+                            <Typography variant="h6" sx={{backgroundColor: 'inherit', fontSize: 18}}> 
+                            Special Comments:   
                             </Typography>
                             <ShowHideTextElement isExpanded={expanded}/>
                         </Box>
                     </AccordionSummary>
                     <AccordionDetails sx={{backgroundColor: '#F2EEEA', p: 1}}>
-                    {cartItem.item.customizations && Object.entries(cartItem.item.customizations).map(([key, category], index) => (
-                        category.amountSelected > 0 ? (<React.Fragment key={index}>
-                            <Typography variant="body2">{key}</Typography>
-                            <DebugElement key={key + category} debugItem={key} />
-                            {Object.entries(category.options).map(([key, option], index) => {
-                                if(option.selected === true)
-                                {
-                                    return (<Typography key={key + index} sx={{ marginLeft: 2 }}>
-                                            {key} (+$ {option.price.toFixed(2)})
-                                        </Typography>)
-                                }
-                                return (<React.Fragment key={key + index}></React.Fragment>)
-                            })}
-                        </React.Fragment>) : (<></>)
-                    ))}
+
+                <TextField sx={{
+                    width: '100%', 
+                    backgroundColor: 'white',
+                    '& .MuiInputBase-root':
+                    {
+                        p: 0.5,
+                        fontSize: 14,
+                    }}} multiline minRows={5} maxRows={5} placeholder='Write your comments here'/>
+
                     </AccordionDetails>
-                    <Typography variant="body1">Special Comments:</Typography>
                 </Accordion>
                 <Box sx={{display: 'flex', flexDirection: 'column', alignContent:'center', justifyContent:'space-between'}}>
                     <Box sx={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between', justifySelf: 'right', alignItems: 'center', pt:1}}>
@@ -154,7 +154,7 @@ const CartItemCard = ({cartItem, handleRemoveItem, handleChangeQuantity}:CartIte
                                 <Typography variant='h6' sx={{minWidth: 20, textAlign: 'center', mr: 1, ml: 1}}>
                                     {cartItem.quantity}
                                 </Typography>
-                                <IconButton onClick={handleDecrease} disabled={cartItem.quantity <=0} sx={{pr: 0}} size="medium">
+                                <IconButton onClick={handleDecrease} disabled={cartItem.quantity <=1} sx={{pr: 0}} size="medium">
                                     <RemoveIcon fontSize='medium'/>
                                 </IconButton>
                             </Box>
