@@ -176,7 +176,7 @@ const CategoryMenu = () =>
     else if (categoryName == "Deals and Promos"){
         return(
             <ThemeProvider theme={theme}>
-            <Navbar bottomLabel='foo'> {/* Bump this up to Main and use context*/}
+            <Navbar bottomLabel={`Review Order - ${totalPrice.toFixed(2)}`}> {/* Bump this up to Main and use context*/}
                 <MenuBreadcrumbs categoryName='Deals and Promotions'/>
                 <DealsPage />
             </Navbar>

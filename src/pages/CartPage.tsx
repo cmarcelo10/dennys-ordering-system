@@ -39,12 +39,17 @@ const CartPage = () => {
     // set up cart context to get cart items
     const { cartItems, totalPrice, saveToCart, addToCart, removeFromCart} = useContext(CartContext);
 
-    const applyDiscount = (itemName: string) => {
-        const item = Object.values(cartItems).find(cartItem => cartItem.item.name === itemName);
-        if (item) {
-            const discountedPrice = item.price / 2; // 50% off
-            saveToCart({ ...item, price: discountedPrice }); // Update the cart
-        }
+    const calculateTotalDiscount = () => {
+        return Object.values(cartItems).reduce((discountTotal, cartItem) => {
+            if (
+                cartItem.originalPrice &&
+                cartItem.price < cartItem.originalPrice
+            ) {
+                const discount = (cartItem.originalPrice - cartItem.price) * cartItem.quantity;
+                return discountTotal + discount;
+            }
+            return discountTotal;
+        }, 0);
     };
     
     function handleChangeQuantity(itemID: string, newQuantity: number)
@@ -96,6 +101,14 @@ const CartPage = () => {
             </Stack>
           </Box>
             <Paper elevation={2} sx={{backgroundColor: '#F2EEEA', borderWidth: 1, borderStyle: 'solid', borderColor: theme.palette.dennysGrey.main, display: 'flex', flexDirection: 'column', flexGrow: 1, alignItems: 'center', justifyContent: 'space-between', height: 'auto', width: 300, borderBox: 'content-box', borderTopRadius: 5, position: 'fixed', bottom: 56, left: '50%', transform: "translateX(-50%)"}}>
+            <Box sx={{display: 'flex', width: '100%', boxSizing: 'border-box', flexDirection: 'row', flexGrow: 1, justifyContent: 'space-between', fontSize: 16, p: 1}}>
+                    <Typography variant="h6" fontSize='inherit'>
+                        Discount
+                    </Typography>
+                    <Typography variant='h6' fontSize='inherit'>
+                            - ${calculateTotalDiscount().toFixed(2)} 
+                    </Typography>
+                </Box>
                <Box sx={{display: 'flex', width: '100%', boxSizing: 'border-box', flexDirection: 'row', flexGrow: 1, justifyContent: 'space-between', fontSize: 16, p: 1}}>
                     <Typography variant="h6" fontSize='inherit'>
                         Taxes
