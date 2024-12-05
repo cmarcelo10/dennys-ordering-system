@@ -1,8 +1,6 @@
 import React, { useState, useContext } from 'react';
-import { Card, CardHeader, CardContent, Typography, Divider, Button, Grid2, IconButton, Box, CardActions, Accordion, AccordionSummary, ButtonGroup, AccordionDetails, Fade} from '@mui/material';
-import { CartContext } from '../contexts/CartContext';
+import { Card, CardHeader, CardContent, Typography, Divider, Button, IconButton, Box, CardActions, Accordion, AccordionSummary, ButtonGroup, AccordionDetails, Fade} from '@mui/material';
 import CartItem from '../types/CartItem';
-import FoodItem from '../types/FoodItem';
 import RemoveIcon from '@mui/icons-material/RemoveCircleOutlineOutlined'
 import AddIcon from '@mui/icons-material/AddCircleOutlineOutlined'
 import { useNavigate } from 'react-router-dom';
@@ -24,10 +22,9 @@ const DebugElement = ({debugItem}:{debugItem: any})=>
 
 const ShowHideTextElement = React.memo(({isExpanded}:{isExpanded: boolean}) =>
 (
-
-        <Typography variant="body1" sx={{width: '50px', textAlign: 'center', mr: 2}}> 
-            {isExpanded ? (<>Hide</>) : (<>Show</>)}
-        </Typography>
+    <Typography variant="body1" sx={{width: '50px', textAlign: 'center', mr: 2, fontWeight: !isExpanded ? 600 : 400}}> 
+        {isExpanded ? (<>Hide</>) : (<>Show</>)}
+    </Typography>
 ),(prev, next)=>(prev.isExpanded === next.isExpanded));
 
 const buttonBorderRadius = 8;
@@ -96,7 +93,7 @@ const CartItemCard = ({cartItem, handleRemoveItem, handleChangeQuantity}:CartIte
                     }}>{cartItem.item.name}</Typography>
                     </Box>
                 }></CardHeader>
-                <CardContent>
+                <CardContent sx={{p: 1, pt: 1.5}}>
                 <Accordion expanded={expanded} elevation={0} defaultExpanded={true} sx={{
                     boxShadow: 0,
                     backgroundColor: '#F2EEEA',
@@ -126,40 +123,39 @@ const CartItemCard = ({cartItem, handleRemoveItem, handleChangeQuantity}:CartIte
                             <ShowHideTextElement isExpanded={expanded}/>
                         </Box>
                     </AccordionSummary>
-                    <AccordionDetails sx={{backgroundColor: '#F2EEEA'}}>
+                    <AccordionDetails sx={{backgroundColor: '#F2EEEA', p: 1}}>
                     {cartItem.item.customizations && Object.entries(cartItem.item.customizations).map(([key, category], index) => (
-                        <React.Fragment key={index}>
+                        category.amountSelected > 0 ? (<React.Fragment key={index}>
                             <Typography variant="body2">{key}</Typography>
                             <DebugElement key={key + category} debugItem={key} />
                             {Object.entries(category.options).map(([key, option], index) => {
                                 if(option.selected === true)
                                 {
-                                    console.log(key)
                                     return (<Typography key={key + index} sx={{ marginLeft: 2 }}>
                                             {key} (+$ {option.price.toFixed(2)})
                                         </Typography>)
                                 }
                                 return (<React.Fragment key={key + index}></React.Fragment>)
                             })}
-                        </React.Fragment>
+                        </React.Fragment>) : (<></>)
                     ))}
                     </AccordionDetails>
                     <Typography variant="body1">Special Comments:</Typography>
                 </Accordion>
                 <Box sx={{display: 'flex', flexDirection: 'column', alignContent:'center', justifyContent:'space-between'}}>
-                    <Box sx={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between', justifySelf: 'right', alignItems: 'center', pt:2}}>
+                    <Box sx={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between', justifySelf: 'right', alignItems: 'center', pt:1}}>
                             <Typography variant='h6'>
                                 Quantity:
                             </Typography>
                             <Box sx={{display: 'flex', flexDirection: 'row', justifyItems: 'space-around', alignItems: 'center', ml: 2}}>
-                                <IconButton onClick={handleIncrease} disabled={cartItem.quantity >=99} size='large'>
-                                    <AddIcon fontSize='large'/>
+                                <IconButton onClick={handleIncrease} disabled={cartItem.quantity >=99} size='medium'>
+                                    <AddIcon fontSize='medium'/>
                                 </IconButton>
                                 <Typography variant='h6' sx={{minWidth: 20, textAlign: 'center', mr: 1, ml: 1}}>
                                     {cartItem.quantity}
                                 </Typography>
-                                <IconButton onClick={handleDecrease} disabled={cartItem.quantity <=0} sx={{pr: 0}} size="large">
-                                    <RemoveIcon fontSize='large'/>
+                                <IconButton onClick={handleDecrease} disabled={cartItem.quantity <=0} sx={{pr: 0}} size="medium">
+                                    <RemoveIcon fontSize='medium'/>
                                 </IconButton>
                             </Box>
                         </Box>

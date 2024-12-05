@@ -11,8 +11,8 @@ import { HandheldsList } from '../types/HandheldsMenu';
 import FoodItem from '../types/FoodItem';
 import { v4 } from 'uuid';
 import { ArrowBackIosRounded } from '@mui/icons-material';
-import {Link, useNavigate} from 'react-router-dom';
-
+import {Link, useNavigate, useLocation} from 'react-router-dom';
+import WindowDimensions from '../components/WindowDimensions';
 const isStrictMode = ()=>
 {
     return (function()
@@ -23,8 +23,22 @@ const isStrictMode = ()=>
 }
 
 const CartPage = () => {
+    const {height, width} = WindowDimensions();
     const navigate = useNavigate();
     const [dirty, setDirty] = React.useState(false);
+    const {state} = useLocation();
+    const [fromLocation, setFromLocation] = React.useState('');
+    function navigateBack()
+    {
+        if(fromLocation)
+        {
+            navigate(fromLocation);
+        }
+        else
+        {
+            navigate('/');
+        }
+    }
     function safePageReload(_e: BeforeUnloadEvent)
     {
 
@@ -40,27 +54,32 @@ const CartPage = () => {
             saveToCart(item);
         }
     }
-
+    React.useEffect(()=>
+    {
+        if(state && state.fromLocation)
+        {
+            setFromLocation(state.fromLocation)
+        }
+    },[state]);
     // cart appears to be doubling price whenever edit is enabled
     React.useEffect(()=>{
         console.log(window.location.href);
         if(Object.keys(cartItems).length === 0)
         {
             addToCart({id: '', item: Slamburger, quantity: 1, price: Slamburger.price});
-        }
-
-        }, []);
+        }}, []);
+    
     return (
       <ThemeProvider theme={theme}>
         <NavBar bottomLabel='Confirm & Place Order' hideCallServerButton>
             <Box display="flex" flexDirection="row" alignContent={'center'}>
-                <IconButton sx={{pr: 3}} size="large" onClick={()=>navigate('/')}>
+                <IconButton sx={{pr: 3}} size="large" onClick={navigateBack}>
                     <ArrowBackIosRounded/>
                 </IconButton>
                 <Breadcrumbs sx={{alignContent: 'center'}} expandText='false'>
-                    <Link to={"/"} style={{textDecoration: 'none', color: 'inherit'}}> Main Menu </Link>{/* Need to link this to the main menu... it's kind of annoying that */}
+                    <Link to={"/"} style={{textDecoration: 'none', color: 'inherit'}}> Main Menu </Link>
                     <Typography>
-                        Review Order
+                        Cart
                     </Typography>
                 </Breadcrumbs>
             </Box>
@@ -74,10 +93,23 @@ const CartPage = () => {
                 ))}
             </Stack>
           </Box>
-            <Paper elevation={2} sx={{backgroundColor: '#F2EEEA', borderWidth: 1, borderStyle: 'solid', borderColor: theme.palette.dennysGrey.main, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'space-around', height: 60, width: 300, borderBox: 'content-box', borderTopRadius: 5, position: 'fixed', bottom: 56, left: '50%', transform: "translateX(-50%)"}}>
-                <Typography variant='h6' textAlign="center">
-                        Total: ${totalPrice.toFixed(2)}
-                </Typography>
+            <Paper elevation={2} sx={{backgroundColor: '#F2EEEA', borderWidth: 1, borderStyle: 'solid', borderColor: theme.palette.dennysGrey.main, display: 'flex', flexDirection: 'column', flexGrow: 1, alignItems: 'center', justifyContent: 'space-between', height: 'auto', width: 300, borderBox: 'content-box', borderTopRadius: 5, position: 'fixed', bottom: 56, left: '50%', transform: "translateX(-50%)"}}>
+               <Box sx={{display: 'flex', width: '100%', boxSizing: 'border-box', flexDirection: 'row', flexGrow: 1, justifyContent: 'space-between', fontSize: 16, p: 1}}>
+                    <Typography variant="h6" fontSize='inherit'>
+                        Taxes
+                    </Typography>
+                    <Typography variant='h6' fontSize='inherit'>
+                            + ${(0.05*totalPrice).toFixed(2)}
+                    </Typography>
+                </Box>
+                <Box sx={{display: 'flex', width: '100%', boxSizing: 'border-box', flexDirection: 'row', flexGrow: 1, justifyContent: 'space-between', fontSize: 16, p: 1}}>
+                    <Typography variant="h6" fontSize='inherit'>
+                        Total:
+                    </Typography>
+                    <Typography variant='h6' fontSize='inherit'>
+                            ${totalPrice.toFixed(2)}
+                    </Typography>
+                </Box>
             </Paper>
         </NavBar>
       </ThemeProvider>

@@ -10,7 +10,7 @@ interface CategoryCardProps
     disableNewSelection: boolean,
     onChange: (newPrice: number, newAmountSelected: number, categoryName: string, updatedOptions:{[key:string]:CustomizationOption}) => void
 }
-
+const requiredText = "(required)";
 const CategoryCard = ({name, category, disableNewSelection, onChange}: CategoryCardProps)=>
 {
     const [options, setOptions] = React.useState(category.options);
@@ -68,11 +68,25 @@ const CategoryCard = ({name, category, disableNewSelection, onChange}: CategoryC
                     p: '2px', 
                     pl: 1, 
                     pr: 1,
-                }
+                },
+                borderBottomWidth: 3,
+                borderBottomStyle: 'solid',
+                borderBottomColor: theme.palette.dennysGrey.main
             }} title={
-                <Typography variant='h4' fontSize={20} fontWeight={500}>
-                {category.label ? category.label : name}
-                </Typography>}/>
+                <Box sx={{display: 'flex', flexDirection: 'row', justifyContent:'space-between', alignItems:'center'}}>
+                <span>
+                    <Typography variant='h4' fontSize={20} fontWeight={500}>
+                        {category.label ? category.label : name}
+                    </Typography>
+                    <Typography>
+                        {category.isRequired ? requiredText : <></>}
+                    </Typography>
+                </span>
+                <Typography>
+                    {category.amountSelected}/ {category.maxSelectAmount}
+                </Typography>
+                </Box>
+            }/>
             <Divider/>
             <CardContent sx={{
                 '&.MuiCardContent-root':

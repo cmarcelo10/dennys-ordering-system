@@ -1,4 +1,4 @@
-import { AppBar, backdropClasses, BottomNavigation, Box, Button, Container, createTheme, Fab, Icon, IconButton, InputBase, OutlinedInput, Paper, TextField, Toolbar, Typography } from '@mui/material'
+import { AppBar, backdropClasses, BottomNavigation, Box, Button, Container, createTheme, Dialog, DialogActions, Fab, Icon, IconButton, InputBase, OutlinedInput, Paper, TextField, Toolbar, Typography } from '@mui/material'
 import React, {useState, useEffect} from 'react'
 import {ThemeProvider} from '@mui/material/styles'
 import WindowDimensions from './WindowDimensions';
@@ -8,7 +8,8 @@ import ItemSearch from './ItemSearch';
 import PersonIcon from '@mui/icons-material/Person'
 import ShoppingCartTwoToneIcon from '@mui/icons-material/ShoppingCartTwoTone';
 import { useNavigate } from 'react-router-dom';
-import { Call, Person } from '@mui/icons-material';
+import CallServerButton from './NavBar/CallServerButton';
+import CallServerDialog from './ItemViewPage/CallServerDialog';
 
 interface NavBarProps
 {
@@ -25,15 +26,24 @@ const Logo = React.memo(()=>
     <Box component='img' src={DennysLogo} sx={{postiion: 'absolute', left: '10px', right: 'auto', backgroundColor: theme.palette.dennysYellow.main, height: 40, width: 40, borderRadius: 2, padding: 0.5}}/>
 )); // never reload the image.
 
-const CallServerButton = ()=>
-(<Fab sx={{position: 'fixed', height:'auto', borderRadius: 10, bottom: '8%', left: '2%', fontWeight: 1000, fontSize: 14, backgroundColor: theme.palette.dennysYellow.main, color: theme.palette.dennysYellow.contrastText}} variant='extended'>
-     <PersonIcon sx={{mr: 1}} />
-    <>Call <br/> Server</>
-</Fab>);
-
-
 const NavBar = ({bottomLabel, onClick, disableButton, children, hideCallServerButton}: NavBarProps) => {
     const navigate = useNavigate();
+    const [snackbarOpen, setSnackbarOpen] = useState(false);
+    const [dialogOpen, setDialogOpen] = useState(false);
+
+    function handleCallServer()
+    {
+        setDialogOpen(true);
+    }
+    function onCancel()
+    {
+        setDialogOpen(false);
+    }
+    function onConfirm()
+    {
+        // snackbar
+        setDialogOpen(false);
+    }
     function handleClick(_event: React.MouseEvent)
     {
         if(onClick)
@@ -47,23 +57,21 @@ const NavBar = ({bottomLabel, onClick, disableButton, children, hideCallServerBu
     }
     return (
         <ThemeProvider theme={theme}>
+            <CallServerDialog open={dialogOpen} onCancel={onCancel} onConfirm={onConfirm}/>
             <AppBar sx={{zIndex: 1000, backgroundColor: '#464340'}} elevation={1} position='fixed'>
                 <Toolbar sx={{justifyContent: 'space-between'}}>
                     <Logo />
                     <Box display='flex' flexDirection={'row'} alignItems={'center'}>
-                        <ItemSearch />
+                    <ItemSearch />
                     </Box>
                 </Toolbar>
             </AppBar>
             <Toolbar/> {/*These empty toolbars are used for spacing*/}
                 {children}
             <Toolbar/>
-            {!hideCallServerButton && (<CallServerButton/>)}
+            {!hideCallServerButton && (<CallServerButton onClick={handleCallServer}/>)}
             <AppBar sx={{zIndex: 1000, backgroundColor: '#464340', alignContent: 'center', justifyContent:'center', position: 'fixed', bottom: 0, top: 'auto'}} elevation={0}>
                     <Toolbar sx={{display: 'flex', flexDirection: 'row', alignContent: 'center', justifyContent: 'center', pb: 0.5, pt: 0.5}}>
-                        <IconButton>
-                            
-                        </IconButton>
                         <Button variant='contained' disabled={disableButton} onClick={handleClick} 
                         sx={{backgroundColor: theme.palette.dennysRed.main, 
                             color: theme.palette.dennysRed.contrastText, 

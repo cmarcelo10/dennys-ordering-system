@@ -25,7 +25,7 @@ const MainMenu = () =>
     }
     const goToCart = () =>
     {
-        navigate('/cart');
+        navigate('/cart', {state: {fromLocation: window.location.href}});
     }
     return (
         <ThemeProvider theme={theme}>
