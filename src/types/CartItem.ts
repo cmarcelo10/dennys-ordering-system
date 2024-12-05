@@ -5,4 +5,5 @@ export default interface CartItem
     item: FoodItem,
     price: number,
     quantity: number,
+    originalPrice?: number,
 }
