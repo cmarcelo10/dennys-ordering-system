@@ -1,7 +1,7 @@
 import { Box, Typography, Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import theme from "../styles/Theme";
-import NavBar from "./Navbar";
+import NavBar from "./NavBar/Navbar";
 
 const ErrorPage = ()=>
 {

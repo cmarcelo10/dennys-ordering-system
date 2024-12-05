@@ -1,8 +1,8 @@
 import React, { useContext, useEffect } from 'react';
-import NavBar from '../components/Navbar';
+import NavBar from '../components/NavBar/Navbar';
 import { Box, Button, Typography, ThemeProvider, Grid2, Breadcrumbs, IconButton, Stack, Paper, Dialog, DialogTitle, DialogContent, DialogActions} from '@mui/material';
 import theme from '../styles/Theme';
-import CartItemCard from '../components/CartItemCard';
+import CartItemCard from '../components/CartPage/CartItemCard';
 import { CartContext } from '../contexts/CartContext';
 import CartItem from '../types/CartItem';
 import Slamburger from '../types/Slamburger';
@@ -30,27 +30,10 @@ const CartPage = () => {
     const [fromLocation, setFromLocation] = React.useState('');
     function navigateBack()
     {
-        navigate('/');
-    }
-    function safePageReload(_e: BeforeUnloadEvent)
-    {
-
+        navigate('/'); //
     }
     // set up cart context to get cart items
     const { cartItems, totalPrice, saveToCart, addToCart, removeFromCart} = useContext(CartContext);
-
-    const calculateTotalDiscount = () => {
-        return Object.values(cartItems).reduce((discountTotal, cartItem) => {
-            if (
-                cartItem.originalPrice &&
-                cartItem.price < cartItem.originalPrice
-            ) {
-                const discount = (cartItem.originalPrice - cartItem.price) * cartItem.quantity;
-                return discountTotal + discount;
-            }
-            return discountTotal;
-        }, 0);
-    };
     
     function handleChangeQuantity(itemID: string, newQuantity: number)
     {
@@ -78,7 +61,7 @@ const CartPage = () => {
     
     return (
       <ThemeProvider theme={theme}>
-        <NavBar bottomLabel='Confirm & Place Order' hideCallServerButton>
+        <NavBar bottomLabel='Checkout' hideCallServerButton>
             <Box display="flex" flexDirection="row" alignContent={'center'}>
                 <IconButton sx={{pr: 3}} size="large" onClick={navigateBack}>
                     <ArrowBackIosRounded/>
@@ -100,23 +83,7 @@ const CartPage = () => {
                 ))}
             </Stack>
           </Box>
-            <Paper elevation={2} sx={{backgroundColor: '#F2EEEA', borderWidth: 1, borderStyle: 'solid', borderColor: theme.palette.dennysGrey.main, display: 'flex', flexDirection: 'column', flexGrow: 1, alignItems: 'center', justifyContent: 'space-between', height: 'auto', width: 300, borderBox: 'content-box', borderTopRadius: 5, position: 'fixed', bottom: 56, left: '50%', transform: "translateX(-50%)"}}>
-            <Box sx={{display: 'flex', width: '100%', boxSizing: 'border-box', flexDirection: 'row', flexGrow: 1, justifyContent: 'space-between', fontSize: 16, p: 1}}>
-                    <Typography variant="h6" fontSize='inherit'>
-                        Discount
-                    </Typography>
-                    <Typography variant='h6' fontSize='inherit'>
-                            - ${calculateTotalDiscount().toFixed(2)} 
-                    </Typography>
-                </Box>
-               <Box sx={{display: 'flex', width: '100%', boxSizing: 'border-box', flexDirection: 'row', flexGrow: 1, justifyContent: 'space-between', fontSize: 16, p: 1}}>
-                    <Typography variant="h6" fontSize='inherit'>
-                        Taxes
-                    </Typography>
-                    <Typography variant='h6' fontSize='inherit'>
-                            + ${(0.05*totalPrice).toFixed(2)}
-                    </Typography>
-                </Box>
+            <Paper elevation={2} sx={{backgroundColor: '#F2EEEA', borderWidth: 1, borderStyle: 'solid', borderColor: theme.palette.dennysGrey.main, display: 'flex', flexDirection: 'column', flexGrow: 1, alignItems: 'center', justifyContent: 'space-between', height: 60, width: 300, borderBox: 'content-box', borderTopRadius: 5, position: 'fixed', bottom: 56, left: '50%', transform: "translateX(-50%)"}}>
                 <Box sx={{display: 'flex', width: '100%', boxSizing: 'border-box', flexDirection: 'row', flexGrow: 1, justifyContent: 'space-between', fontSize: 16, p: 1}}>
                     <Typography variant="h6" fontSize='inherit'>
                         Total:

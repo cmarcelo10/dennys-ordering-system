@@ -1,15 +1,15 @@
 import { AppBar, backdropClasses, BottomNavigation, Box, Button, Container, createTheme, Dialog, DialogActions, Fab, Icon, IconButton, InputBase, OutlinedInput, Paper, TextField, Toolbar, Typography } from '@mui/material'
 import React, {useState, useEffect} from 'react'
 import {ThemeProvider} from '@mui/material/styles'
-import WindowDimensions from './WindowDimensions';
-import DennysLogo from '../assets/DENN.svg'
-import theme from '../styles/Theme';
-import ItemSearch from './ItemSearch';
+import WindowDimensions from '../WindowDimensions';
+import DennysLogo from '../../assets/DENN.svg'
+import theme from '../../styles/Theme';
+import ItemSearch from '../ItemSearch';
 import PersonIcon from '@mui/icons-material/Person'
 import ShoppingCartTwoToneIcon from '@mui/icons-material/ShoppingCartTwoTone';
 import { useNavigate } from 'react-router-dom';
-import CallServerButton from './NavBar/CallServerButton';
-import CallServerDialog from './ItemViewPage/CallServerDialog';
+import CallServerButton from './CallServerButton';
+import CallServerDialog from './CallServerDialog';
 
 interface NavBarProps
 {
