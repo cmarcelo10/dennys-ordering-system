@@ -27,10 +27,6 @@ import CartItem from '../types/CartItem.ts'
 import { v4 } from 'uuid'
 import WindowDimensions from '../components/WindowDimensions.tsx'
 import QuantitySelector from '../components/ItemViewPage/QuantitySelector.tsx'
-// Later problem: lifting the state up to the parent.
-
-
-
 
 const ItemDetailsTextArea = ({description}:{description: string | undefined}) =>
 (
@@ -109,7 +105,7 @@ const ItemViewPage = ()=>
             window.sessionStorage.setItem("price", JSON.stringify(price));
         }
     }
-
+    
     // Minor performance optimization so that React doesn't re-create this function object on re-renders
     const warnBeforeUnload = React.useCallback(function warnBeforeReload(event: BeforeUnloadEvent)
     {
@@ -196,6 +192,7 @@ const ItemViewPage = ()=>
             window.removeEventListener("beforeunload", warnBeforeUnload);
         });
     },[pageModified]);
+
     React.useEffect(()=>
     {
         window.scrollTo(0,0);

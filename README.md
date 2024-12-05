@@ -11,6 +11,7 @@
 * Snackbars for applying deals / adding items (use ``state`` on ``navigate``)
 * Unique assets for all categories **(critical task)**
 [x] Increase the height of the bottom bar
+* ** 
 * **ADD REQUIRED TAGS TO ITEMS & QUANTITY SELECTORS**
 
 ### Low Priority
