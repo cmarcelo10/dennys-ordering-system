@@ -45,6 +45,15 @@ const CartPage = () => {
     }
     // set up cart context to get cart items
     const { cartItems, totalPrice, saveToCart, addToCart, removeFromCart} = useContext(CartContext);
+
+    const applyDiscount = (itemName: string) => {
+        const item = Object.values(cartItems).find(cartItem => cartItem.item.name === itemName);
+        if (item) {
+            const discountedPrice = item.price / 2; // 50% off
+            saveToCart({ ...item, price: discountedPrice }); // Update the cart
+        }
+    };
+    
     function handleChangeQuantity(itemID: string, newQuantity: number)
     {
         const item = cartItems[itemID];

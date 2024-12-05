@@ -11,11 +11,13 @@ interface CartContextProps
 {
     cartItems: Cart // just a FoodItem, but with an ID, and a quantity. 
     totalPrice: number,
+    appliedDiscounts: string[],
     setCartContext: (items: Cart, price: number) => void // unfortunately we have to re-add the entire cart. 
     addToCart: (item: CartItem) => void,
     removeFromCart: (itemID: string) => void,
     saveToCart: (item: CartItem) => void,
     setCartPrice: (price: number) => void,
+    applyDiscount: (itemName: string) => void,
 }
 
 // React only uses this default context if the component is not wrapped in a context provider:
@@ -24,11 +26,13 @@ export const CartContext = React.createContext<CartContextProps>(
     {
         cartItems: {},
         totalPrice: 0,
+        appliedDiscounts: [],
         setCartContext: (_items: Cart, _price: number) => {console.error("Not implemented")},
         addToCart: (_item: CartItem) => {console.error("Function not implemented")},
         removeFromCart: (_itemID: string) => {console.error("Function not implemented")},
         saveToCart: (_item: CartItem) => {console.error("Function not implemented")},
         setCartPrice: (_price: number) => {console.error("Function not implemented")},
+        applyDiscount: (_itemName: string) => {console.error("Function not implemented")},
     } // avoids using a "null" default context
 );
 
@@ -39,7 +43,7 @@ export function verboseLogCart(cart: Cart)
     {
         if(cart.hasOwnProperty(key))
         {
-            console.log(`${key}: ${cart[key]}`);
+            console.log("${key}: ${cart[key]}");
         }
     }
 }
@@ -49,14 +53,15 @@ export const CartProvider = ({children}:{children: React.ReactNode}) =>
     const initialized = React.useRef(false);
     const [cart, setCart] = useState<Cart>({});
     const [price, setPrice] = useState(0);
+    const [appliedDiscounts, setAppliedDiscounts] = useState<string[]>([]);
 
     const saveToCart = (item: CartItem) =>
     {
         let newPrice = 0;
         Object.entries(cart).forEach(([key, value])=>{
-            console.log(`${key}: $ ${value.price}`);
+            console.log('${key}: $ ${value.price}');
             newPrice += value.price * value.quantity
-            console.log(`New Price: $ ${newPrice}`);
+            console.log('New Price: $ ${newPrice}');
         });
         setPrice(newPrice);
         console.log(item);
@@ -64,7 +69,7 @@ export const CartProvider = ({children}:{children: React.ReactNode}) =>
             prev[item.id] = item;
             return prev;
         });
-    }
+    };
     const removeFromCart = (itemID: string) =>
     {
         const doomedCartItem = cart[itemID];
@@ -77,7 +82,7 @@ export const CartProvider = ({children}:{children: React.ReactNode}) =>
         }
         else
         {
-            console.error(`WARNING: No item with the id ${itemID} exists in the cart. Nothing was deleted`);
+            console.error('WARNING: No item with the id ${itemID} exists in the cart. Nothing was deleted');
         }
     }
     const addToCart = (item: CartItem) =>
@@ -95,8 +100,51 @@ export const CartProvider = ({children}:{children: React.ReactNode}) =>
         setPrice(price);
         setCart(items); // replace the whole thing
     }
+
+    const applyDiscount = (itemName: string) => {
+        // Checks if discount is already applied
+        if (appliedDiscounts.includes(itemName)) {
+            return;
+        }
+    
+        setAppliedDiscounts((prev) => [...prev, itemName]);
+    
+        // Updates the cart and applies a one-time 50% discount
+        setCart((prevCart) => {
+            const updatedCart = { ...prevCart };
+    
+            for (const itemID in updatedCart) {
+                if (updatedCart[itemID].item.name === itemName) {
+                    const cartItem = updatedCart[itemID];
+                    if (!cartItem.originalPrice) {
+                        cartItem.originalPrice = cartItem.price; 
+                    }
+                    cartItem.price = cartItem.originalPrice / 2; // Halves the price of one item
+                    break;
+                }
+            }
+    
+            return updatedCart;
+        });
+    
+        // Recalculates the total price
+        recalculateTotalPrice();
+    };
+
+    const recalculateTotalPrice = () => {
+        const newTotal = Object.values(cart).reduce(
+            (total, cartItem) => total + cartItem.price * cartItem.quantity,
+            0
+        );
+        setPrice(newTotal);
+    };
+
+    useEffect(() => {
+        recalculateTotalPrice(); // Recalculates the total whenever the cart updates. Needed for Discount to work
+    }, [cart]);
+    
     return (
-        <CartContext.Provider value={{cartItems: cart, totalPrice: price, setCartContext, setCartPrice, addToCart, removeFromCart, saveToCart}}>
+        <CartContext.Provider value={{cartItems: cart, totalPrice: price, appliedDiscounts, setCartContext, setCartPrice, addToCart, removeFromCart, saveToCart, applyDiscount}}>
             {children}
         </CartContext.Provider>
     );

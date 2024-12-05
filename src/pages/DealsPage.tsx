@@ -1,13 +1,22 @@
-import React from "react"
+import React, { useContext, useState } from "react"
 import DiscountItem from "../types/DiscountItem"
 import { Box, IconButton, Breadcrumbs, Typography, Divider, Stack, Card, CardHeader, CardContent, Button } from "@mui/material"
 import { Link } from "react-router-dom"
 import theme from "../styles/Theme"
 import { DiscountList } from "../types/DiscountMenuItems"
+import { CartContext } from "../contexts/CartContext"
  "../types/DiscountMenuItems"
  
 const DealsPage = ()=>
 {
+    const { appliedDiscounts, applyDiscount } = useContext(CartContext);
+
+    const handleApplyDiscount = (itemName: string) => {
+        if (!appliedDiscounts.includes(itemName)) {
+            applyDiscount(itemName);
+        }
+    };
+
     return(
         <>
             <Typography sx={{paddingTop: 1, width: '100%'}} variant='h2' fontFamily={'Roboto'} color={theme.palette.dennysRed.main} textAlign="center" fontWeight={555} fontSize={30}>Deals and Promos</Typography>
@@ -59,15 +68,18 @@ const DealsPage = ()=>
                                 <Button 
                                     variant="contained" 
                                     color="primary" 
-                                    // To be added later
-                                    // onClick={() => handleApplyDiscount(discount.id)}
+                                    onClick={() => handleApplyDiscount(item.appliesTo)}
                                     sx={{
-                                        backgroundColor: theme.palette.dennysRed.main,
+                                        backgroundColor: appliedDiscounts.includes(item.appliesTo)
+                                        ? "gray"
+                                        : theme.palette.dennysRed.main,
                                         width: { xs: '100%', md: 'auto' }, 
                                         maxWidth: '200px', 
                                         marginBottom: '1rem',
                                     }}>
-                                    Apply
+                                    {appliedDiscounts.includes(item.appliesTo)
+                                    ? "Applied"
+                                    : "Apply"}
                                 </Button>
                              </Box>   
                     </Card>)) 
