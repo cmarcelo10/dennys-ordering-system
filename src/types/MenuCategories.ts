@@ -8,10 +8,11 @@ import PremiumPancakesImage from '../assets/food/PremiumPancakes.jpg'
 import EntreesImage from '../assets/food/Entrees.jpg'
 import DrinksNShakesImage from '../assets/food/Drinks.jpg'
 import BourbonBaconBurgerImage from '../assets/food/BourbonBaconBurger.jpg'
+import DennysDeals from '../assets/DennysDeals.jpg'
 import Category from './Category.ts';
 const Categories: Category[] = [
     {index: 0, name: 'Featured', image: FeaturedImage},
-    {index: 1, name: 'Deals and Promos', image: BourbonBaconBurgerImage},
+    {index: 1, name: 'Deals and Promos', image: DennysDeals},
     {index: 2, name: 'Appetizers', image: AppetizersImage},
     {index: 3, name: 'Drinks and Shakes', image: DrinksNShakesImage},
     {index: 4, name: 'Shareable Starters', image: ShareableStartersImage},

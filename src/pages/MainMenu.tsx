@@ -39,7 +39,7 @@ const MainMenu = () =>
                     cardsArray.map(item=>(
                     <Card key={item.index} elevation={3} sx={{display: "flex", borderStyle: 'solid', borderWidth: 0.5, borderColor: theme.palette.dennysGrey.main, borderRadius: 2, flexDirection: 'column', maxHeight: '180px', width: '160px'}}>
                        <CardActionArea onClick={()=>{handleNavigate(item.name)}}>
-                            <CardMedia component='img' src={item.image? item.image : BourbonBaconBurger} height={120} />
+                            <CardMedia component='img' src={item.image? item.image : BourbonBaconBurger} height={120}/>
                             <CardContent sx={{p: 0.75, pl: 0.5, pr: 0.5, alignSelf: 'center', justifyContent: 'center'}}>
                                 <Typography textAlign='center' variant='h6' lineHeight={1.25} fontSize={18}>{item.name}</Typography>
                             </CardContent>

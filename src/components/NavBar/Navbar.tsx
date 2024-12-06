@@ -2,7 +2,7 @@ import { AppBar, backdropClasses, BottomNavigation, Box, Button, Collapse, Conta
 import React, {useState, useEffect} from 'react'
 import {ThemeProvider} from '@mui/material/styles'
 import WindowDimensions from '../WindowDimensions';
-import DennysLogo from '../../assets/DENN.svg'
+import DennysLogo from '../../assets/DENN2.svg'
 import theme from '../../styles/Theme';
 import ItemSearch from '../ItemSearch';
 import PersonIcon from '@mui/icons-material/Person'
