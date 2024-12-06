@@ -1,15 +1,12 @@
 import React, { useContext, useEffect } from 'react';
 import NavBar from '../components/NavBar/Navbar';
-import { Box, Button, Typography, ThemeProvider, Grid2, Breadcrumbs, IconButton, Stack, Paper, Dialog, DialogTitle, DialogContent, DialogActions, SnackbarContent} from '@mui/material';
+import { Box, Button, Typography, ThemeProvider, Grid2, Breadcrumbs, IconButton, Stack, Paper, Dialog, DialogTitle, DialogContent, DialogActions, SnackbarContent, Divider} from '@mui/material';
 import theme from '../styles/Theme';
 import CartItemCard from '../components/CartPage/CartItemCard';
 import { CartContext } from '../contexts/CartContext';
 import CartItem from '../types/CartItem';
 import SlamburgerFilled from '../types/SlamburgerFilled';
 // dummy menu items for testing
-import { HandheldsList } from '../types/HandheldsMenu';
-import FoodItem from '../types/FoodItem';
-import { v4 } from 'uuid';
 import { ArrowBackIosRounded } from '@mui/icons-material';
 import {Link, useNavigate, useLocation} from 'react-router-dom';
 import WindowDimensions from '../components/WindowDimensions';
@@ -20,37 +17,38 @@ import CheckRoundedIcon from '@mui/icons-material/CheckRounded';
 import TopSnackbarEnhanced from '../components/TopSnackbarEnhanced';
 
 const CartPage = () => {
-    const {height, width} = WindowDimensions();
     const navigate = useNavigate();
-    const [dirty, setDirty] = React.useState(false);
     const {state} = useLocation();
     const [fromLocation, setFromLocation] = React.useState('');
     const [checkout, setCheckout] = React.useState(false);
     const [saveChanges, setSavedChanges] = React.useState(false);
     const [itemDeleted, setItemDeleted] = React.useState(false);
+    const deletedItemName = React.useRef('');
     const [checkoutSnackbar, setCheckoutSnackbar] = React.useState(false);
-    const { cartItems, totalPrice, saveToCart, addToCart, removeFromCart, saveComments} = useContext(CartContext);
+    const { cartItems, length, totalPrice, saveToCart, addToCart, removeFromCart, saveComments} = useContext(CartContext);
     // snackbar functions
-    
     const openCheckoutDialog = React.useCallback(function openCheckoutDialog() { setCheckout(true); },[]);
-    const closeCheckoutDialog = React.useCallback(function() { setCheckoutSnackbar(true); setCheckout(false); },[]);
+    const closeCheckoutDialog = React.useCallback(function() {setCheckout(false); },[]);
     const closeSnackbar = React.useCallback(()=> { 
             // there's never a time when more than one snackbar is open, so use this function to close them all.
             setCheckoutSnackbar(false);
             setSavedChanges(false);
             setItemDeleted(false);
     },[]);
-
+    const performCheckout = React.useCallback(()=>{setCheckout(false); setCheckoutSnackbar(true)}, []);
     function openItemDeletedSnackbar(itemID: string)
     { 
-        removeFromCart(itemID); setItemDeleted(true);
+        deletedItemName.current = cartItems[itemID].item.name
+        removeFromCart(itemID); 
+        setItemDeleted(true);
+
     }
     const navigateBack = React.useCallback(function navigateBack()
     {
-        if(state && state.fromLocation)  navigate(state.fromLocation); //
+        if(state && fromLocation)  navigate(fromLocation); //
         else navigate('/');
     },[state]);
-
+``
     // set up cart context to get cart items
 
     function handleChangeQuantity(itemID: string, newQuantity: number)
@@ -76,14 +74,6 @@ const CartPage = () => {
         window.history.replaceState({},''); // clear the state so it doesn't get cluttered.
     },[state]);
 
-    React.useEffect(()=>
-    {
-        addToCart({id: '', quantity: 1, price: SlamburgerFilled.price, item: SlamburgerFilled});
-        if(state && state.saved)
-        {
-            setSavedChanges(state.saved);
-        }
-    },[state])
     function avoidUnsafeReload(e: BeforeUnloadEvent)
     {
         e.preventDefault();
@@ -97,10 +87,10 @@ const CartPage = () => {
     return (
       <ThemeProvider theme={theme}>
         <TopSnackbarEnhanced color='white' backgroundColor={theme.palette.success.main} open={checkoutSnackbar} timeout={2500} onClose={closeSnackbar} message={<Typography fontSize={18} fontWeight={500}>Order Placed!</Typography>} action={<CheckRoundedIcon fontSize='large'/>}/>
-        <TopSnackbarEnhanced color='white' backgroundColor={theme.palette.error.main} open={itemDeleted} timeout={2500} onClose={closeSnackbar} message={<Typography fontSize={18} fontWeight={500}>Item Removed</Typography>}/>
+        <TopSnackbarEnhanced color='white' open={itemDeleted} timeout={2500} onClose={closeSnackbar} message={<Typography fontSize={18} fontWeight={500}>{deletedItemName.current} removed</Typography>}/>
         <TopSnackbarEnhanced color='white' backgroundColor={theme.palette.success.main} open={saveChanges} timeout={2500} onClose={closeSnackbar} message={<Typography fontSize={18} fontWeight={500}>Changes Saved</Typography>} action={<CheckRoundedIcon fontSize='large'/>}/>
-        <CheckoutDialog open={checkout} onConfirm={closeCheckoutDialog} onClose={closeCheckoutDialog}/>
-        <NavBar bottomLabel='Checkout' onClick={openCheckoutDialog}>
+        <CheckoutDialog open={checkout} onConfirm={performCheckout} onClose={closeCheckoutDialog}/>
+        <NavBar bottomLabel='CHECK OUT' onClick={openCheckoutDialog} disableButton={length <=0}>
             <Box display="flex" flexDirection="row" alignContent={'center'}>
                 <IconButton sx={{pr: 3}} size="large" onClick={navigateBack}>
                     <ArrowBackIosRounded/>
@@ -108,19 +98,21 @@ const CartPage = () => {
                 <Breadcrumbs sx={{alignContent: 'center'}} expandText='false'>
                     <Link to={"/"} style={{textDecoration: 'none', color: 'inherit'}}> Main Menu </Link>
                     <Typography>
-                        Cart
+                        Review Order
                     </Typography>
                 </Breadcrumbs>
             </Box>
-          <Typography sx={{ paddingTop: 1, width: '100%' }} variant='h2' fontFamily={'Roboto'} color={theme.palette.dennysRed.main} textAlign="center" fontWeight={555} fontSize={30}>
+          <Typography sx={{ paddingTop: 1, width: '100%' }} variant='h2' fontFamily={'Roboto'} color={theme.palette.dennysRed.main} textAlign="center" fontWeight={600} fontSize={30}>
             Review Order
           </Typography>
+          <Divider variant='fullWidth'/>
           <Box sx={{ paddingTop: 1, width: '100%', display: 'flex', flexDirection: 'column', alignContent: 'center', justifyContent: 'space-around'}}>
-            <Stack spacing={2} justifyContent={'space-around'} sx={{paddingBottom: 15}}>
-                {Object.values(cartItems).map((cartItem) => (
+            {length > 0 ? (<Stack spacing={2} justifyContent={'space-around'} sx={{paddingBottom: 15}}>
+                {/* By displaying the cart items in reverse, the top of the page will always show the most recently-added item */}
+                {Object.values(cartItems).reverse().map((cartItem) => (
                     <CartItemCard key={cartItem.item.name + cartItem.id} cartItem={cartItem} handleChangeQuantity={handleChangeQuantity} handleRemoveItem={openItemDeletedSnackbar}/>
                 ))}
-            </Stack>
+            </Stack>) : (<Typography variant='body1' textAlign={'center'} sx={{mt: 3}}> Your cart is empty!</Typography>)}
           </Box>
             <Paper elevation={2} sx={{backgroundColor: 'white', borderWidth: 1, borderStyle: 'solid', borderColor: theme.palette.dennysGrey.main, display: 'flex', flexDirection: 'column', flexGrow: 1, alignItems: 'center', justifyContent: 'space-between', height: 80, width: '100%', borderBox: 'content-box', borderTopRadius: 5, position: 'fixed', bottom: 56, left: '50%', transform: "translateX(-50%)"}}>
                 <Box sx={{display: 'flex', width: '100%', boxSizing: 'border-box', flexDirection: 'row', flexGrow: 1, justifyContent: 'space-between', fontSize: 18, p: 2}}>
@@ -128,12 +120,12 @@ const CartPage = () => {
                         Total:
                     </Typography>
                     <Typography variant='h6' fontSize='inherit'>
-                            ${totalPrice.toFixed(2)}
+                            $ {totalPrice.toFixed(2)}
                     </Typography>
                 </Box>
             </Paper>
         </NavBar>
-        <DebugFab show={false} onClick={closeCheckoutDialog}/>
+        <DebugFab show={false} onClick={()=>setItemDeleted((prev)=>!prev)}/>
       </ThemeProvider>
     );
   };

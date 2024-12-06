@@ -37,7 +37,7 @@ const CallServerDialog = ({open, onConfirm, onCancel}:CallServerDialogProps) =>
         </DialogTitle>
         <DialogContent>
             <DialogContentText>
-                Call a server to your table for help?
+                Call a server to your table?
             </DialogContentText>
         </DialogContent>
         <DialogActions sx={{

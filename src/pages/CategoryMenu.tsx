@@ -24,6 +24,7 @@ import WindowDimensions from '../components/WindowDimensions.tsx'
 import ReactDOM from 'react-dom'
 import DebugFab from '../components/DebugFab.tsx'
 import CheckRoundedIcon from '@mui/icons-material/CheckRounded';
+import TopSnackbarEnhanced from '../components/TopSnackbarEnhanced.tsx'
 const imageDimensions = 
 {
     width: 112.5,
@@ -188,8 +189,10 @@ const CategoryMenu = () =>
     {
         return (
         <ThemeProvider theme={theme}>
+              
               <Navbar bottomLabel={`Review Order - $${totalPrice.toFixed(2)}`} onClick={goToCart}> {/* Bump this up to Main and use context*/}
-                <TopSnackbar open={snackbarOpen? snackbarOpen : false} message={`${addedItemName} added`} onClose={closeSnackbar} timeout={10000}/>
+                <TopSnackbarEnhanced open={snackbarOpen} message={<Typography sx={{fontSize: 16, fontWeight: 500}}>{addedItemName}{' '}added!</Typography>} onClose={closeSnackbar} timeout={10000}
+                action={<Button sx={{color: theme.palette.dennysYellow.main}}onClick={goToCart}>View</Button>}/>
                 <MenuBreadcrumbs categoryName='Sandwiches and Burgers'/>
                 <Typography sx={{paddingTop: 1, width: '100%'}} variant='h2' fontFamily={'Roboto'} color={theme.palette.dennysRed.main} textAlign="center" fontWeight={555} fontSize={30}>Sandwiches and Burgers</Typography>
                 <Divider variant='middle'/>
@@ -200,7 +203,6 @@ const CategoryMenu = () =>
                     )) 
                 }
                 </Stack>
-                <TopSnackbar open={snackbarOpen? snackbarOpen : false} message={`${addedItemName} added`} onClose={closeSnackbar} timeout={2000}/>
                 <DebugFab show={false} onClick={openSnackbar}/>
             </Navbar>
         </ThemeProvider>

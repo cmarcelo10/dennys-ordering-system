@@ -1,12 +1,10 @@
 import BaconAvocadoCheeseburgerImg from '../assets/food/BaconAvocadoCheeseburger.jpg'
 import Flaming5PepperBurgerImg from '../assets/food/Flaming5PepperBurger.png'
-import TraditionalClubSandwichImg from '../assets/food/TraditionalClubSandwich.png'
 import PotRoastMeltImg from '../assets/food/PotRoastMelt.png'
 import DoubleCheeseburgerImg from '../assets/food/DoubleCheeseburger.png'
 import FoodItem from "./FoodItem.ts";
 import Slamburger from './Slamburger.ts'
 import TraditionalClubSandwich from './TraditionalClubSandwich.ts'
-import DummyText from "./DummyText.ts";
 
 export const BaconAvocadoCheeseBurger:FoodItem = 
 {

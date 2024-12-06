@@ -1,4 +1,4 @@
-import { AppBar, backdropClasses, BottomNavigation, Box, Button, Container, createTheme, Dialog, DialogActions, Fab, Icon, IconButton, InputBase, OutlinedInput, Paper, TextField, Toolbar, Typography } from '@mui/material'
+import { AppBar, backdropClasses, BottomNavigation, Box, Button, Collapse, Container, createTheme, Dialog, DialogActions, Fab, Fade, Icon, IconButton, InputBase, OutlinedInput, Paper, Slide, TextField, Toolbar, Typography } from '@mui/material'
 import React, {useState, useEffect} from 'react'
 import {ThemeProvider} from '@mui/material/styles'
 import WindowDimensions from '../WindowDimensions';
@@ -10,7 +10,9 @@ import ShoppingCartTwoToneIcon from '@mui/icons-material/ShoppingCartTwoTone';
 import { useNavigate } from 'react-router-dom';
 import CallServerButton from './CallServerButton';
 import CallServerDialog from './CallServerDialog';
-
+import TopSnackbarEnhanced from '../TopSnackbarEnhanced';
+import AccessTimeRoundedIcon from '@mui/icons-material/AccessTimeRounded';
+import DebugFab from '../DebugFab';
 interface NavBarProps
 {
     bottomLabel: string,
@@ -30,7 +32,6 @@ const NavBar = ({bottomLabel, onClick, disableButton, children, hideCallServerBu
     const navigate = useNavigate();
     const [snackbarOpen, setSnackbarOpen] = useState(false);
     const [dialogOpen, setDialogOpen] = useState(false);
-
     function handleCallServer()
     {
         setDialogOpen(true);
@@ -39,10 +40,15 @@ const NavBar = ({bottomLabel, onClick, disableButton, children, hideCallServerBu
     {
         setDialogOpen(false);
     }
+    function closeSnackbar()
+    {
+        setSnackbarOpen(false);
+    }
     function onConfirm()
     {
         // snackbar
         setDialogOpen(false);
+        setSnackbarOpen(true);
     }
     function handleClick(_event: React.MouseEvent)
     {
@@ -57,6 +63,10 @@ const NavBar = ({bottomLabel, onClick, disableButton, children, hideCallServerBu
     }
     return (
         <ThemeProvider theme={theme}>
+            <TopSnackbarEnhanced open={snackbarOpen} onClose={closeSnackbar} timeout={2500} message={<Typography sx={{fontSize: 16, fontWeight: 450}}>A server will be with you shortly.</Typography>}
+            color={theme.palette.info.contrastText}
+            backgroundColor={theme.palette.info.main}
+            action={<AccessTimeRoundedIcon fontSize='large'/>}/>
             <CallServerDialog open={dialogOpen} onCancel={onCancel} onConfirm={onConfirm}/>
             <AppBar sx={{zIndex: 1000, backgroundColor: '#464340'}} elevation={1} position='fixed'>
                 <Toolbar sx={{justifyContent: 'space-between'}}>
@@ -87,6 +97,7 @@ const NavBar = ({bottomLabel, onClick, disableButton, children, hideCallServerBu
                             }}><Typography fontWeight={!disableButton ? 1000 : 500}>{bottomLabel}</Typography></Button>
                     </Toolbar>
             </AppBar>
+            <DebugFab onClick={onConfirm} show={false} />
         </ThemeProvider>
         );
 }

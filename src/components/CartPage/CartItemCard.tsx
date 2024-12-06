@@ -25,7 +25,7 @@ const DebugElement = ({debugItem}:{debugItem: any})=>
 const ShowHideTextElement = React.memo(({isExpanded}:{isExpanded: boolean}) =>
 (
     <Typography variant="body1" sx={{width: '50px', textAlign: 'center', mr: 2, fontWeight: !isExpanded ? 600 : 400, color:theme.palette.primary.main}}> 
-        {isExpanded ? (<>Hide</>) : (<>Show</>)}
+        {isExpanded ? (<>Hide</>) : (<>View...</>)}
     </Typography>
 ),(prev, next)=>(prev.isExpanded === next.isExpanded));
 
@@ -110,28 +110,27 @@ const CartItemCard = ({cartItem, handleRemoveItem, handleChangeQuantity}:CartIte
                     <Box sx={{display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
                     <Typography variant="h6"
                     sx={{
-                            fontSize: 24,
-                            fontWeight: 600,
+                            fontSize: 20,
+                            fontWeight: 500,
                     }}>{cartItem.item.name}</Typography>
-                    <Divider variant='middle' sx={{flexGrow: 1000}}/>
                          <Typography variant="h6"
                     sx={{
-                            fontSize: 24,
-                            fontWeight: 600,
+                            fontSize: 20,
+                            fontWeight: 500,
                     }}>${(cartItem.price*cartItem.quantity).toFixed(2)}</Typography>
                     </Box>
                 }></CardHeader>
                 <CardContent sx={{p: 1, pt: 0}}>
                 <Box sx={{display: 'flex', flexDirection: 'column', alignContent:'center', justifyContent:'space-between'}}>
                     <Box sx={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between', justifySelf: 'right', alignItems: 'center', pt:1, pb: 1, flexGrow: 0}}>
-                            <Typography variant='h6'>
+                            <Typography variant='h6' fontSize={18}>
                                 Quantity:
                             </Typography>
                             <Box sx={{display: 'flex', flexDirection: 'row', justifyItems: 'space-around', alignItems: 'center', ml: 2, flexGrow: 0}}>
                                 <IconButton onClick={handleDecrease} disabled={cartItem.quantity <=1} sx={{pr: 1}} size="medium">
                                     <RemoveIcon fontSize='inherit'/>
                                 </IconButton>
-                                <Typography variant='h6' sx={{minWidth: 30, textAlign: 'center', mr: 1, ml: 1}}>
+                                <Typography variant='h6' sx={{minWidth: 30, textAlign: 'center', mr: 1, ml: 1, fontSize: 18}}>
                                     {cartItem.quantity}
                                 </Typography>
                                 <IconButton onClick={handleIncrease} disabled={cartItem.quantity >=99} sx={{pr: 0}} size='medium'>
@@ -176,7 +175,7 @@ const CartItemCard = ({cartItem, handleRemoveItem, handleChangeQuantity}:CartIte
                 </CardContent>
                 <CardActions sx={{display: 'flex', flexDirection: 'row', justifyContent: 'right'}}>
                     <ButtonGroup sx={{justifySelf: 'right', height: 36}}>
-                        <Button variant="contained" size="medium" onClick={editItem} sx={{fontWeight: 900, backgroundColor: theme.palette.dennysGrey.main, color: theme.palette.dennysGrey.contrastText, borderBottomRightRadius: buttonBorderRadius, borderTopRightRadius: buttonBorderRadius, p:2}}>Edit</Button>
+                        <Button variant="contained" size="medium" onClick={editItem} sx={{fontWeight: 900, backgroundColor: theme.palette.info.main, color: theme.palette.dennysGrey.contrastText, borderBottomRightRadius: buttonBorderRadius, borderTopRightRadius: buttonBorderRadius, p:2, pl: 3, pr: 3}}>Edit</Button>
                         <Button variant="contained" size="medium" onClick={removeItemFromCart} sx={{fontWeight: 900, backgroundColor: theme.palette.dennysRed.main, borderBottomLeftRadius: buttonBorderRadius, borderTopLeftRadius: buttonBorderRadius, p:2}}>Remove</Button>
                     </ButtonGroup>
                 </CardActions>

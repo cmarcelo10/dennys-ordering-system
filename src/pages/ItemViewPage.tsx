@@ -27,7 +27,7 @@ import CartItem from '../types/CartItem.ts'
 import { v4 } from 'uuid'
 import WindowDimensions from '../components/WindowDimensions.tsx'
 import QuantitySelector from '../components/ItemViewPage/QuantitySelector.tsx'
-
+import DebugFab from '../components/DebugFab.tsx'
 const ItemDetailsTextArea = ({description}:{description: string | undefined}) =>
 (
     <Typography fontSize={14}  sx={

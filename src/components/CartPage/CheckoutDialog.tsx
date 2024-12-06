@@ -1,5 +1,5 @@
 import React from "react";
-import {Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Divider, Grid2, Slide, SlideProps, Stack} from '@mui/material'
+import {Button, CircularProgress, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Divider, Grid2, Slide, SlideProps, Stack} from '@mui/material'
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import AppBar from "@mui/material/AppBar";
@@ -19,7 +19,7 @@ const SlideTransition  = React.forwardRef(function Transition(
     }, 
     ref: React.Ref<unknown>){
         console.log(`Timeout: ${props.timeout}`)
-        return(<Slide direction="right" ref={ref} {...props}/>)}
+        return(<Slide direction="up" ref={ref} {...props}/>)}
 );
 
 function DebugElement({log}:{log: any})
@@ -39,6 +39,7 @@ const CheckoutDialog = ({open, onClose, onConfirm}:CheckoutDialogProps)=>
 {
     const {cartItems, totalPrice, setCartContext} = React.useContext(CartContext);
     const cartLength = React.useRef(Object.keys(cartItems).length);
+    const [enabled, setEnabled] = React.useState(false);
     function handleConfirm()
     {
         setCartContext({}, 0); // clear the cart.
@@ -47,16 +48,24 @@ const CheckoutDialog = ({open, onClose, onConfirm}:CheckoutDialogProps)=>
     function handleClose ()
     {
         onClose();
+        setEnabled(false);
+    }
+    function changeCheckoutState()
+    {
+        console.log(Object.values(cartItems).length);
+        console.log(enabled);
+        if(!open) setEnabled(false);
+        else setEnabled(true);
     }
     React.useEffect(()=>
     {
         if(open)
         {
-
+            console.log(cartItems.length)
         }
     },[open])
     return(
-        <Dialog transitionDuration={{enter: 1000, exit: 500}}open={open} TransitionComponent={SlideTransition} fullScreen>
+        <Dialog onTransitionEnd={changeCheckoutState} transitionDuration={{enter: 750, exit: 500}}open={open} TransitionComponent={SlideTransition} fullScreen>
         <DebugElement log={"dialog should be open"}/>
         <AppBar sx={{position: 'relative', backgroundColor: theme.palette.dennysBrown.main}}>
         <Toolbar sx={{justifyContent: 'flex-begin'}}>
@@ -165,8 +174,8 @@ const CheckoutDialog = ({open, onClose, onConfirm}:CheckoutDialogProps)=>
                 </Box>         
             </Box>
             <Divider variant='fullWidth'/>
-            <Button onClick={handleConfirm} variant="contained" sx={{mt: 3, fontWeight: 700, fontSize: 20, backgroundColor: theme.palette.dennysRed.main, color: theme.palette.dennysRed.contrastText}}fullWidth>
-                    Place Order
+            <Button onClick={handleConfirm} variant="contained" sx={{mt: 3, fontWeight: 700, fontSize: 20, backgroundColor: theme.palette.dennysRed.main, color: theme.palette.dennysRed.contrastText}}fullWidth disabled={!enabled || (cartLength.current == 0)}>
+                    {enabled ? 'Place Order' : <CircularProgress sx={{color: 'white'}}/>}
                 </Button>
             </DialogContent>
         </Dialog>

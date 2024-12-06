@@ -55,6 +55,20 @@ const TraditionalClubSandwich:FoodItem =
     preferredFontSize: 24,
     customizations: TraditionalClubSandwichCustomizations,
     image: TraditionalClubSandwichImg,
+    allergens: "Gluten, Dairy",
+    nutritionalData: {
+        name: "Traditional Club Sandwich",
+        calories: '600',
+        protein: '40.1 g',
+        fat: '35.2 g',
+        fibre: '5.3 g',
+        sugar: '6.1 g',
+        carbohydrates: '34.5 g',
+        saturated_fat: '0.7 g',
+        trans_fat:'0.1 g',
+        cholesterol: '88 mg',
+        sodium: '1700 mg',
+    },
     salad: GardenSaladSide,
 }
 export default TraditionalClubSandwich;

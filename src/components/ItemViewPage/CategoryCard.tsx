@@ -10,7 +10,8 @@ interface CategoryCardProps
     disableNewSelection: boolean,
     onChange: (newPrice: number, newAmountSelected: number, categoryName: string, updatedOptions:{[key:string]:CustomizationOption}) => void
 }
-const requiredText = "(required)";
+const requiredText = " (required)";
+const optionalText = " (optional)"
 const CategoryCard = ({name, category, disableNewSelection, onChange}: CategoryCardProps)=>
 {
     const [options, setOptions] = React.useState(category.options);
@@ -74,17 +75,19 @@ const CategoryCard = ({name, category, disableNewSelection, onChange}: CategoryC
                 borderBottomColor: theme.palette.dennysGrey.main
             }} title={
                 <Box sx={{display: 'flex', flexDirection: 'row', justifyContent:'space-between', alignItems:'center'}}>
-                <span>
+                    <Box sx={{whiteSpaceTrim: 'none', display: 'flex', flexDirection: 'row', justifyContent:'space-between', alignItems:'center'}}>
                     <Typography variant='h4' fontSize={20} fontWeight={500}>
                         {category.label ? category.label : name}
                     </Typography>
-                    <Typography>
-                        {category.isRequired ? requiredText : <></>}
+                    <Typography sx={{whiteSpaceTrim: 'none', pl: 1.2}}>
+                        {`${category.isRequired ? requiredText : optionalText}`}
                     </Typography>
-                </span>
-                <Typography>
-                    {category.amountSelected}/ {category.maxSelectAmount}
+                    </Box>
+                <Box display={'inline-block'}>
+                <Typography sx={{textAlign: 'right', minWidth: 34, pl: 1.5}}>
+                    {category.amountSelected} / {category.maxSelectAmount}
                 </Typography>
+                </Box>
                 </Box>
             }/>
             <Divider/>

@@ -11,6 +11,7 @@ interface CartContextProps
 {
     cartItems: Cart // just a FoodItem, but with an ID, and a quantity. 
     totalPrice: number,
+    length: number,
     appliedDiscounts: string[],
     setCartContext: (items: Cart, price: number) => void // unfortunately we have to re-add the entire cart. 
     addToCart: (item: CartItem) => void,
@@ -27,6 +28,7 @@ export const CartContext = React.createContext<CartContextProps>(
     {
         cartItems: {},
         totalPrice: 0,
+        length: 0,
         appliedDiscounts: [],
         setCartContext: (_items: Cart, _price: number) => {console.error("Not implemented")},
         addToCart: (_item: CartItem) => {console.error("Function not implemented")},
@@ -56,6 +58,7 @@ export const CartProvider = ({children}:{children: React.ReactNode}) =>
     const [cart, setCart] = useState<Cart>({});
     const [price, setPrice] = useState(0);
     const [appliedDiscounts, setAppliedDiscounts] = useState<string[]>([]);
+    const [length, setLength] = React.useState(0);
     const saveComments = (item: CartItem) =>
     {
         console.log(item);
@@ -141,11 +144,12 @@ export const CartProvider = ({children}:{children: React.ReactNode}) =>
     };
 
     useEffect(() => {
-        recalculateTotalPrice(); // Recalculates the total whenever the cart updates. Needed for Discount to work
+        recalculateTotalPrice();
+        setLength(Object.keys(cart).length) // Recalculates the total whenever the cart updates. Needed for Discount to work
     }, [cart]);
     
     return (
-        <CartContext.Provider value={{cartItems: cart, totalPrice: price, appliedDiscounts, setCartContext, setCartPrice, addToCart, removeFromCart, saveToCart, saveComments, applyDiscount}}>
+        <CartContext.Provider value={{cartItems: cart, length: length, totalPrice: price, appliedDiscounts, setCartContext, setCartPrice, addToCart, removeFromCart, saveToCart, saveComments, applyDiscount}}>
             {children}
         </CartContext.Provider>
     );

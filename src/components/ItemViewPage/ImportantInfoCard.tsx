@@ -33,7 +33,7 @@ const NutritionalDataRow = React.memo(({fieldName, value}:{fieldName: string, va
 (
     <React.Fragment>
         <Box fontSize={18} className="nutrition-data-popup-desc" sx={{p: 1}} display='flex' flexDirection='row' alignItems='center' justifyContent='space-between'>
-            <Typography fontWeight={800} letterSpacing={1.2} fontSize='inherit'>{toTitleCase(fieldName)}</Typography>
+            <Typography fontWeight={600} letterSpacing={1.2} fontSize='inherit'>{toTitleCase(fieldName)}</Typography>
             <Typography fontWeight={400} fontSize='inherit'>{value}</Typography>
         </Box>
         <Divider variant='fullWidth'/>

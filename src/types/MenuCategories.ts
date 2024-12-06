@@ -1,6 +1,6 @@
 import SlamburgerImage from '../assets/food/Slamburger.png'
 import SignatureBreakfastsImage from '../assets/food/SignatureBreakfasts.jpg'
-import ShareableStartersImage from '../assets/Food/ShareableStarters.jpg'
+import ShareableStartersImage from '../assets/food/ShareableStarters.jpg'
 import FeaturedImage from '../assets/food/Featured.jpg'
 import AppetizersImage from '../assets/food/Appetizers.jpg'
 import SavouryOmelettesImage from '../assets/food/SavoryOmelettes.jpg'
