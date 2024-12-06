@@ -13,6 +13,7 @@ import { v4 } from 'uuid';
 import { ArrowBackIosRounded } from '@mui/icons-material';
 import {Link, useNavigate, useLocation} from 'react-router-dom';
 import WindowDimensions from '../components/WindowDimensions';
+import CheckoutDialog from '../components/CartPage/CheckoutDialog';
 const isStrictMode = ()=>
 {
     return (function()
@@ -28,6 +29,7 @@ const CartPage = () => {
     const [dirty, setDirty] = React.useState(false);
     const {state} = useLocation();
     const [fromLocation, setFromLocation] = React.useState('');
+    const [checkout, setCheckout] = React.useState(false);
     function navigateBack()
     {
         navigate('/'); //
@@ -46,6 +48,7 @@ const CartPage = () => {
     }
     React.useEffect(()=>
     {
+        window.scrollTo(0,1) ;
         if(state && state.fromLocation)
         {
             setFromLocation(state.fromLocation)
@@ -59,9 +62,20 @@ const CartPage = () => {
             addToCart({id: '', item: Slamburger, quantity: 1, price: Slamburger.price});
         }}, []);
     
+    function openCheckoutDialog()
+    {
+        setCheckout(true);
+    }
+
+    function closeCheckoutDialog()
+    {
+        setCheckout(false);
+    }
+
     return (
       <ThemeProvider theme={theme}>
-        <NavBar bottomLabel='Checkout' hideCallServerButton>
+        <CheckoutDialog open={checkout} onConfirm={closeCheckoutDialog} onClose={closeCheckoutDialog}/>
+        <NavBar bottomLabel='Checkout' onClick={openCheckoutDialog}>
             <Box display="flex" flexDirection="row" alignContent={'center'}>
                 <IconButton sx={{pr: 3}} size="large" onClick={navigateBack}>
                     <ArrowBackIosRounded/>

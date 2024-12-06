@@ -99,7 +99,6 @@ export const CartProvider = ({children}:{children: React.ReactNode}) =>
         if (appliedDiscounts.includes(itemName)) {
             return;
         }
-    
         setAppliedDiscounts((prev) => [...prev, itemName]);
     
         // Updates the cart and applies a one-time 50% discount
@@ -126,15 +125,13 @@ export const CartProvider = ({children}:{children: React.ReactNode}) =>
 
     const recalculateTotalPrice = () => {
         const newTotal = Object.values(cart).reduce(
-            (total, cartItem) => total + cartItem.price * cartItem.quantity,
-            0
-        );
+            (total, cartItem) => total + cartItem.price * cartItem.quantity,0);
         setPrice(newTotal);
     };
 
     useEffect(() => {
         recalculateTotalPrice(); // Recalculates the total whenever the cart updates. Needed for Discount to work
-    }, []);
+    }, [cart]);
     
     return (
         <CartContext.Provider value={{cartItems: cart, totalPrice: price, appliedDiscounts, setCartContext, setCartPrice, addToCart, removeFromCart, saveToCart, applyDiscount}}>

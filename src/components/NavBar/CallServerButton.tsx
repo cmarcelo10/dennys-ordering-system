@@ -9,7 +9,7 @@ const CallServerButton = React.memo(({onClick}:{onClick: ()=>void})=>
     {   
         onClick();
     }
-    return (<Fab sx={{position: 'fixed', height:'auto', borderRadius: 10, bottom: '1%', left: '2%', fontWeight: 1000, fontSize: 14, backgroundColor: theme.palette.dennysYellow.main, color: theme.palette.dennysYellow.contrastText}} 
+    return (<Fab sx={{position: 'fixed', height:'auto', borderRadius: 10, bottom: '1%', left: '2%', fontWeight: 1000, fontSize: 14, zIndex: 10000, backgroundColor: theme.palette.dennysYellow.main, color: theme.palette.dennysYellow.contrastText}} 
         variant='extended' onClick={handleClick}>
             Call<br/> Server
     </Fab>)}, (prev, next)=>prev.onClick === next.onClick);
