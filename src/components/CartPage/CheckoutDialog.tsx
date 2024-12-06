@@ -34,7 +34,7 @@ interface CheckoutDialogProps
 
 const CheckoutDialog = ({open, onClose, onConfirm}:CheckoutDialogProps)=>
 {
-    const {cartItems, setCartContext} = React.useContext(CartContext);
+    const {cartItems, totalPrice, setCartContext} = React.useContext(CartContext);
     function handleConfirm()
     {
         setCartContext({}, 0); // clear the cart.
@@ -68,7 +68,6 @@ const CheckoutDialog = ({open, onClose, onConfirm}:CheckoutDialogProps)=>
             Order Summary
         </DialogTitle>
         <Divider variant='middle'/>
-        
         <DialogContent>
             {Object.entries(cartItems).map(([key, item])=>
             {
@@ -112,6 +111,11 @@ const CheckoutDialog = ({open, onClose, onConfirm}:CheckoutDialogProps)=>
                     </React.Fragment>
                 )
             })}
+            <Box>
+            <Typography>
+                {totalPrice}
+            </Typography>
+            </Box>
         </DialogContent>
         </Dialog>
     );

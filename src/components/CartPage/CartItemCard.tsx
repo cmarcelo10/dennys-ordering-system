@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react';
-import { Card, CardHeader, CardContent, Typography, Divider, Button, IconButton, Box, CardActions, Accordion, AccordionSummary, ButtonGroup, AccordionDetails, Fade, TextareaAutosize, TextField} from '@mui/material';
+import { Card, CardHeader, CardContent, Typography, Divider, Button, IconButton, Box, CardActions, Accordion, AccordionSummary, ButtonGroup, AccordionDetails, Fade, TextareaAutosize, TextField, Input} from '@mui/material';
 import CartItem from '../../types/CartItem';
 import RemoveIcon from '@mui/icons-material/RemoveCircleOutlineOutlined'
 import AddIcon from '@mui/icons-material/AddCircleOutlineOutlined'
@@ -41,10 +41,15 @@ const CartItemCard = ({cartItem, handleRemoveItem, handleChangeQuantity}:CartIte
     const [dialogOpen, setDialogOpen] = useState(false); 
     const isEditingRef = React.useRef(false);
     const [editing, setEditing] = React.useState(false);
-
+    const formText = React.useRef('');
+    const [savedText, setSavedText] = React.useState('');
+    function logInput(_e: React.ChangeEvent<HTMLTextAreaElement>)
+    {
+        formText.current = _e.target.value;
+    }
     const onBlur = () =>
     {
-        
+        setSavedText(formText.current);
     }
 
     const toggleExpanded = (_e: React.MouseEvent) => {
@@ -105,9 +110,33 @@ const CartItemCard = ({cartItem, handleRemoveItem, handleChangeQuantity}:CartIte
                             fontSize: 24,
                             fontWeight: 600,
                     }}>{cartItem.item.name}</Typography>
+                    <Divider variant='middle' sx={{flexGrow: 1000}}/>
+                         <Typography variant="h6"
+                    sx={{
+                            fontSize: 24,
+                            fontWeight: 600,
+                    }}>${cartItem.price}</Typography>
                     </Box>
                 }></CardHeader>
                 <CardContent sx={{p: 1, pt: 0}}>
+                <Box sx={{display: 'flex', flexDirection: 'column', alignContent:'center', justifyContent:'space-between'}}>
+                    <Box sx={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between', justifySelf: 'right', alignItems: 'center', pt:1, pb: 1, flexGrow: 0}}>
+                            <Typography variant='h6'>
+                                Quantity:
+                            </Typography>
+                            <Box sx={{display: 'flex', flexDirection: 'row', justifyItems: 'space-around', alignItems: 'center', ml: 2, flexGrow: 0}}>
+                                <IconButton onClick={handleDecrease} disabled={cartItem.quantity <=1} sx={{pr: 1}} size="medium">
+                                    <RemoveIcon fontSize='inherit'/>
+                                </IconButton>
+                                <Typography variant='h6' sx={{minWidth: 30, textAlign: 'center', mr: 1, ml: 1}}>
+                                    {cartItem.quantity}
+                                </Typography>
+                                <IconButton onClick={handleIncrease} disabled={cartItem.quantity >=99} sx={{pr: 0}} size='medium'>
+                                    <AddIcon fontSize='inherit'/>
+                                </IconButton>     
+                            </Box>
+                        </Box>
+                </Box>
                 <CustomizationsAccordion customizations={cartItem.item.customizations}/>
                 <Accordion key={'comments'} expanded={expanded} elevation={0} defaultExpanded={true}>
                 <AccordionSummary sx={{
@@ -124,53 +153,27 @@ const CartItemCard = ({cartItem, handleRemoveItem, handleChangeQuantity}:CartIte
                     }}onClick={toggleExpanded} expandIcon={<ExpandIcon fontSize='medium'/>}>
                         <Box sx={{display: 'flex', flexDirection: 'row', flexGrow: 1, alignItems:'center', justifyContent: 'space-between', backgroundColor: 'inherit'}}>
                             <Typography variant="h6" sx={{backgroundColor: 'inherit', fontSize: 18}}> 
-                            Special Comments:   
+                                Special Comments:   
                             </Typography>
                             <ShowHideTextElement isExpanded={expanded}/>
                         </Box>
                     </AccordionSummary>
                     <AccordionDetails sx={{backgroundColor: '#F2EEEA', p: 1}}>
-
                 <TextField sx={{
                     width: '100%', 
                     backgroundColor: 'white',
                     '& .MuiInputBase-root':
                     {
-                        p: 0.5,
-                        fontSize: 14,
-                    }}} multiline minRows={5} maxRows={5} placeholder='Write your comments here'/>
+                        p: 0.75,
+                        fontSize: 16,
+                    }}} multiline minRows={5} maxRows={5} placeholder='Add special comments here' onChange={logInput}/>
 
                     </AccordionDetails>
                 </Accordion>
-                <Box sx={{display: 'flex', flexDirection: 'column', alignContent:'center', justifyContent:'space-between'}}>
-                    <Box sx={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between', justifySelf: 'right', alignItems: 'center', pt:1}}>
-                            <Typography variant='h6'>
-                                Quantity:
-                            </Typography>
-                            <Box sx={{display: 'flex', flexDirection: 'row', justifyItems: 'space-around', alignItems: 'center', ml: 2}}>
-                                <IconButton onClick={handleIncrease} disabled={cartItem.quantity >=99} size='medium'>
-                                    <AddIcon fontSize='medium'/>
-                                </IconButton>
-                                <Typography variant='h6' sx={{minWidth: 20, textAlign: 'center', mr: 1, ml: 1}}>
-                                    {cartItem.quantity}
-                                </Typography>
-                                <IconButton onClick={handleDecrease} disabled={cartItem.quantity <=1} sx={{pr: 0}} size="medium">
-                                    <RemoveIcon fontSize='medium'/>
-                                </IconButton>
-                            </Box>
-                        </Box>
-                    <Divider variant='fullWidth'/>
-                    <Box className="totalPriceDisplay" sx={{display: 'flex', flexDirection: 'row', alignContent:'center', justifyContent:'space-between', pt: 1,}}>
-                        <Typography variant='h5'>
-                            Total:
-                        </Typography>
-                        <Typography variant="h6" textAlign={'right'}>${(cartItem.quantity * cartItem.price).toFixed(2)}</Typography>
-                    </Box>
-                </Box>
                 </CardContent>
                 <CardActions sx={{display: 'flex', flexDirection: 'row', justifyContent: 'right'}}>
                     <ButtonGroup sx={{justifySelf: 'right', height: 36}}>
-                        <Button variant="contained" size="medium" onClick={editItem} sx={{fontWeight: 900, backgroundColor: theme.palette.dennysYellow.main, color: theme.palette.dennysYellow.contrastText, borderBottomRightRadius: buttonBorderRadius, borderTopRightRadius: buttonBorderRadius, p:2}}>Edit</Button>
+                        <Button variant="contained" size="medium" onClick={editItem} sx={{fontWeight: 900, backgroundColor: theme.palette.dennysGrey.main, color: theme.palette.dennysGrey.contrastText, borderBottomRightRadius: buttonBorderRadius, borderTopRightRadius: buttonBorderRadius, p:2}}>Edit</Button>
                         <Button variant="contained" size="medium" onClick={removeItemFromCart} sx={{fontWeight: 900, backgroundColor: theme.palette.dennysRed.main, borderBottomLeftRadius: buttonBorderRadius, borderTopLeftRadius: buttonBorderRadius, p:2}}>Remove</Button>
                     </ButtonGroup>
                 </CardActions>

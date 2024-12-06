@@ -5,7 +5,7 @@ import theme from '../styles/Theme';
 import CartItemCard from '../components/CartPage/CartItemCard';
 import { CartContext } from '../contexts/CartContext';
 import CartItem from '../types/CartItem';
-import Slamburger from '../types/Slamburger';
+import SlamburgerFilled from '../types/SlamburgerFilled';
 // dummy menu items for testing
 import { HandheldsList } from '../types/HandheldsMenu';
 import FoodItem from '../types/FoodItem';
@@ -32,7 +32,8 @@ const CartPage = () => {
     const [checkout, setCheckout] = React.useState(false);
     function navigateBack()
     {
-        navigate('/'); //
+        if(state && state.previousLocation)  navigate(state.previousLocation); //
+        else navigate('/');
     }
     // set up cart context to get cart items
     const { cartItems, totalPrice, saveToCart, addToCart, removeFromCart} = useContext(CartContext);
@@ -54,14 +55,6 @@ const CartPage = () => {
             setFromLocation(state.fromLocation)
         }
     },[state]);
-    // cart appears to be doubling price whenever edit is enabled
-    React.useEffect(()=>{
-        console.log(window.location.href);
-        if(Object.keys(cartItems).length === 0)
-        {
-            addToCart({id: '', item: Slamburger, quantity: 1, price: Slamburger.price});
-        }}, []);
-    
     function openCheckoutDialog()
     {
         setCheckout(true);
@@ -91,14 +84,14 @@ const CartPage = () => {
             Review Order
           </Typography>
           <Box sx={{ paddingTop: 1, width: '100%', display: 'flex', flexDirection: 'column', alignContent: 'center', justifyContent: 'space-around'}}>
-            <Stack spacing={2} justifyContent={'space-around'} sx={{paddingBottom: 10}}>
+            <Stack spacing={2} justifyContent={'space-around'} sx={{paddingBottom: 15}}>
                 {Object.values(cartItems).map((cartItem) => (
                     <CartItemCard key={cartItem.item.name + cartItem.id} cartItem={cartItem} handleChangeQuantity={handleChangeQuantity} handleRemoveItem={removeFromCart}/>
                 ))}
             </Stack>
           </Box>
-            <Paper elevation={2} sx={{backgroundColor: '#F2EEEA', borderWidth: 1, borderStyle: 'solid', borderColor: theme.palette.dennysGrey.main, display: 'flex', flexDirection: 'column', flexGrow: 1, alignItems: 'center', justifyContent: 'space-between', height: 60, width: 300, borderBox: 'content-box', borderTopRadius: 5, position: 'fixed', bottom: 56, left: '50%', transform: "translateX(-50%)"}}>
-                <Box sx={{display: 'flex', width: '100%', boxSizing: 'border-box', flexDirection: 'row', flexGrow: 1, justifyContent: 'space-between', fontSize: 16, p: 1}}>
+            <Paper elevation={2} sx={{backgroundColor: 'white', borderWidth: 1, borderStyle: 'solid', borderColor: theme.palette.dennysGrey.main, display: 'flex', flexDirection: 'column', flexGrow: 1, alignItems: 'center', justifyContent: 'space-between', height: 80, width: '100%', borderBox: 'content-box', borderTopRadius: 5, position: 'fixed', bottom: 56, left: '50%', transform: "translateX(-50%)"}}>
+                <Box sx={{display: 'flex', width: '100%', boxSizing: 'border-box', flexDirection: 'row', flexGrow: 1, justifyContent: 'space-between', fontSize: 18, p: 2}}>
                     <Typography variant="h6" fontSize='inherit'>
                         Total:
                     </Typography>

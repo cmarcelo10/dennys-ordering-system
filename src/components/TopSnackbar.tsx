@@ -10,14 +10,14 @@ interface TopSnackbarProps
     timeout: number,
 }
 
-const TopSnackbar: React.FC<TopSnackbarProps> = ({...props}:TopSnackbarProps)=>{
+const TopSnackbar = ({...props}:TopSnackbarProps)=>{
     const navigate = useNavigate();
     function goToCart()
     {
         navigate('/cart');
     }
     return(
-        <Snackbar open={props.open} onClose={props.onClose} anchorOrigin={{vertical: 'top', horizontal: 'center'}} autoHideDuration={props.timeout} message={
+        <Snackbar open={props.open} onClose={props.onClose} anchorOrigin={{vertical: 'top', horizontal: 'center'}} autoHideDuration={props.timeout*2} message={
         <Typography fontSize={16}>
             {props.message}
         </Typography>}

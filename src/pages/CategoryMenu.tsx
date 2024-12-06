@@ -22,6 +22,7 @@ import TopSnackbar from '../components/TopSnackbar.tsx'
 import { AddCircleOutlineRounded, BugReport } from '@mui/icons-material'
 import WindowDimensions from '../components/WindowDimensions.tsx'
 import ReactDOM from 'react-dom'
+import DebugFab from '../components/DebugFab.tsx'
 const imageDimensions = 
 {
     width: 112.5,
@@ -97,8 +98,6 @@ const MenuBreadcrumbs = ({categoryName}:{categoryName: string})=>
     </Box>)
 }
 
-const DebugFab = ({onClick}:{onClick: ()=>void})=>
-    (<Fab size='large' sx={{position: 'fixed', bottom: '5%', left: '60%', right: '50%'}} onClick={onClick} variant='extended' title='Debug'><BugReport/> </Fab>)
 const CategoryMenu = () =>
 {
     const navigate = useNavigate();
@@ -187,7 +186,7 @@ const CategoryMenu = () =>
         <ThemeProvider theme={theme}>
              
               <Navbar bottomLabel={`Review Order - $${totalPrice.toFixed(2)}`}> {/* Bump this up to Main and use context*/}
-                <TopSnackbar open={snackbarOpen? snackbarOpen : false} message={`${addedItemName} added`} onClose={closeSnackbar} timeout={5000}/>
+                <TopSnackbar open={snackbarOpen? snackbarOpen : false} message={`${addedItemName} added`} onClose={closeSnackbar} timeout={10000}/>
                 <MenuBreadcrumbs categoryName='Sandwiches and Burgers'/>
                 <Typography sx={{paddingTop: 1, width: '100%'}} variant='h2' fontFamily={'Roboto'} color={theme.palette.dennysRed.main} textAlign="center" fontWeight={555} fontSize={30}>Sandwiches and Burgers</Typography>
                 <Divider variant='middle'/>
@@ -199,7 +198,7 @@ const CategoryMenu = () =>
                 }
                 </Stack>
                 <TopSnackbar open={snackbarOpen? snackbarOpen : false} message={`${addedItemName} added`} onClose={closeSnackbar} timeout={2000}/>
-                <DebugFab onClick={openSnackbar}/>
+                <DebugFab show onClick={openSnackbar}/>
             </Navbar>
         </ThemeProvider>
         );

@@ -1,6 +1,7 @@
 import Category from "./Category"
 import FoodItem from "./FoodItem"
 import SlamburgerImage from "../assets/Food/Slamburger.png"
+import ShareableStartersImage from '../assets/Food/SharableStarters.jpg'
 import { HandheldsMenu } from "./HandheldsMenu"
 interface Menu {
     [key: string]: Category
@@ -9,7 +10,7 @@ interface Menu {
 export const Menu:Menu = {
     "Featured": {
         name: 'Featured', 
-        image: SlamburgerImage
+        image: '../'
     },
     "Deals and Promos": {
         name: 'Deals and Promos', 
@@ -25,7 +26,7 @@ export const Menu:Menu = {
     },
     "Shareable Starters": {
         name: 'Shareable Starters', 
-        image: SlamburgerImage
+        image: ShareableStartersImage
     },
     "Sandwiches and Burgers": {
         name: 'Drinks and Shakes', 
