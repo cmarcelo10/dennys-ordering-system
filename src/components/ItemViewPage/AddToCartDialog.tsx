@@ -6,9 +6,8 @@ import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
 import styled from "@mui/material/styles";
 import { TransitionProps } from "@mui/material/transitions";
-import IconButton from '@mui/material/IconButton';
-import {ArrowBackIosRounded} from '@mui/icons-material'
-import { PercentSharp } from "@mui/icons-material";
+import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
+import IconButton from '@mui/icons-material/CloseRounded';
 import { CartContext } from "../../contexts/CartContext";
 import theme from "../../styles/Theme";
 // source: https://mui.com/material-ui/react-dialog/ -> full screen dialogs
@@ -19,7 +18,7 @@ const SlideTransition  = React.forwardRef(function Transition(
     }, 
     ref: React.Ref<unknown>){
         console.log(`Timeout: ${props.timeout}`)
-        return(<Slide direction="right" ref={ref} {...props}/>)}
+        return(<Slide direction="up" ref={ref} {...props}/>)}
 );
 
 function DebugElement({log}:{log: any})
@@ -38,7 +37,6 @@ interface CheckoutDialogProps
 const CheckoutDialog = ({open, onClose, onConfirm}:CheckoutDialogProps)=>
 {
     const {cartItems, totalPrice, setCartContext} = React.useContext(CartContext);
-    const cartLength = React.useRef(Object.keys(cartItems).length);
     function handleConfirm()
     {
         setCartContext({}, 0); // clear the cart.
@@ -59,10 +57,13 @@ const CheckoutDialog = ({open, onClose, onConfirm}:CheckoutDialogProps)=>
         <Dialog transitionDuration={{enter: 1000, exit: 500}}open={open} TransitionComponent={SlideTransition} fullScreen>
         <DebugElement log={"dialog should be open"}/>
         <AppBar sx={{position: 'relative', backgroundColor: theme.palette.dennysBrown.main}}>
-        <Toolbar sx={{justifyContent: 'flex-begin'}}>
-           <Button sx={{color: theme.palette.dennysYellow.main, borderColor: theme.palette.dennysYellow.main, fontSize: 16, fontWeight: 500}} onClick={handleClose}>
-                Back
-           </Button>
+        <Toolbar sx={{justifyContent: 'space-between'}}>
+            <IconButton onClick={handleClose} fontSize='large'>
+                <CloseRoundedIcon fontSize='inherit'/>
+            </IconButton>
+            <Button sx={{color: theme.palette.dennysYellow.main, fontWeight: 1000, borderColor: theme.palette.dennysYellow.main}} variant='text' onClick={handleConfirm}>
+                    Place order
+            </Button>
         </Toolbar>
         </AppBar>
         <DialogTitle sx={{textAlign: 'center', fontSize: 30}}>
@@ -71,37 +72,35 @@ const CheckoutDialog = ({open, onClose, onConfirm}:CheckoutDialogProps)=>
         <DialogContent sx={{
             '&.MuiDialogContent-root':
             {
-                minHeight: 0,
-                maxHeight: 530,
-            },
-        }} dividers>
-            {
-                Object.entries(cartItems).map(([key, item], index)=>
+                minHeight: 0
+            }
+        }}>
+            {Object.entries(cartItems).map(([key, item])=>
             {
                 const foodItem = item.item;
                 return (
-                    <Box key={key} sx={{mb: 1}}>
+                    <React.Fragment key={key}>
                         <Box sx={{display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', 
-                                fontSize: 18, borderBottomColor: 'rgba(71, 67, 85, 0.4)',
+                                fontSize: 20, borderBottomColor: 'rgba(71, 67, 85, 0.4)',
                                 borderBottomWidth: 1, borderBottomStyle: undefined}}>
                         <Box sx={{textWrap: 'wrap'}}>
                             <Typography variant="h6" sx={{fontSize: 'inherit', fontWeight: 500}}>
-                                {item.item.name}{' '}{item.quantity > 0 && (<>x {item.quantity}</>)}
+                                {item.item.name} × {item.quantity}
                             </Typography>
                         </Box>
-                        
-                        <Typography sx={{pr: 0.5, fontWeight: 500, fontSize: 18}} variant="h6">
-                            ${(item.price * item.quantity).toFixed(2)}
+                        <Typography sx={{pr: 0.5, fontWeight: 500}} variant="h6">
+                            ${item.price}
                         </Typography>
                         </Box>
                         <Divider variant='fullWidth'/>
-                         <Box sx={{padding: 1, pr: 0, pb: 2, pt: 1}}>
-                            <Box sx={{display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent:'space-between', m: 0.5}}>
+                        <Box key={'secondItemName'} sx={{padding: 1, pr: 0, pb: 2, pt: 1}}>
+                            <Box sx={{display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent:'space-between'}}>
                                 <Typography variant='body1'>
-                                    {item.item.name}{}{/* This double listing is intentional */}
+                                    {foodItem.name}
                                 </Typography>
+                                <Divider variant="middle" sx={{display: 'none', flexGrow: 100}}/>
                                 <Typography fontWeight={400}>
-                                    ${' '}{item.item.price}
+                                    $ {foodItem.price}
                                 </Typography> 
                             </Box>
                             <Divider variant='inset'/>
@@ -117,59 +116,44 @@ const CheckoutDialog = ({open, onClose, onConfirm}:CheckoutDialogProps)=>
                                                     </Typography>
                                                     <Divider variant="middle" sx={{display: 'none', flexGrow: 100}}/>
                                                     <Typography fontWeight={400}>
-                                                        {data.price > 0 ? (<>+ ${' '}{data.price}</>):('(free)')}
+                                                        {data.price > 0 && (<>+ ${' '}{data.price}</>)}
                                                     </Typography> 
                                                 </Box>
                                                 <Divider variant='inset'/>
                                             </Box>
-
                                         ))}
                                     </Stack>)
                             })}
                         </Box>
-                        {index < cartLength.current && <Divider variant="middle"/>}
-                    </Box>
+                        <Stack>
+                                <Box sx={{display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
+                                    <Typography variant='h6'>
+                                        Total:
+                                    </Typography>
+                                    <Typography sx={{pr: 0.5, fontWeight: 500}} variant='h6'>
+                                    $ {(item.quantity * item.item.price).toFixed(2)}
+                                    </Typography>
+                                </Box>
+                            </Stack>
+                    </React.Fragment>
                 )
             })}
             </DialogContent>
-            <DialogContent sx={{
-                borderTopWidth: '1px', 
-                borderTopColor: theme.palette.dennysGrey.light, 
-                borderTopStyle: 'solid',
-                '&.MuiPaper-root':
-                {
-                    height: 'auto',
-                },
-                '&.MuiDialogContent-root':
-                {
-                    resize: 'both',
-                    pb: 0,
-                    minHeight: 0,
-                }}}>
-            <Box sx={{display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'space-around'}}>
+            <DialogContent sx={{flexGrow: 1}}>
+            <Box sx={{display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'space-around', flexGrow: 1}}>
                 <Box sx={{display: 'flex', width: '100%', flexDirection: 'row', justifyContent: 'space-between', flexGrow: 1}}>
-                    <Typography variant="h6">
-                        GST {'(+5.00%)'}
+                    <Typography>
+                        GST (+5.00%)
                     </Typography>
-                    <Typography variant='h6'>
-                       + $ {(totalPrice*0.05).toFixed(2)}
+                    <Typography>
+                        {(totalPrice*0.05).toFixed(2)}
                     </Typography>
                 </Box>
-                <Box sx={{display: 'flex', width: '100%', flexDirection: 'row', justifyContent: 'space-between', flexGrow: 1, mt: 1}}>
-                    <Typography variant='h6'>
-                       Total:
-                    </Typography>
-                    <Typography variant='h6'>
-                        ${' '}{(totalPrice*1.05).toFixed(2)}
-                    </Typography>
-                </Box>         
             </Box>
-            <Divider variant='fullWidth'/>
-            <Button onClick={handleConfirm} variant="contained" sx={{mt: 3, fontWeight: 700, fontSize: 20, backgroundColor: theme.palette.dennysRed.main, color: theme.palette.dennysRed.contrastText}}fullWidth>
-                    Place Order
-                </Button>
-            </DialogContent>
+        </DialogContent>
         </Dialog>
     );
 }
 export default CheckoutDialog
+
+

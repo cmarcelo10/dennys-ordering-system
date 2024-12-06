@@ -179,7 +179,7 @@ const ItemViewPage = ()=>
             cartItem.price = price;
             cartItem.quantity = quantity;
             saveToCart(cartItem);
-            navigate('/cart');
+            navigate('/cart', {state: {saved: true}});
         }
     }
 

@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react'
+import React, {useState, useEffect, useContext} from 'react'
 import Categories from '../types/MenuCategories'
 import Category from '../types/Category'
 import Navbar from '../components/NavBar/Navbar.tsx'
@@ -8,10 +8,12 @@ import CardHeader from '@mui/material/CardHeader';
 import theme from '../styles/Theme.ts'
 import BourbonBaconBurger from '../assets/food/BourbonBaconBurger.jpg'
 import { Link, useNavigate } from 'react-router-dom'
+import { CartContext } from '../contexts/CartContext.tsx'
 const MainMenu = () =>
 {
     const navigate = useNavigate();
     const [cardsArray, setCardsArray] = useState<Category[]>([]);
+    const {totalPrice} = useContext(CartContext);
     useEffect((()=>
     {
         setCardsArray(Categories);
@@ -25,11 +27,11 @@ const MainMenu = () =>
     }
     const goToCart = () =>
     {
-        navigate('/cart', {state: {fromLocation: window.location.href}});
+        navigate('/cart', {state: {fromLocation:'/'}});
     }
     return (
         <ThemeProvider theme={theme}>
-        <Navbar bottomLabel='Review Order' onClick={goToCart}>
+        <Navbar bottomLabel={`Review Order - $ ${totalPrice.toFixed(2)}`} onClick={goToCart}>
             <Typography sx={{paddingTop: 3, width: '100%'}} variant='h2' fontFamily={"'Roboto', 'Helvetica', 'Arial', sans-serif"} color={theme.palette.dennysRed.main} textAlign="center" fontWeight={555} fontSize={30}>Main Menu</Typography>
             <Divider variant='middle'/>
             <Grid2 container alignContent="center" justifyContent='space-evenly' alignSelf='center' columnSpacing={0.5} rowSpacing={2} paddingBottom={3} pt={3}>

@@ -16,6 +16,7 @@ interface CartContextProps
     addToCart: (item: CartItem) => void,
     removeFromCart: (itemID: string) => void,
     saveToCart: (item: CartItem) => void,
+    saveComments: (item: CartItem) => void,
     setCartPrice: (price: number) => void,
     applyDiscount: (itemName: string) => void,
 }
@@ -31,6 +32,7 @@ export const CartContext = React.createContext<CartContextProps>(
         addToCart: (_item: CartItem) => {console.error("Function not implemented")},
         removeFromCart: (_itemID: string) => {console.error("Function not implemented")},
         saveToCart: (_item: CartItem) => {console.error("Function not implemented")},
+        saveComments: (_item: CartItem) => {console.error("Function not implemented")},
         setCartPrice: (_price: number) => {console.error("Function not implemented")},
         applyDiscount: (_itemName: string) => {console.error("Function not implemented")},
     } // avoids using a "null" default context
@@ -54,13 +56,16 @@ export const CartProvider = ({children}:{children: React.ReactNode}) =>
     const [cart, setCart] = useState<Cart>({});
     const [price, setPrice] = useState(0);
     const [appliedDiscounts, setAppliedDiscounts] = useState<string[]>([]);
-
+    const saveComments = (item: CartItem) =>
+    {
+        console.log(item);
+        setCart((prev)=>({...prev, [item.id]:item}));
+    }
     const saveToCart = (item: CartItem) =>
     {
         let newPrice = 0;
-        Object.values(cart).reduce((total, value)=>(total+=value.price * value.quantity), 0);
+        newPrice = Object.values(cart).reduce((total, value)=>(total+=value.price * value.quantity), 0);
         setPrice(newPrice);
-        console.log(item);
         setCart((prev)=>({...prev, [item.id]:item}));
     };
     const removeFromCart = (itemID: string) =>
@@ -72,6 +77,12 @@ export const CartProvider = ({children}:{children: React.ReactNode}) =>
             delete updatedCart[itemID];
             setPrice((prev)=>(prev - doomedCartItem.price));
             setCart({...updatedCart});
+            const index = appliedDiscounts.indexOf(doomedCartItem.item.name);
+            if(index >=0)
+            {
+                appliedDiscounts.splice(index, 1);
+                setAppliedDiscounts(appliedDiscounts);
+            }
         }
         else
         {
@@ -134,7 +145,7 @@ export const CartProvider = ({children}:{children: React.ReactNode}) =>
     }, [cart]);
     
     return (
-        <CartContext.Provider value={{cartItems: cart, totalPrice: price, appliedDiscounts, setCartContext, setCartPrice, addToCart, removeFromCart, saveToCart, applyDiscount}}>
+        <CartContext.Provider value={{cartItems: cart, totalPrice: price, appliedDiscounts, setCartContext, setCartPrice, addToCart, removeFromCart, saveToCart, saveComments, applyDiscount}}>
             {children}
         </CartContext.Provider>
     );

@@ -23,6 +23,7 @@ import { AddCircleOutlineRounded, BugReport } from '@mui/icons-material'
 import WindowDimensions from '../components/WindowDimensions.tsx'
 import ReactDOM from 'react-dom'
 import DebugFab from '../components/DebugFab.tsx'
+import CheckRoundedIcon from '@mui/icons-material/CheckRounded';
 const imageDimensions = 
 {
     width: 112.5,
@@ -110,7 +111,10 @@ const CategoryMenu = () =>
     const [categoryName, setCategoryName] = React.useState('');
     const [snackbarOpen, setSnackbarOpen] = React.useState(false);
     const [addedItemName, setAddedItemName] = React.useState('');
-
+    function goToCart()
+    {
+        navigate('/cart', {state:{fromLocation: `/browse?category=${encodeURIComponent(categoryName)}`}})
+    }
     function openSnackbar()
     {
         navigate(`/browse?category=${encodeURIComponent(categoryName)}`, {state:
@@ -175,7 +179,7 @@ const CategoryMenu = () =>
     else if (categoryName == "Deals and Promos"){
         return(
             <ThemeProvider theme={theme}>
-            <Navbar bottomLabel={`Review Order - ${totalPrice.toFixed(2)}`}> {/* Bump this up to Main and use context*/}
+            <Navbar bottomLabel={`Review Order - ${totalPrice.toFixed(2)}`} onClick={goToCart}> {/* Bump this up to Main and use context*/}
                 <MenuBreadcrumbs categoryName='Deals and Promotions'/>
                 <DealsPage />
             </Navbar>
@@ -184,8 +188,7 @@ const CategoryMenu = () =>
     {
         return (
         <ThemeProvider theme={theme}>
-             
-              <Navbar bottomLabel={`Review Order - $${totalPrice.toFixed(2)}`}> {/* Bump this up to Main and use context*/}
+              <Navbar bottomLabel={`Review Order - $${totalPrice.toFixed(2)}`} onClick={goToCart}> {/* Bump this up to Main and use context*/}
                 <TopSnackbar open={snackbarOpen? snackbarOpen : false} message={`${addedItemName} added`} onClose={closeSnackbar} timeout={10000}/>
                 <MenuBreadcrumbs categoryName='Sandwiches and Burgers'/>
                 <Typography sx={{paddingTop: 1, width: '100%'}} variant='h2' fontFamily={'Roboto'} color={theme.palette.dennysRed.main} textAlign="center" fontWeight={555} fontSize={30}>Sandwiches and Burgers</Typography>
@@ -198,7 +201,7 @@ const CategoryMenu = () =>
                 }
                 </Stack>
                 <TopSnackbar open={snackbarOpen? snackbarOpen : false} message={`${addedItemName} added`} onClose={closeSnackbar} timeout={2000}/>
-                <DebugFab show onClick={openSnackbar}/>
+                <DebugFab onClick={openSnackbar}/>
             </Navbar>
         </ThemeProvider>
         );

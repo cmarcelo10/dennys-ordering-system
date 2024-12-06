@@ -22,7 +22,6 @@ export const SeniorsDiscount:DiscountItem =
     description: "50% off one full-priced menu item, excluding alcoholic beverages. Cannot be combined with other offers. Ask your server for more details",
     preferredFontSize: 24,
     appliesTo: "Slamburger"
-
 }
 
 export const FreePieDiscount:DiscountItem =

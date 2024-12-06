@@ -14,7 +14,6 @@ interface CartItemCardProps
     cartItem: CartItem,
     handleRemoveItem: (itemID: string) => void,
     handleChangeQuantity: (itemID: string, updatedQuantity: number) => void
-    handleFormDataChange?: (itemID: string, comments: string) => void;
 }
 
 const DebugElement = ({debugItem}:{debugItem: any})=>
@@ -34,22 +33,26 @@ const ShowHideTextElement = React.memo(({isExpanded}:{isExpanded: boolean}) =>
 const buttonBorderRadius = 8;
 
 const CartItemCard = ({cartItem, handleRemoveItem, handleChangeQuantity}:CartItemCardProps) => {
-    const {cartItems, saveToCart} = React.useContext(CartContext);
+    const {cartItems, saveToCart, saveComments} = React.useContext(CartContext);
     const navigate = useNavigate();
     const [expanded, setExpanded] = useState(true);
     const [commentsExpanded, setCommentsExpanded] =  useState(true);
     const [dialogOpen, setDialogOpen] = useState(false); 
     const isEditingRef = React.useRef(false);
     const [editing, setEditing] = React.useState(false);
-    const formText = React.useRef('');
-    const [savedText, setSavedText] = React.useState('');
+    const formText = React.useRef(''); // useRef because we don't want this rerendering every time something changes
+    const [savedText, setSavedText] = React.useState(cartItem.comments);
+
     function logInput(_e: React.ChangeEvent<HTMLTextAreaElement>)
     {
         formText.current = _e.target.value;
     }
     const onBlur = () =>
     {
-        setSavedText(formText.current);
+        console.log(cartItem.comments);
+        cartItem.comments = formText.current;
+        saveComments(cartItem);
+        setSavedText(cartItem.comments);
     }
 
     const toggleExpanded = (_e: React.MouseEvent) => {
@@ -115,7 +118,7 @@ const CartItemCard = ({cartItem, handleRemoveItem, handleChangeQuantity}:CartIte
                     sx={{
                             fontSize: 24,
                             fontWeight: 600,
-                    }}>${cartItem.price}</Typography>
+                    }}>${(cartItem.price*cartItem.quantity).toFixed(2)}</Typography>
                     </Box>
                 }></CardHeader>
                 <CardContent sx={{p: 1, pt: 0}}>
@@ -159,14 +162,14 @@ const CartItemCard = ({cartItem, handleRemoveItem, handleChangeQuantity}:CartIte
                         </Box>
                     </AccordionSummary>
                     <AccordionDetails sx={{backgroundColor: '#F2EEEA', p: 1}}>
-                <TextField sx={{
+                <TextField defaultValue={savedText} sx={{
                     width: '100%', 
                     backgroundColor: 'white',
                     '& .MuiInputBase-root':
                     {
                         p: 0.75,
                         fontSize: 16,
-                    }}} multiline minRows={5} maxRows={5} placeholder='Add special comments here' onChange={logInput}/>
+                    }}} multiline minRows={5} maxRows={5} placeholder='Add special comments here' onChange={logInput} onBlur={onBlur}/>
 
                     </AccordionDetails>
                 </Accordion>
