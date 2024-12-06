@@ -201,7 +201,7 @@ const CategoryMenu = () =>
                 }
                 </Stack>
                 <TopSnackbar open={snackbarOpen? snackbarOpen : false} message={`${addedItemName} added`} onClose={closeSnackbar} timeout={2000}/>
-                <DebugFab onClick={openSnackbar}/>
+                <DebugFab show={false} onClick={openSnackbar}/>
             </Navbar>
         </ThemeProvider>
         );

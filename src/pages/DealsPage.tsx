@@ -37,9 +37,7 @@ const DealsPage = ()=>
             <TopSnackbarEnhanced open={open} onClose={closeSnackbar} timeout={2500} className='successSnackbar' 
                 color={theme.palette.success.contrastText} 
                 backgroundColor={theme.palette.success.main} 
-                message={<Typography fontWeight={500} fontSize={18}>
-                    Deal Applied!
-                    </Typography>}
+                message={<Typography fontWeight={500} fontSize={18}>Deal Applied!</Typography>}
                 action={<CheckRounded sx={{fontWeight: 1000}}fontSize='large'/>}
                 />
             <TopSnackbarEnhanced open={failure} onClose={closeSnackbar} timeout={2500} className='failureSnackbar' 
@@ -50,7 +48,7 @@ const DealsPage = ()=>
                     </Typography>}
                 action={<SadFace sx={{fontWeight: 1000}}fontSize='large'/>}
                 />
-            <DebugFab show onClick={()=>setFailure(true)} />
+            <DebugFab show={false} onClick={()=>setFailure(true)} />
             <Typography sx={{paddingTop: 1, width: '100%'}} variant='h2' fontFamily={'Roboto'} color={theme.palette.dennysRed.main} textAlign="center" fontWeight={555} fontSize={30}>Deals and Promos</Typography>
             <Divider variant='middle'/>
             <Stack spacing={3} sx={{paddingTop: 3, paddingBottom: 3, overflowY: 'scroll'}}>

@@ -51,9 +51,6 @@ const CartPage = () => {
         else navigate('/');
     },[state]);
 
-    function fakeNavigate(){
-        navigate('/cart', {state:{saved: true}});
-    }
     // set up cart context to get cart items
 
     function handleChangeQuantity(itemID: string, newQuantity: number)
@@ -136,7 +133,7 @@ const CartPage = () => {
                 </Box>
             </Paper>
         </NavBar>
-        <DebugFab show onClick={closeCheckoutDialog}/>
+        <DebugFab show={false} onClick={closeCheckoutDialog}/>
       </ThemeProvider>
     );
   };
