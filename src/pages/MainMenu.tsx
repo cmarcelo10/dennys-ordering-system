@@ -37,10 +37,10 @@ const MainMenu = () =>
             <Grid2 container alignContent="center" justifyContent='space-evenly' alignSelf='center' columnSpacing={0.5} rowSpacing={2} paddingBottom={3} pt={3}>
                 {
                     cardsArray.map(item=>(
-                    <Card key={item.index} elevation={3} sx={{display: "flex", borderStyle: 'solid', borderWidth: 0.5, borderColor: theme.palette.dennysGrey.main, borderRadius: 2, flexDirection: 'column', maxHeight: '180px', width: '160px'}}>
-                       <CardActionArea onClick={()=>{handleNavigate(item.name)}}>
-                            <CardMedia component='img' src={item.image? item.image : BourbonBaconBurger} height={120}/>
-                            <CardContent sx={{p: 0.75, pl: 0.5, pr: 0.5, alignSelf: 'center', justifyContent: 'center'}}>
+                    <Card key={item.index} elevation={4} sx={{display: 'flex', flexDirection: 'column', borderStyle: 'solid', borderWidth: 0.5, borderColor: theme.palette.dennysGrey.main, borderRadius: 2, width: '160px'}}>
+                            <CardActionArea onClick={()=>{handleNavigate(item.name)}} sx={{height: 'auto'}}>
+                            <CardMedia component='img' image={item.image? item.image : BourbonBaconBurger} height={120}/>
+                            <CardContent sx={{display: 'flex', flexDirection: 'column', p: 0.75, pl: 0.5, pr: 0.5, alignSelf: 'center', justifyContent: 'center', flexGrow: 2}}>
                                 <Typography textAlign='center' variant='h6' lineHeight={1.25} fontSize={18}>{item.name}</Typography>
                             </CardContent>
                         </CardActionArea>

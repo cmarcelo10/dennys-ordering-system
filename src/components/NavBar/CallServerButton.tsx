@@ -21,7 +21,20 @@ const CallServerButton = React.memo(({onClick}:{onClick: ()=>void})=>
 
     return (
 
-            <Fab sx={{position: 'fixed', borderRadius: 10, height: 'auto', bottom: '1%', left: '0%', fontWeight: 1000, fontSize: 14, zIndex: 1001, backgroundColor: theme.palette.dennysYellow.main, color: theme.palette.dennysYellow.contrastText}} 
+            <Fab sx={{position: 'fixed', borderRadius: 10, height: 'auto', bottom: '1%', left: '0%', fontWeight: 1000, fontSize: 14, zIndex: 1001, 
+                    backgroundColor: theme.palette.dennysYellow.main, 
+                    color: theme.palette.dennysYellow.contrastText,
+                    '&.MuiButtonBase-root':
+                    {
+                        backgroundColor: theme.palette.dennysYellow.main,
+                        color: theme.palette.dennysYellow.contrastText,
+                    },
+                    '&:hover':
+                    {
+                        color: theme.palette.dennysRed.contrastText,
+                        backgroundColor: theme.palette.dennysRed.main,
+                    }
+                    }} 
                 variant='extended' onClick={handleClick}>
                     Call 
                     <br/> Server
