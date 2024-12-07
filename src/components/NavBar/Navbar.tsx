@@ -2,7 +2,7 @@ import { AppBar, backdropClasses, BottomNavigation, Box, Button, Collapse, Conta
 import React, {useState, useEffect} from 'react'
 import {ThemeProvider} from '@mui/material/styles'
 import WindowDimensions from '../WindowDimensions';
-import DennysLogo from '../../assets/DENN2.svg'
+import DennysLogo from '../../assets/DENN.svg'
 import theme from '../../styles/Theme';
 import ItemSearch from '../ItemSearch';
 import PersonIcon from '@mui/icons-material/Person'
@@ -23,15 +23,21 @@ interface NavBarProps
     onClick?: ()=>void;
 }
 
-const Logo = React.memo(()=>
+
+const Logo = React.memo(({onClick}:{onClick?: (_e: React.MouseEvent)=>void})=>
 (
-    <Box component='img' src={DennysLogo} sx={{postiion: 'absolute', left: '10px', right: 'auto', backgroundColor: theme.palette.dennysYellow.main, height: 40, width: 40, borderRadius: 2, padding: 0.5}}/>
+    <Box component='img' onClick={onClick} src={DennysLogo} sx={{postiion: 'absolute', left: '10px', right: 'auto', backgroundColor: theme.palette.dennysYellow.main, height: 40, width: 40, borderRadius: 2, padding: 0.5}}/>
 )); // never reload the image.
 
 const NavBar = ({bottomLabel, onClick, disableButton, children, hideCallServerButton}: NavBarProps) => {
     const navigate = useNavigate();
     const [snackbarOpen, setSnackbarOpen] = useState(false);
     const [dialogOpen, setDialogOpen] = useState(false);
+    function handleClickLogo(_e: React.MouseEvent)
+    {
+        navigate("/");
+    }
+
     function handleCallServer()
     {
         setDialogOpen(true);
@@ -70,7 +76,7 @@ const NavBar = ({bottomLabel, onClick, disableButton, children, hideCallServerBu
             <CallServerDialog open={dialogOpen} onCancel={onCancel} onConfirm={onConfirm}/>
             <AppBar sx={{zIndex: 1000, backgroundColor: '#464340'}} elevation={1} position='fixed'>
                 <Toolbar sx={{justifyContent: 'space-between'}}>
-                    <Logo />
+                    <Logo onClick={handleClickLogo}/>
                     <Box display='flex' flexDirection={'row'} alignItems={'center'}>
                     <ItemSearch />
                     </Box>
