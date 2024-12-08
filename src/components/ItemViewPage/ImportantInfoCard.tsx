@@ -7,6 +7,7 @@ interface ImportantInfoCardProps
 {
     nutritionalData?: NutritionalData,
     allergenData?: string,
+    allergenFontSize?: number,
     modalOpen: boolean,
     openModal: ()=>void,
     closeModal: ()=>void,
@@ -40,7 +41,7 @@ const NutritionalDataRow = React.memo(({fieldName, value}:{fieldName: string, va
     </React.Fragment>
 ),(prev, next) => prev.fieldName === next.fieldName && prev.value === next.value);
 
-const ImportantInfoCard=({nutritionalData, allergenData, modalOpen, openModal, closeModal}:ImportantInfoCardProps) =>
+const ImportantInfoCard=({nutritionalData, allergenData, allergenFontSize, modalOpen, openModal, closeModal}:ImportantInfoCardProps) =>
 {
     return(
         <Card sx={{backgroundColor: '#F2EEEA'}}>
@@ -65,17 +66,17 @@ const ImportantInfoCard=({nutritionalData, allergenData, modalOpen, openModal, c
                             padding: '5px'
                         }
                     }}>
-                    <Box display='flex' flexDirection='column'>
-                        <Box display='flex' flexDirection='row' justifyContent='space-between'>
-                            <Typography margin='4px' fontSize={20} color="red">
+                    <Box sx={{display: 'flex', flexDirection: 'column'}}>
+                        <Box sx={{display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
+                            <Typography margin='4px' fontSize={20} fontWeight={450} color="red">
                                 Allergens
                             </Typography>
-                            <Typography margin='4px' fontSize={20} color="red">
+                            <Typography margin='4px'fontSize={allergenFontSize ? allergenFontSize : 20} color="red">
                                 {allergenData ? allergenData : <>Unavailable</>}
                             </Typography>
                         </Box>
-                        <Box display='flex' flexDirection='row' justifyContent='space-between'>
-                            <Typography margin='4px' fontSize={20}>
+                        <Box sx={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between'}}>
+                            <Typography margin='4px' fontSize={20} fontWeight={450}>
                                 Nutritional Info
                             </Typography>
                             <Button sx={{borderRadius: 3}}variant='outlined'onClick={openModal} disabled={!nutritionalData}>{nutritionalData ? (<>View</>):(<>Unavailable</>)}</Button>
