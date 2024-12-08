@@ -6,7 +6,7 @@ import AccordionSummary from '@mui/material/AccordionSummary'
 import AccordionDetails from '@mui/material/AccordionDetails'
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
-import ExpandIcon from '@mui/icons-material/ExpandCircleDownTwoTone';
+import ExpandIcon from '@mui/icons-material/ExpandCircleDownOutlined';
 import theme from '../../styles/Theme'
 import CustomizationOption from '../../types/CustomizationOption'
 import ShowHideTextElement from './ShowHideTextElement'
