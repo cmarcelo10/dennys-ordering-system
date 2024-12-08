@@ -187,7 +187,7 @@ const CategoryMenu = () =>
                     message={
                         <Typography sx={{fontSize: 16, fontWeight: 500}}>{`${addedItemName} added!`}</Typography>
                     } 
-                    onClose={closeSnackbar} timeout={5000}
+                    onClose={closeSnackbar} timeout={2000}
                     action={
                     <Button sx={{color: theme.palette.dennysYellow.main}} onClick={goToCart}>
                         View
