@@ -157,6 +157,7 @@ const CategoryMenu = () =>
     }
     React.useEffect(()=>
     {
+        window.scrollTo(0,0);
         if(state && state.itemAdded && state.itemName)
         {
             setAddedItemName(state.itemName)
@@ -196,7 +197,7 @@ const CategoryMenu = () =>
                 <MenuBreadcrumbs categoryName={categoryName}/>
                 <Typography sx={{paddingTop: 1, width: '100%'}} variant='h2' fontFamily={'Roboto'} color={theme.palette.dennysRed.main} textAlign="center" fontWeight={555} fontSize={30}>{categoryName}</Typography>
                 <Divider variant='middle'/>
-                {categoryName === "Sandwiches and Burgers" ? (<Stack spacing={3} sx={{paddingTop: 3, paddingBottom: 3, overflowY: 'scroll'}}>
+                {categoryName === "Sandwiches and Burgers" ? (<Stack spacing={3} sx={{paddingTop: 3, paddingBottom: 3}}>
                 {
                     cardsArray.map((item, index)=>(
                         <MenuCard key={index} name={item.name} description={item.description} image={item.image} price={item.price} />
