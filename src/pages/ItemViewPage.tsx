@@ -122,7 +122,7 @@ const ItemViewPage = ()=>
     const [open, setOpen] = React.useState(false);
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
-    const [parentLocation, setParentLocation] = item ? `/browse?category=${encodeURIComponent(item.parentCategory)}` : "/";
+    const [parentLocation, setParentLocation] = React.useState(item ? `/browse?category=${encodeURIComponent(item.parentCategory)}` : "/");
     const [disableAddItem, setDisableAddItem] = React.useState(true);
     // Minor performance optimization so that React doesn't re-create this function object on re-renders
     const [dialogOpen, setDialogOpen] = React.useState(false);
@@ -146,7 +146,7 @@ const ItemViewPage = ()=>
                 let foodItemCopy =  structuredClone(item);
                 foodItemCopy.customizations = structuredClone(custOptions);
                 addToCart({id: '', item: foodItemCopy, price: price, quantity: quantity});
-                navigate(parentLocation, {state:{
+                navigate(`/browse?category=${encodeURIComponent(item.parentCategory)}`, {state:{
                     itemAdded: true,
                     itemName: item.name
                 }})
@@ -215,7 +215,11 @@ const ItemViewPage = ()=>
                 setEditing(true);
             }
         }
-        else if(itemName && !item)
+        if(item)
+        {
+            setParentLocation(item.parentCategory)
+        }
+        else if(item || itemName)
         {
             const foundItem = menu.current.find((entry)=>entry.name === itemName);
             if(foundItem)
@@ -280,7 +284,7 @@ const ItemViewPage = ()=>
     }
     function goToParent()
     {
-        navigate(parentLocation)
+        navigate(`/browse?category=${encodeURIComponent(item!.parentCategory)}`);
     }
     if(!item)
     {
