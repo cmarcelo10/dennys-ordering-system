@@ -7,7 +7,7 @@ Our project is hosted on Vercel, and can be accessed [here](https://dennys-order
 While our website is completely functional on Desktop, the interface is designed to be viewed on a smartphone
 
 You can also open our prototype web app by scanning this QR code on your phone!</br></br>
-![QR Code](qr_code.png "Denny's Ordering System QR Code");
+![QR Code](qr_code.png "Denny's Ordering System QR Code")
 
 ## Implemented Pages:
 The following routes have been fully implemented in this prototype
