@@ -95,10 +95,10 @@ const CartPage = () => {
     },[]);
     return (
       <ThemeProvider theme={theme}>
-        <TopSnackbarEnhanced color='white' backgroundColor={theme.palette.success.main} open={checkoutSnackbar} timeout={2500} onClose={closeSnackbar} message={<Typography fontSize={18} fontWeight={500}>Order Placed!</Typography>} action={<CheckRoundedIcon fontSize='large'/>}/>
-        <TopSnackbarEnhanced color='white' open={itemDeleted} timeout={2500} onClose={closeSnackbar} message={<Typography fontSize={18} fontWeight={500}>{deletedItemName.current} removed</Typography>}/>
-        <TopSnackbarEnhanced color='white' backgroundColor={theme.palette.success.main} open={saveChanges} timeout={2500} onClose={closeSnackbar} message={<Typography sx={{color: theme.palette.success.contrastText}} fontSize={18} fontWeight={500}>Changes Saved</Typography>} action={<CheckRoundedIcon fontSize='large'/>}/>
-        <TopSnackbarEnhanced color='white' backgroundColor={theme.palette.info.main} open={cancelled} timeout={2500} onClose={closeSnackbar} message={<Typography sx={{color: theme.palette.info.contrastText}}fontSize={18} fontWeight={500}>Changes Discarded</Typography>}/>
+        <TopSnackbarEnhanced color='white' backgroundColor={theme.palette.success.main} open={checkoutSnackbar} timeout={2000} onClose={closeSnackbar} message={<Typography fontSize={18} fontWeight={500}>Order Placed!</Typography>} action={<CheckRoundedIcon fontSize='large'/>}/>
+        <TopSnackbarEnhanced color='white' open={itemDeleted} timeout={2000} onClose={closeSnackbar} message={<Typography fontSize={18} fontWeight={500}>{deletedItemName.current} removed</Typography>}/>
+        <TopSnackbarEnhanced color='white' backgroundColor={theme.palette.success.main} open={saveChanges} timeout={2000} onClose={closeSnackbar} message={<Typography sx={{color: theme.palette.success.contrastText}} fontSize={18} fontWeight={500}>Changes Saved</Typography>} action={<CheckRoundedIcon fontSize='large'/>}/>
+        <TopSnackbarEnhanced color='white' backgroundColor={theme.palette.info.main} open={cancelled} timeout={2000} onClose={closeSnackbar} message={<Typography sx={{color: theme.palette.info.contrastText}}fontSize={18} fontWeight={500}>Changes Discarded</Typography>}/>
         <CheckoutDialog open={checkout} onConfirm={performCheckout} onClose={closeCheckoutDialog}/>
         <NavBar bottomLabel='CHECK OUT' onClick={openCheckoutDialog} disableButton={length <=0}>
             <Box display="flex" flexDirection="row" alignContent={'center'}>
