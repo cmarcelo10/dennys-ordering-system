@@ -41,8 +41,8 @@ export const TCSExtras:CustomizationCategory =
 }
 export const TraditionalClubSandwichCustomizations = 
 {
-    "Extras": TCSExtras,
     "Side": TCSSideOptions, 
+    "Extras": TCSExtras,
     "Side Salad": SideSaladOptions
 };
 
@@ -55,7 +55,7 @@ const TraditionalClubSandwich:FoodItem =
     preferredFontSize: 24,
     customizations: TraditionalClubSandwichCustomizations,
     image: TraditionalClubSandwichImg,
-    allergens: "Gluten, Dairy",
+    allergens: "Eggs, Dairy, Gluten",
     nutritionalData: {
         name: "Traditional Club Sandwich",
         calories: '600',
