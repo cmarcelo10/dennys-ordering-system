@@ -74,14 +74,14 @@ const CheckoutDialog = ({open, onClose, onConfirm}:CheckoutDialogProps)=>
            </Button>
         </Toolbar>
         </AppBar>
-        <DialogTitle sx={{textAlign: 'center', fontSize: 30}}>
+        <DialogTitle sx={{textAlign: 'center', fontSize: 28, boxShadow: 3, height: 35}}>
             Order Summary
         </DialogTitle>
         <DialogContent sx={{
             '&.MuiDialogContent-root':
             {
                 minHeight: 0,
-                maxHeight: 530,
+                maxHeight: 350,
             },
         }} dividers>
             {
@@ -95,7 +95,7 @@ const CheckoutDialog = ({open, onClose, onConfirm}:CheckoutDialogProps)=>
                                 borderBottomWidth: 1, borderBottomStyle: undefined}}>
                         <Box sx={{textWrap: 'wrap'}}>
                             <Typography variant="h6" sx={{fontSize: 'inherit', fontWeight: 500}}>
-                                {item.item.name}{' '}{item.quantity > 0 && (<>x {item.quantity}</>)}
+                                {item.item.name}{' '}{item.quantity > 0 && (<> x {item.quantity}</>)}
                             </Typography>
                         </Box>
                         
@@ -113,11 +113,12 @@ const CheckoutDialog = ({open, onClose, onConfirm}:CheckoutDialogProps)=>
                                     ${' '}{item.item.price}
                                 </Typography> 
                             </Box>
-                            <Divider variant='inset'/>
+                            <Divider variant='inset'/>  
+                            <Stack>
                             {Object.entries(foodItem.customizations).map(([itemKey, category])=>
                             {
                                 return (
-                                    <Stack key={itemKey}>
+                                        <>
                                         {Object.entries(category.options).filter(([_optionName, value])=>{return value.selected;}).map(([option, data])=>(
                                             <Box key={option+itemKey} sx={{m: 0.5}}>
                                                 <Box sx={{display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent:'space-between'}}>
@@ -133,17 +134,19 @@ const CheckoutDialog = ({open, onClose, onConfirm}:CheckoutDialogProps)=>
                                             </Box>
 
                                         ))}
-                                    </Stack>)
-                            })}
+                                        </>
+                                  )
+                            })}  
+                            </Stack>
                         </Box>
-                        {index < cartLength.current && <Divider variant="middle"/>}
+                        {index < cartLength.current - 1 && <Divider variant="middle"/>}
                     </Box>
                 )
             })}
             </DialogContent>
             <DialogContent sx={{
                 borderTopWidth: '1px', 
-                borderTopColor: theme.palette.dennysGrey.light, 
+                borderTopColor: theme.palette.dennysGrey.main, 
                 borderTopStyle: 'solid',
                 '&.MuiPaper-root':
                 {
