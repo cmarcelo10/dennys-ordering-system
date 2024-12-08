@@ -1,6 +1,6 @@
 import React, { useContext } from 'react'
 import Typography from '@mui/material/Typography'
-import {createBrowserRouter, Link,  useLocation,  useNavigate} from 'react-router-dom'
+import {createBrowserRouter, Link,  useLocation,  useNavigate, useSearchParams} from 'react-router-dom'
 import Stack from '@mui/material/Stack'
 import Box from '@mui/material/Box'
 import Breadcrumbs from '@mui/material/Breadcrumbs'
@@ -25,6 +25,7 @@ import ReactDOM from 'react-dom'
 import DebugFab from '../components/DebugFab.tsx'
 import CheckRoundedIcon from '@mui/icons-material/CheckRounded';
 import TopSnackbarEnhanced from '../components/TopSnackbarEnhanced.tsx'
+import { setUseStrictShallowCopy } from 'immer'
 const imageDimensions = 
 {
     width: 112.5,
@@ -100,18 +101,43 @@ const MenuBreadcrumbs = ({categoryName}:{categoryName: string})=>
     </Box>)
 }
 
+const ErrorComponent = ({totalPrice}:{totalPrice: number})=>
+(
+    <ThemeProvider theme={theme}>
+        <Navbar bottomLabel={`Review Order - $ ${totalPrice.toFixed(2)}`}> {/* Bump this up to Main and use context*/}
+        <MenuBreadcrumbs categoryName='Not Found'/>
+        <Typography sx={{paddingTop: 1, width: '100%'}} variant='h2' fontFamily={'Roboto'} color={theme.palette.dennysRed.main} textAlign="center" fontWeight={555} fontSize={30}>Page not implemented</Typography>
+        </Navbar>
+    </ThemeProvider>
+);
+
 const CategoryMenu = () =>
 {
     const navigate = useNavigate();
     const {totalPrice} = useContext(CartContext);
     const {height, width} = WindowDimensions();
     const {state} = useLocation();
-    const location = React.useRef(useLocation());
-    const [cardsArray, setCardsArray] = React.useState<FoodItem[]>([]);
-    const [categoryFound, setCategoryFound] = React.useState<boolean>(false);
-    const [categoryName, setCategoryName] = React.useState('');
+    const [categoryName, setCategoryName] = React.useState(()=>
+    {
+        const queryParams = new URLSearchParams(window.location.search);
+        // this appears to be safe.
+        if (queryParams && queryParams.has('category'))
+        {
+            const category = queryParams.get('category');
+            if(category)
+            {
+                return decodeURIComponent(category)
+            }
+        }
+        return "Page Not Found";
+    });
+
     const [snackbarOpen, setSnackbarOpen] = React.useState(false);
     const [addedItemName, setAddedItemName] = React.useState('');
+    const [cardsArray, setCardsArray] = React.useState(()=>
+    {
+        return categoryName.toLowerCase() === 'sandwiches and burgers' ? FoodItems.HandheldsList : []
+    })
     function goToCart()
     {
         navigate('/cart', {state:{fromLocation: `/browse?category=${encodeURIComponent(categoryName)}`}})
@@ -133,54 +159,20 @@ const CategoryMenu = () =>
     {
         if(state && state.itemAdded && state.itemName)
         {
-            console.log(state.itemName);
             setAddedItemName(state.itemName)
             setSnackbarOpen(true);
             window.history.replaceState({},''); // purge the state
         }
     }, [state]);
 
-    React.useEffect((()=>
-    {
-        if(!state)
-        {
-            console.log("no state");
-        }
-        const queryParams = new URLSearchParams(location.current.search);
-        const menuCategory = queryParams.get('category');
-        console.log(menuCategory);
-        if(menuCategory === null || menuCategory === undefined)
-        {
-            navigate("/"); // go home
-        }
-        const catName = decodeURIComponent(menuCategory!);
-        if(catName === "Sandwiches and Burgers")
-        {
-            setCardsArray(FoodItems.HandheldsList);
-            setCategoryName(catName)
-        } else if (catName === "Deals and Promos"){
-            setCategoryName(catName);
-        }
-    }));
-
-    const ErrorComponent = ()=>
-    (
-        <ThemeProvider theme={theme}>
-            <Navbar bottomLabel={"Page Not Implemented"}> {/* Bump this up to Main and use context*/}
-            <MenuBreadcrumbs categoryName='Not Implemented'/>
-            <Typography sx={{paddingTop: 1, width: '100%'}} variant='h2' fontFamily={'Roboto'} color={theme.palette.dennysRed.main} textAlign="center" fontWeight={555} fontSize={30}>Page not implemented</Typography>
-            </Navbar>
-        </ThemeProvider>
-    );
-
     if(!categoryName)
     {
-        return (<ErrorComponent />)
+        return (<ErrorComponent totalPrice={totalPrice}/>)
     }
     else if (categoryName == "Deals and Promos"){
         return(
             <ThemeProvider theme={theme}>
-            <Navbar bottomLabel={`Review Order - ${totalPrice.toFixed(2)}`} onClick={goToCart}> {/* Bump this up to Main and use context*/}
+            <Navbar bottomLabel={`Review Order - $ ${totalPrice.toFixed(2)}`} onClick={goToCart}>
                 <MenuBreadcrumbs categoryName='Deals and Promotions'/>
                 <DealsPage />
             </Navbar>
@@ -189,21 +181,31 @@ const CategoryMenu = () =>
     {
         return (
         <ThemeProvider theme={theme}>
-              
-              <Navbar bottomLabel={`Review Order - $${totalPrice.toFixed(2)}`} onClick={goToCart}> {/* Bump this up to Main and use context*/}
-                <TopSnackbarEnhanced open={snackbarOpen} message={<Typography sx={{fontSize: 16, fontWeight: 500}}>{addedItemName}{' '}added!</Typography>} onClose={closeSnackbar} timeout={10000}
-                action={<Button sx={{color: theme.palette.dennysYellow.main}}onClick={goToCart}>View</Button>}/>
-                <MenuBreadcrumbs categoryName='Sandwiches and Burgers'/>
-                <Typography sx={{paddingTop: 1, width: '100%'}} variant='h2' fontFamily={'Roboto'} color={theme.palette.dennysRed.main} textAlign="center" fontWeight={555} fontSize={30}>Sandwiches and Burgers</Typography>
+                <TopSnackbarEnhanced 
+                    open={snackbarOpen} 
+                    message={
+                        <Typography sx={{fontSize: 16, fontWeight: 500}}>{`${addedItemName} added!`}</Typography>
+                    } 
+                    onClose={closeSnackbar} timeout={5000}
+                    action={
+                    <Button sx={{color: theme.palette.dennysYellow.main}} onClick={goToCart}>
+                        View
+                    </Button>
+                    }/>
+                <Navbar bottomLabel={`Review Order - $ ${totalPrice.toFixed(2)}`} onClick={goToCart}>
+                <MenuBreadcrumbs categoryName={categoryName}/>
+                <Typography sx={{paddingTop: 1, width: '100%'}} variant='h2' fontFamily={'Roboto'} color={theme.palette.dennysRed.main} textAlign="center" fontWeight={555} fontSize={30}>{categoryName}</Typography>
                 <Divider variant='middle'/>
-                <Stack spacing={3} sx={{paddingTop: 3, paddingBottom: 3, overflowY: 'scroll'}}>
+                {categoryName === "Sandwiches and Burgers" ? (<Stack spacing={3} sx={{paddingTop: 3, paddingBottom: 3, overflowY: 'scroll'}}>
                 {
                     cardsArray.map((item, index)=>(
                         <MenuCard key={index} name={item.name} description={item.description} image={item.image} price={item.price} />
                     )) 
                 }
-                </Stack>
-                <DebugFab show={false} onClick={openSnackbar}/>
+                </Stack>) : (
+                        <Typography sx={{mt: 4, textAlign: 'center', fontSize: 20}}>Page not implemented</Typography>
+                    )}
+                <DebugFab onClick={openSnackbar}/>
             </Navbar>
         </ThemeProvider>
         );

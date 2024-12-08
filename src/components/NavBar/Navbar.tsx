@@ -2,7 +2,7 @@ import { AppBar, backdropClasses, BottomNavigation, Box, Button, Collapse, Conta
 import React, {useState, useEffect} from 'react'
 import {ThemeProvider} from '@mui/material/styles'
 import WindowDimensions from '../WindowDimensions';
-import DennysLogo from '../../assets/DENN.svg'
+import DennysLogo from '../../assets/DENN2.svg'
 import theme from '../../styles/Theme';
 import ItemSearch from '../ItemSearch';
 import PersonIcon from '@mui/icons-material/Person'
@@ -15,6 +15,7 @@ import AccessTimeRoundedIcon from '@mui/icons-material/AccessTimeRounded';
 import DebugFab from '../DebugFab';
 interface NavBarProps
 {
+    bottomButtonComponent?: React.ReactNode,
     bottomLabel: string,
     bottomPaperText?: string,
     children?: React.ReactNode,
@@ -23,21 +24,18 @@ interface NavBarProps
     onClick?: ()=>void;
 }
 
+const Logo = React.memo(()=>
+{
+    const navigate = useNavigate();
+    const navigateToCart = ()=>{navigate("/")}
+    return(<Box component='img' src={DennysLogo} sx={{postiion: 'absolute', left: '10px', right: 'auto', backgroundColor: theme.palette.dennysYellow.main, height: 40, width: 40, borderRadius: 2, padding: 0.5}}
+        onClick={navigateToCart}/>)
+}); // never reload the image.
 
-const Logo = React.memo(({onClick}:{onClick?: (_e: React.MouseEvent)=>void})=>
-(
-    <Box component='img' onClick={onClick} src={DennysLogo} sx={{postiion: 'absolute', left: '10px', right: 'auto', backgroundColor: theme.palette.dennysYellow.main, height: 40, width: 40, borderRadius: 2, padding: 0.5}}/>
-)); // never reload the image.
-
-const NavBar = ({bottomLabel, onClick, disableButton, children, hideCallServerButton}: NavBarProps) => {
+const NavBar = ({bottomLabel, bottomButtonComponent, onClick, disableButton, children, hideCallServerButton}: NavBarProps) => {
     const navigate = useNavigate();
     const [snackbarOpen, setSnackbarOpen] = useState(false);
     const [dialogOpen, setDialogOpen] = useState(false);
-    function handleClickLogo(_e: React.MouseEvent)
-    {
-        navigate("/");
-    }
-
     function handleCallServer()
     {
         setDialogOpen(true);
@@ -76,7 +74,7 @@ const NavBar = ({bottomLabel, onClick, disableButton, children, hideCallServerBu
             <CallServerDialog open={dialogOpen} onCancel={onCancel} onConfirm={onConfirm}/>
             <AppBar sx={{zIndex: 1000, backgroundColor: '#464340'}} elevation={1} position='fixed'>
                 <Toolbar sx={{justifyContent: 'space-between'}}>
-                    <Logo onClick={handleClickLogo}/>
+                    <Logo />
                     <Box display='flex' flexDirection={'row'} alignItems={'center'}>
                     <ItemSearch />
                     </Box>
@@ -91,7 +89,7 @@ const NavBar = ({bottomLabel, onClick, disableButton, children, hideCallServerBu
                         <Button variant='contained' disabled={disableButton} onClick={handleClick} 
                         sx={{backgroundColor: theme.palette.dennysRed.main, 
                             color: theme.palette.dennysRed.contrastText, 
-                            minWidth: '40%', 
+                            minWidth: '180px', 
                             height: '45px', 
                             fontSize: 20, 
                             postion: 'fixed',
@@ -100,10 +98,10 @@ const NavBar = ({bottomLabel, onClick, disableButton, children, hideCallServerBu
                             {
                                 color: '#cccccc',
                             }
-                            }}><Typography fontWeight={!disableButton ? 1000 : 500}>{bottomLabel}</Typography></Button>
+                            }}>{bottomButtonComponent ? (bottomButtonComponent) : (<Typography fontWeight={!disableButton ? 1000 : 500}>{bottomLabel}</Typography>)}</Button>
                     </Toolbar>
             </AppBar>
-            <DebugFab onClick={onConfirm} show={false} />
+            <DebugFab onClick={onConfirm}/>
         </ThemeProvider>
         );
 }

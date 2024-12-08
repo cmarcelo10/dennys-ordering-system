@@ -57,7 +57,7 @@ const CategoryCard = ({name, category, disableNewSelection, onChange}: CategoryC
             }
         }
         console.log(`Selected ${category.amountSelected}`);
-        setOptions({...options}); // avoid rewriting the old state.
+        setOptions((prev)=>({...prev, [key]:customization})); // !!avoid rewriting the old state.
         onChange(category.totalPrice, category.amountSelected, name, options);
     }
     return(

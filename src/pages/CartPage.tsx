@@ -25,17 +25,23 @@ const CartPage = () => {
     const [itemDeleted, setItemDeleted] = React.useState(false);
     const deletedItemName = React.useRef('');
     const [checkoutSnackbar, setCheckoutSnackbar] = React.useState(false);
+    const [cancelled, setCancelled] = React.useState(false);
     const { cartItems, length, totalPrice, saveToCart, addToCart, removeFromCart, saveComments} = useContext(CartContext);
     // snackbar functions
-    const openCheckoutDialog = React.useCallback(function openCheckoutDialog() { setCheckout(true); },[]);
-    const closeCheckoutDialog = React.useCallback(function() {setCheckout(false); },[]);
-    const closeSnackbar = React.useCallback(()=> { 
+    const closeItemDeletedSnackbar = ()=>
+    {
+        setCancelled(false);
+    }
+    const openCheckoutDialog =  () => {setCheckout(true)};
+    const closeCheckoutDialog = ()=>{setCheckout(false); };
+    const closeSnackbar = ()=> { 
             // there's never a time when more than one snackbar is open, so use this function to close them all.
             setCheckoutSnackbar(false);
             setSavedChanges(false);
             setItemDeleted(false);
-    },[]);
-    const performCheckout = React.useCallback(()=>{setCheckout(false); setCheckoutSnackbar(true)}, []);
+            setCancelled(false);
+    };
+    const performCheckout = ()=>{setCheckout(false); setCheckoutSnackbar(true)}
     function openItemDeletedSnackbar(itemID: string)
     { 
         deletedItemName.current = cartItems[itemID].item.name
@@ -45,8 +51,7 @@ const CartPage = () => {
     }
     const navigateBack = React.useCallback(function navigateBack()
     {
-        if(state && fromLocation)  navigate(fromLocation); //
-        else navigate('/');
+         navigate(fromLocation ? fromLocation : '/');
     },[state]);
 ``
     // set up cart context to get cart items
@@ -71,6 +76,10 @@ const CartPage = () => {
         {
             setSavedChanges(state.saved);
         }
+        if(state && state.cancelled)
+        {
+            setCancelled(true);
+        }
         window.history.replaceState({},''); // clear the state so it doesn't get cluttered.
     },[state]);
 
@@ -88,7 +97,8 @@ const CartPage = () => {
       <ThemeProvider theme={theme}>
         <TopSnackbarEnhanced color='white' backgroundColor={theme.palette.success.main} open={checkoutSnackbar} timeout={2500} onClose={closeSnackbar} message={<Typography fontSize={18} fontWeight={500}>Order Placed!</Typography>} action={<CheckRoundedIcon fontSize='large'/>}/>
         <TopSnackbarEnhanced color='white' open={itemDeleted} timeout={2500} onClose={closeSnackbar} message={<Typography fontSize={18} fontWeight={500}>{deletedItemName.current} removed</Typography>}/>
-        <TopSnackbarEnhanced color='white' backgroundColor={theme.palette.success.main} open={saveChanges} timeout={2500} onClose={closeSnackbar} message={<Typography fontSize={18} fontWeight={500}>Changes Saved</Typography>} action={<CheckRoundedIcon fontSize='large'/>}/>
+        <TopSnackbarEnhanced color='white' backgroundColor={theme.palette.success.main} open={saveChanges} timeout={2500} onClose={closeSnackbar} message={<Typography sx={{color: theme.palette.success.contrastText}} fontSize={18} fontWeight={500}>Changes Saved</Typography>} action={<CheckRoundedIcon fontSize='large'/>}/>
+        <TopSnackbarEnhanced color='white' backgroundColor={theme.palette.info.main} open={cancelled} timeout={2500} onClose={closeSnackbar} message={<Typography sx={{color: theme.palette.info.contrastText}}fontSize={18} fontWeight={500}>Changes Discarded</Typography>}/>
         <CheckoutDialog open={checkout} onConfirm={performCheckout} onClose={closeCheckoutDialog}/>
         <NavBar bottomLabel='CHECK OUT' onClick={openCheckoutDialog} disableButton={length <=0}>
             <Box display="flex" flexDirection="row" alignContent={'center'}>

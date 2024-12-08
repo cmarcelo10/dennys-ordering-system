@@ -151,7 +151,6 @@ const CartItemCard = ({cartItem, handleRemoveItem, handleChangeQuantity}:CartIte
                             pr: 0,
                             pt:1,
                         },
-
                     }}onClick={toggleExpanded} expandIcon={<ExpandIcon fontSize='medium'/>}>
                         <Box sx={{display: 'flex', flexDirection: 'row', flexGrow: 1, alignItems:'center', justifyContent: 'space-between', backgroundColor: 'inherit'}}>
                             <Typography variant="h6" sx={{backgroundColor: 'inherit', fontSize: 18}}> 

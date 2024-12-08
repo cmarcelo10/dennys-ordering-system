@@ -8,6 +8,7 @@ type FoodItem =
     url?: string,
     description?: string
     price: number,
+    customizationsPrice?: number,
     image?: string,
     largeImage?: string,
     customizations:
