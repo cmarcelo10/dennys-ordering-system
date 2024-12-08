@@ -92,7 +92,7 @@ const CartPage = () => {
     {
         window.addEventListener('beforeunload', avoidUnsafeReload);
         return(()=> window.removeEventListener('beforeunload', avoidUnsafeReload ));
-    },[state]);
+    },[]);
     return (
       <ThemeProvider theme={theme}>
         <TopSnackbarEnhanced color='white' backgroundColor={theme.palette.success.main} open={checkoutSnackbar} timeout={2500} onClose={closeSnackbar} message={<Typography fontSize={18} fontWeight={500}>Order Placed!</Typography>} action={<CheckRoundedIcon fontSize='large'/>}/>
@@ -117,34 +117,16 @@ const CartPage = () => {
           </Typography>
           <Divider variant='fullWidth'/>
           <Box sx={{ paddingTop: 1, width: '100%', display: 'flex', flexDirection: 'column', alignContent: 'center', justifyContent: 'space-around'}}>
-            {length > 0 ? (<Stack spacing={5} justifyContent={'space-around'} sx={{paddingBottom: 15, pr: 1, pl: 1}}>
+            {length > 0 ? (<Stack spacing={2} justifyContent={'space-around'} sx={{paddingBottom: 15}}>
                 {/* By displaying the cart items in reverse, the top of the page will always show the most recently-added item */}
                 {Object.values(cartItems).reverse().map((cartItem) => (
                     <CartItemCard key={cartItem.item.name + cartItem.id} cartItem={cartItem} handleChangeQuantity={handleChangeQuantity} handleRemoveItem={openItemDeletedSnackbar}/>
                 ))}
             </Stack>) : (<Typography variant='body1' textAlign={'center'} sx={{mt: 3}}> Your cart is empty!</Typography>)}
           </Box>
-            <Paper elevation={2} sx={{ 
-                borderWidth: 1, borderStyle: 'solid', 
-                borderColor: theme.palette.dennysGrey.main, display: 'flex', 
-                flexDirection: 'column', flexGrow: 4, 
-                alignItems: 'center', justifyContent: 'space-between', height: 70, width: '90%', 
-                backgroundColor: 'rgba(255, 255, 255, 1)', borderBox: 'content-box', 
-                borderTopRadius: 5, position: 'fixed', bottom: 50, left: '50%', 
-                transform: "translateX(-50%)",
-                '&. MuiPaper-root':
-                {
-                    resize: 'both',
-                    display: 'flex',
-                    flexDirection: 'column',
-                },
-                '&:hover':
-                {
-                    backgroundColor: 'rgba(255, 255, 255, 0.9)'
-                }
-                }}>
-                <Box sx={{display: 'flex', width: '100%', boxSizing: 'border-box', opacity: 100, flexDirection: 'row', flexGrow: 0, justifyContent: 'space-between', fontSize: 18, p: 2}}>
-                    <Typography sx={{opacity: 100}}variant="h6" fontSize='inherit'>
+            <Paper elevation={2} sx={{backgroundColor: 'white', borderWidth: 1, borderStyle: 'solid', borderColor: theme.palette.dennysGrey.main, display: 'flex', flexDirection: 'column', flexGrow: 1, alignItems: 'center', justifyContent: 'space-between', height: 80, width: '100%', borderBox: 'content-box', borderTopRadius: 5, position: 'fixed', bottom: 56, left: '50%', transform: "translateX(-50%)"}}>
+                <Box sx={{display: 'flex', width: '100%', boxSizing: 'border-box', flexDirection: 'row', flexGrow: 1, justifyContent: 'space-between', fontSize: 18, p: 2}}>
+                    <Typography variant="h6" fontSize='inherit'>
                         Total:
                     </Typography>
                     <Typography variant='h6' fontSize='inherit'>

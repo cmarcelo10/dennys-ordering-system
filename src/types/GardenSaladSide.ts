@@ -30,7 +30,6 @@ const GardenSaladSide: FoodItem =
 
 export const SideSaladOptions:CustomizationCategory = 
 {
-    label: "Side Salad",
     isRequired: false,
     options: {"Add Garden Salad":{price: 4.29, selected: false, parentCategory: "Side Salad"}},
     optionsAreMutuallyExclusive: true,

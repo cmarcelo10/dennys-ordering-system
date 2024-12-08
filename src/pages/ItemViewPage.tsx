@@ -361,7 +361,7 @@ const ItemViewPage = ()=>
                                 <QuantitySelector initial={quantity} min={1} max={10} onChange={setQuantity}/>
                             </Box>
                         </Card>
-                        <ImportantInfoCard key={'importantInfoCard'} nutritionalData={item.nutritionalData} allergenData={item.allergens} allergenFontSize={item.allergenFontSize} modalOpen={open} openModal={handleOpen} closeModal={handleClose}/>
+                        <ImportantInfoCard key={'importantInfoCard'} nutritionalData={item.nutritionalData} allergenData={item.allergens} modalOpen={open} openModal={handleOpen} closeModal={handleClose}/>
                         <Divider key={'contentDivider'} variant='fullWidth' sx={{
                             
                              borderBottomWidth: '10px'}}>
