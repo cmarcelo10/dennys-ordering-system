@@ -35,10 +35,3 @@ category page.
   
 
 - The Design Team of CPSC 481 T09 Group 3, 12/07/2024
-
-Members:
-* Carter Marcelo
-* Ryan Mailhiot
-* Vihdi
-* Mark
-* Hussain Ab
