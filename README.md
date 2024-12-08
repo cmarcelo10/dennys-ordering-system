@@ -34,4 +34,4 @@ category page.
     Pressing the back button will take you directly to the main menu.
   
 
-- The Design Team of CPSC 481 T09 Group 3, 12/07/2024
+*The Design Team of CPSC 481 T09 Group 3, 12/07/2024*
