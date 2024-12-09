@@ -2,10 +2,10 @@ import BaconAvocadoCheeseburgerImg from '../assets/food/BaconAvocadoCheeseburger
 import Flaming5PepperBurgerImg from '../assets/food/Flaming5PepperBurger.png'
 import PotRoastMeltImg from '../assets/food/PotRoastMelt.png'
 import DoubleCheeseburgerImg from '../assets/food/DoubleCheeseburger.png'
+import BourbonBaconBurgerImg from '../assets/food/BourbonBaconBurger.jpg'
 import FoodItem from "./FoodItem.ts";
-import Slamburger, { BurgerPattyOptions } from './Slamburger.ts'
+import Slamburger, { BurgerPattyOptions, BurgerFillingOptions, SauceOptions, SlamburgerSideOptions } from './Slamburger.ts'
 import TraditionalClubSandwich from './TraditionalClubSandwich.ts'
-import { SauceOptions, SlamburgerSideOptions} from './Slamburger.ts';
 import { SideSaladOptions } from './GardenSaladSide.ts';
 export const BaconAvocadoCheeseBurger:FoodItem = 
 {
@@ -24,7 +24,7 @@ export const BaconAvocadoCheeseBurger:FoodItem =
         trans_fat: "1.3 g",
         cholesterol: "217 mg",
         sodium: "1936 mg",
-        carbohydrates: "43.5g",
+        carbohydrates: "43.5 g",
         protein: "52.9 g",
         fibre: "13.5 g",
         sugar: "9.6 g",
@@ -106,12 +106,47 @@ export const DoubleCheeseburger:FoodItem =
 
 export const Flaming5PepperBurger:FoodItem = 
 {
-    name: "Flamin 5 Pepper Burger",
+    name: "Flamin' 5 Pepper Burger",
     parentCategory: "Sandwiches and Burgers",
-    description: "Aged white cheddar cheese, bacon, jalapeños, 5-pepper sauce, mayo, shredded iceberg lettuce, tomato, red onions and pickles on a brioche bun",
+    description: "Aged white cheddar cheese, bacon, jalapeños, 5-pepper sauce, mayo, shredded iceberg lettuce, tomato, red onions and pickles on a brioche bun.",
     price: 19.39,
-    customizations: {},
+    customizations: {
+
+    },
     image: Flaming5PepperBurgerImg,
+}
+
+export const BourbonBaconBurger:FoodItem=
+{
+    name: "Bourbon Bacon Burger",
+    parentCategory: "Sandwiches and Burgers",
+    description: "Aged white cheddar cheese, bacon, sauteed mushrooms, fire-roasted bell peppers and onions, bourbon sauce, mayo, shredded iceberg lettuce, tomato, red onions, and pickles on a brioche bun.",
+    price: 19.59,
+    allergenFontSize: 16,
+    nutritionalData:
+    {
+        name: "Bourbon Bacon Burger",
+        calories: "1170",
+        fat: "71.2 g",
+        saturated_fat: "26.8 g",
+        trans_fat: '1.3 g',
+        carbohydrates: "79.7 g",
+        sugar: "40.0 g",
+        fibre: "13.4 g",
+        protein: '54.1 g',
+        cholesterol: "208 mg",
+        sodium: "1714 mg",
+    },
+
+    allergens: "Eggs, Dairy, Soy, Gluten, Mustard",
+    customizations:
+    {
+        BurgerPattyOptions, 
+        BurgerFillingOptions,
+        SlamburgerSideOptions,
+        SideSaladOptions,
+    },
+    image: BourbonBaconBurgerImg
 }
 
 export const HandheldsMenu = 

@@ -5,6 +5,7 @@ import NavBar from "./NavBar/Navbar";
 
 const ErrorPage = ()=>
 {
+    // not very graceful, but it gets the point across.
     const navigate = useNavigate();
     const goHome = () =>
     {

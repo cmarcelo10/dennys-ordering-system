@@ -84,10 +84,11 @@ const NavBar = ({bottomLabel, bottomButtonComponent, onClick, disableButton, chi
                 {children}
             <Toolbar/>
             {!hideCallServerButton && (<CallServerButton onClick={handleCallServer}/>)}
-            <AppBar sx={{zIndex: 1000, backgroundColor: '#464340', alignContent: 'center', justifyContent:'center', position: 'fixed', bottom: 0, top: 'auto', height: 80}} elevation={0}>
-                    <Toolbar sx={{display: 'flex', flexDirection: 'row', alignContent: 'center', justifyContent: 'center', pb: 0.5, pt: 0.5}}>
+            <AppBar sx={{zIndex: 1000, backgroundColor: '#464340', alignContent: 'center', justifyContent:'center', position: 'fixed', bottom: 0, top: 'auto'}} elevation={0}>
+                    <Toolbar sx={{display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', pb: 0.5, pt: 0.5}}>
                         <Button variant='contained' disabled={disableButton} onClick={handleClick} 
-                        sx={{backgroundColor: theme.palette.dennysRed.main, 
+                        sx={{
+                            backgroundColor: theme.palette.dennysRed.main, 
                             color: theme.palette.dennysRed.contrastText, 
                             minWidth: '180px', 
                             height: '45px', 

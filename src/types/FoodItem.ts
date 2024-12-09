@@ -10,8 +10,7 @@ type FoodItem =
     price: number,
     customizationsPrice?: number,
     image?: string,
-    largeImage?: string,
-    allergenFontSize?: number,
+    allergenFontSize?: number
     customizations:
     {
         [key: string]: CustomizationCategory,

@@ -66,17 +66,17 @@ const ImportantInfoCard=({nutritionalData, allergenData, allergenFontSize, modal
                             padding: '5px'
                         }
                     }}>
-                    <Box sx={{display: 'flex', flexDirection: 'column'}}>
-                        <Box sx={{display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
-                            <Typography margin='4px' fontSize={20} fontWeight={450} color="red">
+                    <Box sx={{display:'flex', flexDirection:'column'}}>
+                        <Box sx={{display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent:'space-between'}}>
+                            <Typography margin='4px' fontSize={20} color="red">
                                 Allergens
                             </Typography>
-                            <Typography margin='4px'fontSize={allergenFontSize ? allergenFontSize : 20} color="red">
+                            <Typography margin='4px' fontSize={allergenFontSize? allergenFontSize : 20} color="red">
                                 {allergenData ? allergenData : <>Unavailable</>}
                             </Typography>
                         </Box>
-                        <Box sx={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between'}}>
-                            <Typography margin='4px' fontSize={20} fontWeight={450}>
+                        <Box display='flex' flexDirection='row' justifyContent='space-between'>
+                            <Typography margin='4px' fontSize={20}>
                                 Nutritional Info
                             </Typography>
                             <Button sx={{borderRadius: 3}}variant='outlined'onClick={openModal} disabled={!nutritionalData}>{nutritionalData ? (<>View</>):(<>Unavailable</>)}</Button>

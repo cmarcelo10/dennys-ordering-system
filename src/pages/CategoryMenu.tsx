@@ -106,7 +106,7 @@ const ErrorComponent = ({totalPrice}:{totalPrice: number})=>
     <ThemeProvider theme={theme}>
         <Navbar bottomLabel={`Review Order - $ ${totalPrice.toFixed(2)}`}> {/* Bump this up to Main and use context*/}
         <MenuBreadcrumbs categoryName='Not Found'/>
-        <Typography sx={{paddingTop: 1, width: '100%'}} variant='h2' fontFamily={'Roboto'} color={theme.palette.dennysRed.main} textAlign="center" fontWeight={555} fontSize={30}>Page not implemented</Typography>
+        <Typography sx={{paddingTop: 1, width: '100%'}} variant='h2' fontFamily={"Roboto"} color={theme.palette.dennysRed.main} textAlign="center" fontWeight={555} fontSize={30}>Page not implemented</Typography>
         </Navbar>
     </ThemeProvider>
 );
@@ -126,7 +126,7 @@ const CategoryMenu = () =>
             const category = queryParams.get('category');
             if(category)
             {
-                return decodeURIComponent(category)
+                return decodeURIComponent(category);
             }
         }
         return "Page Not Found";
@@ -195,7 +195,7 @@ const CategoryMenu = () =>
                     }/>
                 <Navbar bottomLabel={`Review Order - $ ${totalPrice.toFixed(2)}`} onClick={goToCart}>
                 <MenuBreadcrumbs categoryName={categoryName}/>
-                <Typography sx={{paddingTop: 1, width: '100%'}} variant='h2' fontFamily={'Roboto'} color={theme.palette.dennysRed.main} textAlign="center" fontWeight={555} fontSize={30}>{categoryName}</Typography>
+                <Typography sx={{paddingTop: 1, width: '100%'}} variant='h2' fontFamily={'Roboto, sans-serif'} color={theme.palette.dennysRed.main} textAlign="center" fontWeight={555} fontSize={30}>{categoryName}</Typography>
                 <Divider variant='middle'/>
                 {categoryName === "Sandwiches and Burgers" ? (<Stack spacing={3} sx={{paddingTop: 3, paddingBottom: 3}}>
                 {

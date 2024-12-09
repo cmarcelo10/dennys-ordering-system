@@ -4,7 +4,7 @@ import FoodItem from '../types/FoodItem'
 import CustomizationCategory from '../types/CustomizationCategory'
 import CustomizationOption from '../types/CustomizationOption'
 import Breadcrumbs from '@mui/material/Breadcrumbs'
-import { Link, useNavigate, useSearchParams} from 'react-router-dom'
+import { Link, useLocation, useNavigate, useSearchParams} from 'react-router-dom'
 import Typography from '@mui/material/Typography'
 import { HandheldsList } from '../types/HandheldsMenu.ts'
 
@@ -94,12 +94,14 @@ const ItemViewPage = ()=>
     const {cartItems, addToCart, saveToCart} = React.useContext(CartContext);
     const menu = React.useRef(HandheldsList);
     const [editing, setEditing] = React.useState(false);
-    const [searchParams, setSearchParams] = useSearchParams(new URLSearchParams(window.location.search));
+    const {search} = useLocation();
+    const [searchParams, setSearchParams] = useSearchParams(new URLSearchParams(search));
     const isSaving = React.useRef(false);
     const [cartItem, setCartItem] = React.useState<CartItem>();
     const [itemFound, setItemFound] = React.useState(true);
     const [item, setFoodItem] = React.useState<FoodItem | undefined>(() =>
     {
+        // complex initial state setter. fallback is defined in the React.useEffect function later.
         const queryParams = new URLSearchParams(window.location.search);
         if(queryParams && queryParams.has('item'))
         {
@@ -146,7 +148,7 @@ const ItemViewPage = ()=>
                 let foodItemCopy =  structuredClone(item);
                 foodItemCopy.customizations = structuredClone(custOptions);
                 addToCart({id: '', item: foodItemCopy, price: price, quantity: quantity});
-                navigate(`/browse?category=${encodeURIComponent(item.parentCategory)}`, {state:{
+                navigate(parentLocation, {state:{
                     itemAdded: true,
                     itemName: item.name
                 }})
@@ -154,7 +156,7 @@ const ItemViewPage = ()=>
         }
         return;
     }
-
+    
     function handleGoBack()
     {
         setDialogOpen(true);
@@ -215,11 +217,7 @@ const ItemViewPage = ()=>
                 setEditing(true);
             }
         }
-        if(item)
-        {
-            setParentLocation(item.parentCategory)
-        }
-        else if(item || itemName)
+        else if(!item || itemName != item?.name)
         {
             const foundItem = menu.current.find((entry)=>entry.name === itemName);
             if(foundItem)
@@ -247,7 +245,7 @@ const ItemViewPage = ()=>
                 console.log("ItemViewPage did unmount");
             }
         )
-    }, [window.location.search]);
+    }, [search]);
 
     function handleChange(newPriceOfCategory: number, newAmountSelected:number, categoryName: string, updatedOptions: {[key:string]:CustomizationOption})
     {
@@ -284,7 +282,7 @@ const ItemViewPage = ()=>
     }
     function goToParent()
     {
-        navigate(`/browse?category=${encodeURIComponent(item!.parentCategory)}`);
+        navigate(parentLocation)
     }
     if(!item)
     {
@@ -357,7 +355,7 @@ const ItemViewPage = ()=>
                                     <Box display='flex' flexDirection={'row'} alignItems={'top'}  justifyContent={'space-between'}>
                                     <ItemDetailsTextArea description={item.description}/>
                                         <Box display='flex' flexDirection='column' textAlign={'right'}>
-                                            <Box component='img' maxHeight={158} height={'auto'} width={150} paddingLeft={1} src={item.image}/>
+                                            <Box component='img' height={158} width={150} paddingLeft={1} src={item.image} />
                                             <Typography margin='4px' fontSize={20} fontWeight={500}>$ {item.price}</Typography>
                                         </Box>
                                     </Box>
