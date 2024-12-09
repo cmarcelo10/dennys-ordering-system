@@ -1,4 +1,4 @@
-import SlamburgerImage from '../assets/food/Slamburger.png'
+import SlamburgerImage from '../assets/food/Slamburger.jpg'
 import SignatureBreakfastsImage from '../assets/food/SignatureBreakfasts.jpg'
 import ShareableStartersImage from '../assets/food/ShareableStarters.jpg'
 import FeaturedImage from '../assets/food/Featured.jpg'
@@ -7,7 +7,6 @@ import SavouryOmelettesImage from '../assets/food/SavoryOmelettes.jpg'
 import PremiumPancakesImage from '../assets/food/PremiumPancakes.jpg'
 import EntreesImage from '../assets/food/Entrees.jpg'
 import DrinksNShakesImage from '../assets/food/Drinks.jpg'
-import BourbonBaconBurgerImage from '../assets/food/BourbonBaconBurger.jpg'
 import DennysDeals from '../assets/DennysDeals.jpg'
 import Category from './Category.ts';
 const Categories: Category[] = [

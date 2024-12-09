@@ -1,6 +1,6 @@
 import FoodItem from "./FoodItem.ts";
 import CustomizationCategory from "./CustomizationCategory.ts";
-import SlamburgerSmall from '../assets/food/Slamburger.jpg'
+import SlamburgerSmall from '../assets/food/SlamburgerSquare.jpg'
 import SlamburgerLarge from '../assets/food/Slamburger.png'
 import GardenSaladSide, {SideSaladOptions} from "./GardenSaladSide.ts";
 
@@ -147,7 +147,6 @@ const Slamburger:FoodItem =
     description: "Crispy hash browns, a fresh egg made to order, bacon and Canadian cheese stacked high on a brioche bun.",
     price: 18.59,
     image: SlamburgerSmall,
-    largeImage: SlamburgerLarge,
     nutritionalData: {
         name: "Slamburger",
         calories: "1090",
