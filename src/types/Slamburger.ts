@@ -1,6 +1,6 @@
 import FoodItem from "./FoodItem.ts";
 import CustomizationCategory from "./CustomizationCategory.ts";
-import SlamburgerSmall from '../assets/food/Slamburger.jpg'
+import SlamburgerSmall from '../assets/food/SlamburgerSquare.jpg'
 import SlamburgerLarge from '../assets/food/Slamburger.png'
 import GardenSaladSide, {SideSaladOptions} from "./GardenSaladSide.ts";
 
